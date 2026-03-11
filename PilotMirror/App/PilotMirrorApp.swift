@@ -56,19 +56,10 @@ struct MainTabView: View {
             .tag(0)
 
             NavigationStack {
-                CreateFeedbackLinkView()
-                    .navigationTitle("Share Link")
-                    .navigationBarTitleDisplayMode(.inline)
-                    .toolbarColorScheme(.dark, for: .navigationBar)
-            }
-            .tabItem { Label("Share", systemImage: "square.and.arrow.up.fill") }
-            .tag(1)
-
-            NavigationStack {
                 AssessmentAdviceView()
             }
-            .tabItem { Label("Advice", systemImage: "lightbulb.fill") }
-            .tag(2)
+            .tabItem { Label("Tipps", systemImage: "lightbulb.fill") }
+            .tag(1)
         }
         .tint(Color(hex: "4A9EF8"))
         .onAppear {
