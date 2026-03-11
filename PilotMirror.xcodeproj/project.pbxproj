@@ -1,0 +1,446 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		CC000001000000000000000A /* PilotMirrorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000001000000000000000A /* PilotMirrorApp.swift */; };
+		CC000002000000000000000A /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000002000000000000000A /* User.swift */; };
+		CC000003000000000000000A /* Assessment.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000003000000000000000A /* Assessment.swift */; };
+		CC000004000000000000000A /* Question.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000004000000000000000A /* Question.swift */; };
+		CC000005000000000000000A /* Response.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000005000000000000000A /* Response.swift */; };
+		CC000006000000000000000A /* FeedbackLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000006000000000000000A /* FeedbackLink.swift */; };
+		CC000007000000000000000A /* Respondent.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000007000000000000000A /* Respondent.swift */; };
+		CC000008000000000000000A /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000008000000000000000A /* AuthService.swift */; };
+		CC000009000000000000000A /* FeedbackService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000009000000000000000A /* FeedbackService.swift */; };
+		CC000010000000000000000A /* SurveyService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000010000000000000000A /* SurveyService.swift */; };
+		CC000011000000000000000A /* AIAnalysisService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000011000000000000000A /* AIAnalysisService.swift */; };
+		CC000012000000000000000A /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000012000000000000000A /* OnboardingView.swift */; };
+		CC000013000000000000000A /* AssessmentSelectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000013000000000000000A /* AssessmentSelectView.swift */; };
+		CC000014000000000000000A /* CreateFeedbackLinkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000014000000000000000A /* CreateFeedbackLinkView.swift */; };
+		CC000015000000000000000A /* FeedbackStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000015000000000000000A /* FeedbackStatusView.swift */; };
+		CC000016000000000000000A /* FeedbackSurveyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000016000000000000000A /* FeedbackSurveyView.swift */; };
+		CC000017000000000000000A /* ResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000017000000000000000A /* ResultsView.swift */; };
+		CC000018000000000000000A /* AssessmentAdviceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000018000000000000000A /* AssessmentAdviceView.swift */; };
+		CC000019000000000000000A /* QuestionCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000019000000000000000A /* QuestionCard.swift */; };
+		CC000020000000000000000A /* ProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000020000000000000000A /* ProgressBar.swift */; };
+		CC000021000000000000000A /* TraitRadarChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000021000000000000000A /* TraitRadarChart.swift */; };
+		CC000022000000000000000A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BB000022000000000000000A /* Assets.xcassets */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		BB000001000000000000000A /* PilotMirrorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PilotMirrorApp.swift; sourceTree = "<group>"; };
+		BB000002000000000000000A /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		BB000003000000000000000A /* Assessment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Assessment.swift; sourceTree = "<group>"; };
+		BB000004000000000000000A /* Question.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Question.swift; sourceTree = "<group>"; };
+		BB000005000000000000000A /* Response.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Response.swift; sourceTree = "<group>"; };
+		BB000006000000000000000A /* FeedbackLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackLink.swift; sourceTree = "<group>"; };
+		BB000007000000000000000A /* Respondent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Respondent.swift; sourceTree = "<group>"; };
+		BB000008000000000000000A /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
+		BB000009000000000000000A /* FeedbackService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackService.swift; sourceTree = "<group>"; };
+		BB000010000000000000000A /* SurveyService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SurveyService.swift; sourceTree = "<group>"; };
+		BB000011000000000000000A /* AIAnalysisService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIAnalysisService.swift; sourceTree = "<group>"; };
+		BB000012000000000000000A /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		BB000013000000000000000A /* AssessmentSelectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssessmentSelectView.swift; sourceTree = "<group>"; };
+		BB000014000000000000000A /* CreateFeedbackLinkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateFeedbackLinkView.swift; sourceTree = "<group>"; };
+		BB000015000000000000000A /* FeedbackStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackStatusView.swift; sourceTree = "<group>"; };
+		BB000016000000000000000A /* FeedbackSurveyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackSurveyView.swift; sourceTree = "<group>"; };
+		BB000017000000000000000A /* ResultsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultsView.swift; sourceTree = "<group>"; };
+		BB000018000000000000000A /* AssessmentAdviceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssessmentAdviceView.swift; sourceTree = "<group>"; };
+		BB000019000000000000000A /* QuestionCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestionCard.swift; sourceTree = "<group>"; };
+		BB000020000000000000000A /* ProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressBar.swift; sourceTree = "<group>"; };
+		BB000021000000000000000A /* TraitRadarChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TraitRadarChart.swift; sourceTree = "<group>"; };
+		BB000022000000000000000A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		AA000005000000000000000A /* PilotMirror.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PilotMirror.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		EE000001000000000000000A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		AA000008000000000000000A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		AA000002000000000000000A /* PilotMirror */ = {
+			isa = PBXGroup;
+			children = (
+				DD000001000000000000000A /* App */,
+				DD000002000000000000000A /* Models */,
+				DD000003000000000000000A /* Services */,
+				DD000004000000000000000A /* Views */,
+				DD000005000000000000000A /* Components */,
+				BB000022000000000000000A /* Assets.xcassets */,
+				EE000001000000000000000A /* Info.plist */,
+			);
+			path = PilotMirror;
+			sourceTree = "<group>";
+		};
+		AA000003000000000000000A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AA000005000000000000000A /* PilotMirror.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		FF000001000000000000000A = {
+			isa = PBXGroup;
+			children = (
+				AA000002000000000000000A /* PilotMirror */,
+				AA000003000000000000000A /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		DD000001000000000000000A /* App */ = {
+			isa = PBXGroup;
+			children = (
+				BB000001000000000000000A /* PilotMirrorApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		DD000002000000000000000A /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				BB000002000000000000000A /* User.swift */,
+				BB000003000000000000000A /* Assessment.swift */,
+				BB000004000000000000000A /* Question.swift */,
+				BB000005000000000000000A /* Response.swift */,
+				BB000006000000000000000A /* FeedbackLink.swift */,
+				BB000007000000000000000A /* Respondent.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		DD000003000000000000000A /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				BB000008000000000000000A /* AuthService.swift */,
+				BB000009000000000000000A /* FeedbackService.swift */,
+				BB000010000000000000000A /* SurveyService.swift */,
+				BB000011000000000000000A /* AIAnalysisService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		DD000004000000000000000A /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				BB000012000000000000000A /* OnboardingView.swift */,
+				BB000013000000000000000A /* AssessmentSelectView.swift */,
+				BB000014000000000000000A /* CreateFeedbackLinkView.swift */,
+				BB000015000000000000000A /* FeedbackStatusView.swift */,
+				BB000016000000000000000A /* FeedbackSurveyView.swift */,
+				BB000017000000000000000A /* ResultsView.swift */,
+				BB000018000000000000000A /* AssessmentAdviceView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		DD000005000000000000000A /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				BB000019000000000000000A /* QuestionCard.swift */,
+				BB000020000000000000000A /* ProgressBar.swift */,
+				BB000021000000000000000A /* TraitRadarChart.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		AA000004000000000000000A /* PilotMirror */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AA000010000000000000000A /* Build configuration list for PBXNativeTarget "PilotMirror" */;
+			buildPhases = (
+				AA000006000000000000000A /* Sources */,
+				AA000007000000000000000A /* Resources */,
+				AA000008000000000000000A /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PilotMirror;
+			productName = PilotMirror;
+			productReference = AA000005000000000000000A /* PilotMirror.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		AA000001000000000000000A /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					AA000004000000000000000A = {
+						CreatedOnToolsVersion = 15.0;
+					};
+				};
+			};
+			buildConfigurationList = AA000009000000000000000A /* Build configuration list for PBXProject "PilotMirror" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = FF000001000000000000000A;
+			productRefGroup = AA000003000000000000000A /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				AA000004000000000000000A /* PilotMirror */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		AA000007000000000000000A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CC000022000000000000000A /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		AA000006000000000000000A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CC000001000000000000000A /* PilotMirrorApp.swift in Sources */,
+				CC000002000000000000000A /* User.swift in Sources */,
+				CC000003000000000000000A /* Assessment.swift in Sources */,
+				CC000004000000000000000A /* Question.swift in Sources */,
+				CC000005000000000000000A /* Response.swift in Sources */,
+				CC000006000000000000000A /* FeedbackLink.swift in Sources */,
+				CC000007000000000000000A /* Respondent.swift in Sources */,
+				CC000008000000000000000A /* AuthService.swift in Sources */,
+				CC000009000000000000000A /* FeedbackService.swift in Sources */,
+				CC000010000000000000000A /* SurveyService.swift in Sources */,
+				CC000011000000000000000A /* AIAnalysisService.swift in Sources */,
+				CC000012000000000000000A /* OnboardingView.swift in Sources */,
+				CC000013000000000000000A /* AssessmentSelectView.swift in Sources */,
+				CC000014000000000000000A /* CreateFeedbackLinkView.swift in Sources */,
+				CC000015000000000000000A /* FeedbackStatusView.swift in Sources */,
+				CC000016000000000000000A /* FeedbackSurveyView.swift in Sources */,
+				CC000017000000000000000A /* ResultsView.swift in Sources */,
+				CC000018000000000000000A /* AssessmentAdviceView.swift in Sources */,
+				CC000019000000000000000A /* QuestionCard.swift in Sources */,
+				CC000020000000000000000A /* ProgressBar.swift in Sources */,
+				CC000021000000000000000A /* TraitRadarChart.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		AA000011000000000000000A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		AA000012000000000000000A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		AA000013000000000000000A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = PilotMirror/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.pilotmirror.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		AA000014000000000000000A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = PilotMirror/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.pilotmirror.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		AA000009000000000000000A /* Build configuration list for PBXProject "PilotMirror" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA000011000000000000000A /* Debug */,
+				AA000012000000000000000A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AA000010000000000000000A /* Build configuration list for PBXNativeTarget "PilotMirror" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA000013000000000000000A /* Debug */,
+				AA000014000000000000000A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+	};
+	rootObject = AA000001000000000000000A /* Project object */;
+}
