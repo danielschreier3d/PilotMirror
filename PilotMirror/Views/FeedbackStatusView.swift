@@ -92,20 +92,18 @@ struct FeedbackStatusView: View {
         stepCard(
             number: 2,
             title: "Link an mindestens 5 Personen senden",
-            subtitle: linkDone
-                ? "\(responseCount) Rückmeldungen erhalten ✓"
-                : feedbackService.feedbackLink == nil
-                    ? "Erstelle deinen persönlichen Feedback-Link"
-                    : "\(responseCount) von \(minimumResponses) Rückmeldungen — \(minimumResponses - responseCount) fehlen noch",
+            subtitle: feedbackService.feedbackLink == nil
+                ? "Erstelle deinen persönlichen Feedback-Link"
+                : linkDone
+                    ? "\(responseCount)/\(targetResponses) Rückmeldungen — Report freigeschaltet, mehr ist besser!"
+                    : "\(responseCount) von \(minimumResponses) Minimum — \(minimumResponses - responseCount) fehlen noch",
             done: linkDone,
             locked: false
         ) {
             if let link = feedbackService.feedbackLink {
                 VStack(spacing: 10) {
-                    // Response progress bar
-                    if !linkDone {
-                        responseProgressBar
-                    }
+                    // Response progress bar (always visible)
+                    responseProgressBar
 
                     // URL copy row
                     HStack {
@@ -167,22 +165,40 @@ struct FeedbackStatusView: View {
         VStack(spacing: 6) {
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
+                    // Track
                     Capsule().fill(.white.opacity(0.08)).frame(height: 8)
+                    // Fill (0–12)
                     Capsule()
-                        .fill(LinearGradient(colors: [Color(hex: "4A9EF8"), Color(hex: "34C759")],
-                                             startPoint: .leading, endPoint: .trailing))
-                        .frame(width: max(0, geo.size.width * Double(responseCount) / Double(minimumResponses)), height: 8)
+                        .fill(LinearGradient(
+                            colors: responseCount >= minimumResponses
+                                ? [Color(hex: "34C759"), Color(hex: "34C759")]
+                                : [Color(hex: "4A9EF8"), Color(hex: "4A9EF8")],
+                            startPoint: .leading, endPoint: .trailing))
+                        .frame(width: max(0, geo.size.width * min(Double(responseCount) / Double(targetResponses), 1.0)), height: 8)
                         .animation(.spring(response: 0.5), value: responseCount)
+                    // Milestone marker at 5/12
+                    let milestoneX = geo.size.width * Double(minimumResponses) / Double(targetResponses)
+                    Rectangle()
+                        .fill(.white.opacity(0.5))
+                        .frame(width: 2, height: 14)
+                        .offset(x: milestoneX - 1, y: -3)
                 }
             }
             .frame(height: 8)
+            .padding(.top, 6)
             HStack {
                 Text("0")
                 Spacer()
-                Text("5 Minimum")
-                    .foregroundStyle(responseCount >= 5 ? Color(hex: "34C759") : .white.opacity(0.4))
+                VStack(spacing: 1) {
+                    Text("5 min")
+                        .foregroundStyle(responseCount >= 5 ? Color(hex: "34C759") : .white.opacity(0.5))
+                    if responseCount >= 5 && responseCount < 12 {
+                        Text("✓ freigeschaltet")
+                            .foregroundStyle(Color(hex: "34C759"))
+                    }
+                }
                 Spacer()
-                Text("12 Ideal")
+                Text("12 ideal")
                     .foregroundStyle(responseCount >= 12 ? Color(hex: "34C759") : .white.opacity(0.4))
             }
             .font(.caption2)
