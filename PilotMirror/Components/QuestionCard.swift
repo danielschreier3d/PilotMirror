@@ -137,14 +137,10 @@ struct QuestionCard: View {
 
     // MARK: - Open text
 
+    @State private var localText: String = ""
+
     private var openTextView: some View {
-        TextField(question.placeholder ?? "Antwort eingeben…", text: Binding(
-            get: {
-                if case .text(let t) = answer { return t }
-                return ""
-            },
-            set: { onAnswer(.text($0)) }
-        ), axis: .vertical)
+        TextField(question.placeholder ?? "Antwort eingeben…", text: $localText, axis: .vertical)
         .lineLimit(3...6)
         .foregroundStyle(.white)
         .padding(14)
@@ -154,7 +150,12 @@ struct QuestionCard: View {
             RoundedRectangle(cornerRadius: 12)
                 .strokeBorder(.white.opacity(0.15), lineWidth: 1)
         )
-        .id(question.id)
+        .onAppear {
+            if case .text(let t) = answer { localText = t } else { localText = "" }
+        }
+        .onChange(of: localText) { _, newValue in
+            onAnswer(.text(newValue))
+        }
     }
 }
 
