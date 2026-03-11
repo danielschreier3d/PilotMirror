@@ -238,17 +238,24 @@ struct FeedbackStatusView: View {
 
         // Simulate self responses
         surveyService.selfResponses = [
-            "q1": .multipleChoice(["calm", "analytical", "responsible", "structured"]),
-            "q2": .singleChoice("After careful analysis"),
-            "q3": .singleChoice("Contribute ideas"),
-            "q4": .singleChoice("Calm and solution-focused"),
-            "q5": .rating(4),
-            "q6": .rating(4),
-            "q7": .rating(5),
-            "q8": .rating(3),
-            "q9": .rating(5),
-            "q10": .text("Very reliable, always well prepared"),
-            "q11": .text("Can be too quiet in group discussions"),
+            "q1":  .multipleChoice(["ruhig", "analytisch", "verantwortungsbewusst", "strukturiert"]),
+            "q2":  .singleChoice("Nach sorgfältiger Analyse"),
+            "q3":  .singleChoice("Ideen einzubringen"),
+            "q4":  .singleChoice("Ruhig & lösungsorientiert"),
+            "q5":  .rating(4),
+            "q6":  .rating(4),
+            "q7":  .rating(5),
+            "q8":  .rating(3),
+            "q9":  .rating(5),
+            "q10": .text("Sehr zuverlässig, immer gut vorbereitet"),
+            "q11": .text("Ruhig unter Druck, gibt anderen Stabilität"),
+            "q12": .text("Wenn es komplex wird — behält den Überblick"),
+            "q13": .text("Manchmal zu lange in der Analyse, bevor ich handele"),
+            "q14": .text("Trete in Gruppen nicht immer proaktiv auf"),
+            "q15": .text("Kann ungeduldig werden, wenn Dinge schlecht organisiert sind"),
+            "q16": .text(""),
+            "q17": .text("Nehme Feedback gut an, manchmal etwas defensiv bei ungerechter Kritik"),
+            "q18": .text(""),
         ]
 
         // Load mock AI result directly

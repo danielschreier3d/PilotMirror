@@ -13,7 +13,7 @@ struct ResultsView: View {
 
             if let result {
                 VStack(spacing: 0) {
-                    // Tab picker
+                    // Tab picker (fixed, not scrolling)
                     Picker("", selection: $selectedTab) {
                         Text("Profil").tag(0)
                         Text("Vergleich").tag(1)
@@ -23,12 +23,17 @@ struct ResultsView: View {
                     .padding(.horizontal)
                     .padding(.vertical, 12)
 
-                    Group {
-                        if selectedTab == 0 { profilTab(result) }
-                        else if selectedTab == 1 { vergleichTab(result) }
-                        else { rohdatenTab(result) }
+                    // Single ScrollView — no nesting
+                    ScrollView {
+                        VStack(spacing: 18) {
+                            if selectedTab == 0 { profilContent(result) }
+                            else if selectedTab == 1 { vergleichContent(result) }
+                            else { rohdatenContent(result) }
+                        }
+                        .padding(.top, 8)
+                        .padding(.bottom, 40)
+                        .animation(.easeInOut(duration: 0.2), value: selectedTab)
                     }
-                    .animation(.easeInOut(duration: 0.2), value: selectedTab)
                 }
             } else {
                 VStack(spacing: 16) {
@@ -52,9 +57,8 @@ struct ResultsView: View {
 
     // MARK: - Tab 1: Profil
 
-    private func profilTab(_ r: AnalysisResult) -> some View {
-        ScrollView {
-            VStack(spacing: 18) {
+    @ViewBuilder
+    private func profilContent(_ r: AnalysisResult) -> some View {
                 // "Das macht dich aus" — top traits with %
                 sectionCard(icon: "person.fill", color: "4A9EF8", title: "Das macht dich aus") {
                     VStack(alignment: .leading, spacing: 14) {
@@ -105,7 +109,7 @@ struct ResultsView: View {
                 }
 
                 // Schwächen
-                sectionCard(icon: "exclamationmark.triangle.fill", color: "FF9F0A", title: "Bereiche zum Weiterentwickeln") {
+                sectionCard(icon: "exclamationmark.triangle.fill", color: "FF9F0A", title: "Schwächen") {
                     VStack(alignment: .leading, spacing: 12) {
                         ForEach(Array(r.possibleWeaknesses.enumerated()), id: \.offset) { _, w in
                             HStack(alignment: .top, spacing: 12) {
@@ -128,51 +132,39 @@ struct ResultsView: View {
                         .foregroundStyle(.white.opacity(0.85))
                         .lineSpacing(5)
                 }
-
-                Spacer(minLength: 40)
-            }
-            .padding(.top, 8)
-        }
     }
 
     // MARK: - Tab 2: Vergleich
 
-    private func vergleichTab(_ r: AnalysisResult) -> some View {
-        ScrollView {
-            VStack(spacing: 18) {
-
-                // Rating areas — Du vs. Andere
-                sectionCard(icon: "chart.bar.fill", color: "4A9EF8", title: "Bereiche — Du vs. Andere (1–5)") {
-                    VStack(spacing: 22) {
-                        ForEach(r.comparisonAreas) { area in
-                            areaComparisonRow(area)
-                        }
-                    }
+    @ViewBuilder
+    private func vergleichContent(_ r: AnalysisResult) -> some View {
+        // Rating areas — Du vs. Andere
+        sectionCard(icon: "chart.bar.fill", color: "4A9EF8", title: "Bereiche — Du vs. Andere (1–5)") {
+            VStack(spacing: 22) {
+                ForEach(r.comparisonAreas) { area in
+                    areaComparisonRow(area)
                 }
-
-                // Self vs Others summary
-                sectionCard(icon: "arrow.left.arrow.right", color: "FF9F0A", title: "Wo täuschst du dich?") {
-                    Text(r.selfVsOthers)
-                        .font(.subheadline)
-                        .foregroundStyle(.white.opacity(0.85))
-                        .lineSpacing(5)
-                }
-
-                // Surprise traits
-                let surpriseTraits = r.traitStats.filter(\.surprise)
-                if !surpriseTraits.isEmpty {
-                    sectionCard(icon: "exclamationmark.bubble.fill", color: "FF6B6B", title: "Überraschende Unterschiede") {
-                        VStack(alignment: .leading, spacing: 10) {
-                            ForEach(surpriseTraits) { t in
-                                traitSurpriseRow(t)
-                            }
-                        }
-                    }
-                }
-
-                Spacer(minLength: 40)
             }
-            .padding(.top, 8)
+        }
+
+        // Self vs Others summary
+        sectionCard(icon: "arrow.left.arrow.right", color: "FF9F0A", title: "Wo täuschst du dich?") {
+            Text(r.selfVsOthers)
+                .font(.subheadline)
+                .foregroundStyle(.white.opacity(0.85))
+                .lineSpacing(5)
+        }
+
+        // Surprise traits
+        let surpriseTraits = r.traitStats.filter(\.surprise)
+        if !surpriseTraits.isEmpty {
+            sectionCard(icon: "exclamationmark.bubble.fill", color: "FF6B6B", title: "Überraschende Unterschiede") {
+                VStack(alignment: .leading, spacing: 10) {
+                    ForEach(surpriseTraits) { t in
+                        traitSurpriseRow(t)
+                    }
+                }
+            }
         }
     }
 
@@ -270,63 +262,53 @@ struct ResultsView: View {
 
     // MARK: - Tab 3: Rohdaten
 
-    private func rohdatenTab(_ r: AnalysisResult) -> some View {
-        ScrollView {
-            VStack(spacing: 18) {
-
-                // Trait stats
-                sectionCard(icon: "tag.fill", color: "4A9EF8", title: "Eigenschaften — wie oft genannt?") {
-                    VStack(spacing: 10) {
-                        // Legend
-                        HStack(spacing: 16) {
-                            HStack(spacing: 4) {
-                                Image(systemName: "person.fill").font(.caption2)
-                                    .foregroundStyle(Color(hex: "4A9EF8"))
-                                Text("Du hast dich so gesehen")
-                                    .font(.caption2).foregroundStyle(.white.opacity(0.4))
-                            }
-                            Spacer()
-                        }
-                        ForEach(r.traitStats.sorted { $0.othersPercent > $1.othersPercent }) { t in
-                            traitStatRow(t)
-                        }
-                    }
+    @ViewBuilder
+    private func rohdatenContent(_ r: AnalysisResult) -> some View {
+        // Trait stats
+        sectionCard(icon: "tag.fill", color: "4A9EF8", title: "Eigenschaften — wie oft genannt?") {
+            VStack(spacing: 10) {
+                HStack(spacing: 4) {
+                    Image(systemName: "person.fill").font(.caption2)
+                        .foregroundStyle(Color(hex: "4A9EF8"))
+                    Text("Du hast dich so gesehen")
+                        .font(.caption2).foregroundStyle(.white.opacity(0.4))
+                    Spacer()
                 }
-
-                // Forced choice
-                sectionCard(icon: "arrow.triangle.branch", color: "FF9F0A", title: "Entscheidungsstil — Antworten der anderen") {
-                    VStack(spacing: 20) {
-                        ForEach(r.forcedChoiceStats) { stat in
-                            forcedChoiceRow(stat)
-                        }
-                    }
+                ForEach(r.traitStats.sorted { $0.othersPercent > $1.othersPercent }) { t in
+                    traitStatRow(t)
                 }
-
-                // Open text
-                if !r.openTextResponses.isEmpty {
-                    sectionCard(icon: "text.bubble.fill", color: "6B5EE4", title: "Freitextantworten (\(r.openTextResponses.count))") {
-                        VStack(alignment: .leading, spacing: 10) {
-                            ForEach(Array(r.openTextResponses.enumerated()), id: \.offset) { _, text in
-                                HStack(alignment: .top, spacing: 10) {
-                                    Text("„")
-                                        .font(.title2.bold())
-                                        .foregroundStyle(Color(hex: "6B5EE4"))
-                                    Text(text)
-                                        .font(.subheadline)
-                                        .foregroundStyle(.white.opacity(0.85))
-                                        .fixedSize(horizontal: false, vertical: true)
-                                }
-                                .padding(12)
-                                .background(.white.opacity(0.05))
-                                .clipShape(RoundedRectangle(cornerRadius: 10))
-                            }
-                        }
-                    }
-                }
-
-                Spacer(minLength: 40)
             }
-            .padding(.top, 8)
+        }
+
+        // Forced choice
+        sectionCard(icon: "arrow.triangle.branch", color: "FF9F0A", title: "Entscheidungsstil — Antworten der anderen") {
+            VStack(spacing: 20) {
+                ForEach(r.forcedChoiceStats) { stat in
+                    forcedChoiceRow(stat)
+                }
+            }
+        }
+
+        // Open text
+        if !r.openTextResponses.isEmpty {
+            sectionCard(icon: "text.bubble.fill", color: "6B5EE4", title: "Freitextantworten (\(r.openTextResponses.count))") {
+                VStack(alignment: .leading, spacing: 10) {
+                    ForEach(Array(r.openTextResponses.enumerated()), id: \.offset) { _, text in
+                        HStack(alignment: .top, spacing: 10) {
+                            Text("„")
+                                .font(.title2.bold())
+                                .foregroundStyle(Color(hex: "6B5EE4"))
+                            Text(text)
+                                .font(.subheadline)
+                                .foregroundStyle(.white.opacity(0.85))
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                        .padding(12)
+                        .background(.white.opacity(0.05))
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                    }
+                }
+            }
         }
     }
 

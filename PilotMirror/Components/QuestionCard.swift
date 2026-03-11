@@ -137,10 +137,8 @@ struct QuestionCard: View {
 
     // MARK: - Open text
 
-    @State private var textInput = ""
-
     private var openTextView: some View {
-        TextField("Type your answer here…", text: Binding(
+        TextField(question.placeholder ?? "Antwort eingeben…", text: Binding(
             get: {
                 if case .text(let t) = answer { return t }
                 return ""
@@ -156,6 +154,7 @@ struct QuestionCard: View {
             RoundedRectangle(cornerRadius: 12)
                 .strokeBorder(.white.opacity(0.15), lineWidth: 1)
         )
+        .id(question.id)
     }
 }
 
