@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="theme-color" content="#0A1628">
+  <title>PilotMirror – Feedback</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0A1628; --bg2: #0D2B55;
+      --accent: #4A9EF8; --green: #34C759; --red: #FF6B6B;
+      --card: rgba(255,255,255,0.07); --border: rgba(255,255,255,0.11);
+      --text: #fff; --dim: rgba(255,255,255,0.6); --faint: rgba(255,255,255,0.32);
+    }
+
+    html, body {
+      min-height: 100dvh;
+      background: linear-gradient(160deg, var(--bg) 0%, var(--bg2) 100%);
+      background-attachment: fixed;
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    #app { max-width: 480px; margin: 0 auto; min-height: 100dvh; display: flex; flex-direction: column; }
+
+    /* ── screens ── */
+    .screen { display: none; flex-direction: column; flex: 1; padding: 24px 20px; }
+    .screen.active { display: flex; }
+
+    /* ── loading ── */
+    .center-fill { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; text-align:center; }
+    .spinner { width:36px; height:36px; border:3px solid rgba(74,158,248,.2); border-top-color:var(--accent); border-radius:50%; animation:spin .8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── typography ── */
+    h1 { font-size:24px; font-weight:700; line-height:1.25; }
+    h2 { font-size:18px; font-weight:700; line-height:1.35; margin-bottom:12px; }
+    p  { font-size:15px; line-height:1.7; color:var(--dim); }
+    .label { font-size:13px; color:var(--faint); margin-bottom:8px; display:block; }
+
+    /* ── logo area ── */
+    .logo-block { text-align:center; margin-bottom:28px; }
+    .logo-icon  { font-size:44px; line-height:1; margin-bottom:6px; }
+    .logo-name  { font-size:22px; font-weight:700; letter-spacing:-.4px; }
+    .anon-pill  { display:inline-block; margin-top:6px; font-size:12px; font-weight:600; color:var(--green); background:rgba(52,199,89,.12); border:1px solid rgba(52,199,89,.25); padding:3px 12px; border-radius:99px; }
+
+    /* ── card ── */
+    .card { background:var(--card); border:1px solid var(--border); border-radius:18px; padding:18px 20px; }
+
+    /* ── field ── */
+    .field { display:flex; align-items:center; gap:10px; background:rgba(255,255,255,.08); border:1px solid var(--border); border-radius:12px; padding:13px 16px; }
+    .field-icon { font-size:17px; flex-shrink:0; }
+    .field input { flex:1; background:none; border:none; outline:none; color:var(--text); font-size:16px; font-family:inherit; min-width:0; }
+    .field input::placeholder { color:var(--faint); }
+
+    /* ── chips (relationship) ── */
+    .chip-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .chip { padding:11px 14px; border-radius:11px; border:1.5px solid var(--border); background:rgba(255,255,255,.05); color:var(--dim); font-size:14px; font-weight:500; cursor:pointer; text-align:center; font-family:inherit; transition:all .15s; }
+    .chip.active { border-color:var(--accent); background:rgba(74,158,248,.15); color:var(--accent); font-weight:600; }
+
+    /* ── anon notice ── */
+    .anon-notice { display:flex; align-items:center; gap:10px; padding:11px 14px; background:rgba(52,199,89,.08); border:1px solid rgba(52,199,89,.22); border-radius:11px; font-size:13px; color:var(--green); line-height:1.5; }
+
+    /* ── buttons ── */
+    .btn { display:flex; align-items:center; justify-content:center; gap:8px; height:52px; border-radius:14px; border:none; font-size:16px; font-weight:600; font-family:inherit; cursor:pointer; transition:opacity .15s, transform .1s; width:100%; }
+    .btn:active { transform:scale(.98); opacity:.9; }
+    .btn:disabled { opacity:.3; cursor:not-allowed; pointer-events:none; }
+    .btn-primary  { background:var(--accent); color:#fff; }
+    .btn-ghost    { background:rgba(255,255,255,.08); border:1px solid var(--border); color:#fff; }
+    .btn-icon     { width:52px; height:52px; border-radius:14px; background:rgba(255,255,255,.08); border:1px solid var(--border); color:#fff; font-size:22px; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+
+    /* ── progress ── */
+    .progress-bar  { height:5px; background:rgba(255,255,255,.1); border-radius:99px; overflow:hidden; margin-top:6px; }
+    .progress-fill { height:100%; background:var(--accent); border-radius:99px; transition:width .35s ease; }
+    .progress-meta { display:flex; justify-content:space-between; }
+
+    /* ── question ── */
+    .q-section-label { font-size:11px; font-weight:700; letter-spacing:.8px; text-transform:uppercase; color:var(--accent); margin-bottom:6px; }
+    .q-text { font-size:18px; font-weight:600; line-height:1.4; margin-bottom:20px; }
+
+    /* trait selection */
+    .trait-grid { display:grid; grid-template-columns:1fr 1fr; gap:9px; }
+    .trait-btn { padding:11px 12px; border-radius:10px; border:1.5px solid var(--border); background:rgba(255,255,255,.05); color:var(--dim); font-size:14px; font-weight:500; cursor:pointer; text-align:center; font-family:inherit; transition:all .12s; }
+    .trait-btn.active { border-color:var(--accent); background:rgba(74,158,248,.15); color:var(--accent); font-weight:600; }
+
+    /* forced choice */
+    .choice-list { display:flex; flex-direction:column; gap:10px; }
+    .choice-item { display:flex; align-items:center; gap:14px; padding:15px 16px; border-radius:13px; border:1.5px solid var(--border); background:rgba(255,255,255,.05); cursor:pointer; font-family:inherit; font-size:15px; font-weight:500; color:var(--text); width:100%; text-align:left; transition:all .12s; }
+    .choice-item.active { border-color:var(--accent); background:rgba(74,158,248,.12); color:var(--accent); }
+    .choice-dot { width:20px; height:20px; border-radius:50%; border:2px solid rgba(255,255,255,.25); flex-shrink:0; transition:all .12s; }
+    .choice-item.active .choice-dot { border-color:var(--accent); background:var(--accent); }
+
+    /* rating */
+    .rating-row { display:flex; gap:8px; }
+    .rating-btn { flex:1; aspect-ratio:1; border-radius:12px; border:1.5px solid var(--border); background:rgba(255,255,255,.05); color:var(--dim); font-size:18px; font-weight:700; cursor:pointer; font-family:inherit; display:flex; align-items:center; justify-content:center; transition:all .12s; }
+    .rating-btn.active { border-color:var(--accent); background:rgba(74,158,248,.2); color:var(--accent); }
+    .rating-labels { display:flex; justify-content:space-between; margin-top:7px; font-size:11px; color:var(--faint); }
+
+    /* open text */
+    .optional-tag { display:inline-block; font-size:11px; font-weight:600; color:var(--faint); background:rgba(255,255,255,.06); padding:2px 8px; border-radius:6px; margin-bottom:10px; }
+    .open-ta { width:100%; background:rgba(255,255,255,.08); border:1px solid var(--border); border-radius:12px; padding:13px 16px; color:var(--text); font-size:15px; font-family:inherit; outline:none; resize:none; min-height:110px; line-height:1.65; transition:border-color .2s; }
+    .open-ta:focus { border-color:var(--accent); }
+    .open-ta::placeholder { color:var(--faint); }
+
+    /* nav row */
+    .nav-row { display:flex; gap:10px; padding-top:20px; }
+
+    /* lang button */
+    #lang-btn { position:fixed; top:14px; right:14px; padding:5px 12px; border-radius:20px; background:rgba(74,158,248,.18); border:1px solid rgba(74,158,248,.3); color:var(--accent); font-size:12px; font-weight:700; cursor:pointer; z-index:999; font-family:inherit; }
+
+    /* completion */
+    .big-check { font-size:72px; filter:drop-shadow(0 0 28px rgba(52,199,89,.4)); margin-bottom:8px; }
+
+    /* spacing helpers */
+    .mt4{margin-top:4px} .mt8{margin-top:8px} .mt12{margin-top:12px}
+    .mt16{margin-top:16px} .mt20{margin-top:20px} .mt24{margin-top:24px}
+    .mb8{margin-bottom:8px} .mb12{margin-bottom:12px} .mb16{margin-bottom:16px}
+    .mb20{margin-bottom:20px} .mb24{margin-bottom:24px} .mb32{margin-bottom:32px}
+    .spacer { flex:1; }
+  </style>
+</head>
+<body>
+
+<button id="lang-btn" onclick="toggleLang()">EN</button>
+
+<div id="app">
+
+  <!-- LOADING -->
+  <div class="screen active" id="screen-loading">
+    <div class="center-fill">
+      <div style="font-size:44px">✈️</div>
+      <div class="spinner"></div>
+      <span class="label" id="txt-loading">Lade…</span>
+    </div>
+  </div>
+
+  <!-- ERROR -->
+  <div class="screen" id="screen-error">
+    <div class="center-fill">
+      <div style="font-size:52px">❌</div>
+      <h1 id="txt-err-title" class="mb12">Ungültiger Link</h1>
+      <p id="txt-err-msg">Dieser Feedback-Link ist nicht gültig oder abgelaufen. Bitte frage die Person, die ihn dir geschickt hat, nach einem neuen Link.</p>
+    </div>
+  </div>
+
+  <!-- INTRO -->
+  <div class="screen" id="screen-intro">
+    <div class="spacer"></div>
+
+    <div class="logo-block">
+      <div class="logo-icon">✈️</div>
+      <div class="logo-name">PilotMirror</div>
+      <span class="anon-pill" id="txt-anon-pill">🔒 Anonym &amp; vertraulich</span>
+    </div>
+
+    <div class="card mb20">
+      <p id="txt-intro-body" style="color:rgba(255,255,255,.88); font-size:15px;"></p>
+    </div>
+
+    <span class="label" id="txt-name-label">Wie möchtest du genannt werden?</span>
+    <div class="field mb8">
+      <span class="field-icon">👤</span>
+      <input id="inp-name" type="text" maxlength="40" autocomplete="off" autocorrect="off"
+             autocapitalize="words" spellcheck="false" />
+    </div>
+    <span class="label mt4" id="txt-name-hint" style="font-size:12px;">Ein Pseudonym ist völlig okay – der Kandidat sieht nur die Gesamtauswertung, nie deinen Namen.</span>
+
+    <span class="label mt20" id="txt-rel-label">Wie kennst du diese Person?</span>
+    <div class="chip-grid mb20">
+      <button class="chip active" data-rel="Friend"           id="chip-friend">👫 Freund/in</button>
+      <button class="chip"        data-rel="Family"           id="chip-family">🏠 Familie</button>
+      <button class="chip"        data-rel="Colleague"        id="chip-colleague">💼 Kollege/in</button>
+      <button class="chip"        data-rel="Flight Instructor" id="chip-fi">✈️ Fluglehrer/in</button>
+      <button class="chip"        data-rel="Other"            id="chip-other" style="grid-column:span 2">💬 Sonstige</button>
+    </div>
+
+    <div class="anon-notice mb24">
+      <span style="font-size:18px">🔒</span>
+      <span id="txt-anon-notice">Deine Antworten sind vollständig anonym. Der Kandidat sieht nie deinen Namen — nur die Gesamtauswertung aller Rückmeldungen.</span>
+    </div>
+
+    <button class="btn btn-primary" id="btn-start" disabled onclick="startSurvey()">
+      <span id="txt-btn-start">Fragebogen starten →</span>
+    </button>
+
+    <div class="spacer"></div>
+  </div>
+
+  <!-- SURVEY -->
+  <div class="screen" id="screen-survey">
+    <div class="mb16">
+      <div class="progress-meta mb4">
+        <span class="label" id="txt-q-counter" style="margin:0"></span>
+        <span style="font-size:12px; color:var(--accent); font-weight:600;" id="txt-q-section"></span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+    </div>
+
+    <div id="q-container" style="flex:1; overflow-y:auto; padding-bottom:4px;"></div>
+
+    <div class="nav-row">
+      <button class="btn-icon" id="btn-back" onclick="prevQ()" style="display:none">‹</button>
+      <button class="btn btn-primary" id="btn-next" onclick="nextOrSubmit()">
+        <span id="txt-btn-next">Weiter</span>
+      </button>
+    </div>
+    <div style="height:8px"></div>
+  </div>
+
+  <!-- COMPLETE -->
+  <div class="screen" id="screen-complete">
+    <div class="center-fill">
+      <div class="big-check">✅</div>
+      <h1 id="txt-done-title" class="mb12">Vielen Dank!</h1>
+      <p id="txt-done-msg"></p>
+    </div>
+  </div>
+
+</div><!-- #app -->
+
+<script>
+// ── Config ─────────────────────────────────────────────────────────────────
+const SB_URL  = 'https://outsherttkwwuvihpkzn.supabase.co';
+const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im91dHNoZXJ0dGt3d3V2aWhwa3puIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMyODE4NzgsImV4cCI6MjA4ODg1Nzg3OH0.KRFm5YghZPysybdTKtQRUX2Mr6pOKgyWgJ1gOnc-9as';
+
+// ── Questions ──────────────────────────────────────────────────────────────
+const Qs = [
+  { id:'q1', type:'trait', sDE:'Persönlichkeit', sEN:'Personality',
+    de:'Welche Eigenschaften beschreiben diese Person? Alle zutreffenden auswählen.',
+    en:'Which words describe this person? Select all that apply.',
+    optDE:['ruhig','analytisch','selbstsicher','teamorientiert','verantwortungsbewusst','strukturiert','bedachtsam','spontan','dominant','zurückhaltend','empathisch','entschlossen'],
+    optEN:['calm','analytical','confident','team-oriented','responsible','structured','careful','spontaneous','dominant','reserved','empathetic','decisive'] },
+
+  { id:'q2', type:'choice', sDE:'Entscheidungsstil', sEN:'Decision Style',
+    de:'Diese Person entscheidet eher:', en:'This person tends to decide:',
+    optDE:['Schnell und intuitiv','Nach sorgfältiger Analyse'],
+    optEN:['Quickly and intuitively','After careful analysis'] },
+
+  { id:'q3', type:'choice', sDE:'Entscheidungsstil', sEN:'Decision Style',
+    de:'In Gruppen tendiert diese Person dazu:', en:'In groups, this person tends to:',
+    optDE:['Die Diskussion zu führen','Ideen einzubringen','Erst zu beobachten'],
+    optEN:['Lead the discussion','Contribute ideas','Observe first'] },
+
+  { id:'q4', type:'choice', sDE:'Entscheidungsstil', sEN:'Decision Style',
+    de:'Wenn etwas schiefläuft, reagiert diese Person:', en:'When something goes wrong, this person reacts:',
+    optDE:['Ruhig & lösungsorientiert','Gestresst aber funktional','Emotional/frustriert'],
+    optEN:['Calm and solution-focused','Stressed but functional','Emotionally/frustrated'] },
+
+  { id:'q5', type:'rating', sDE:'Bewertungen', sEN:'Ratings', de:'Teamfähigkeit',             en:'Teamwork' },
+  { id:'q6', type:'rating', sDE:'Bewertungen', sEN:'Ratings', de:'Stressresistenz',           en:'Stress Resistance' },
+  { id:'q7', type:'rating', sDE:'Bewertungen', sEN:'Ratings', de:'Verantwortungsbewusstsein', en:'Responsibility' },
+  { id:'q8', type:'rating', sDE:'Bewertungen', sEN:'Ratings', de:'Kommunikation',             en:'Communication' },
+  { id:'q9', type:'rating', sDE:'Bewertungen', sEN:'Ratings', de:'Zuverlässigkeit',           en:'Reliability' },
+
+  { id:'q10', type:'text', sDE:'Stärken', sEN:'Strengths',
+    de:'Stärke 1: Was kann diese Person besonders gut?',
+    en:'Strength 1: What is this person particularly good at?',
+    phDE:'z.B. hört gut zu, bleibt in Konflikten sachlich…', phEN:'e.g. listens well, stays calm in conflicts…' },
+  { id:'q11', type:'text', sDE:'Stärken', sEN:'Strengths',
+    de:'Stärke 2: Wofür wird diese Person von anderen geschätzt?',
+    en:'Strength 2: What is this person appreciated for by others?',
+    phDE:'z.B. ist immer gut vorbereitet, motiviert andere…', phEN:'e.g. always well-prepared, motivates others…' },
+  { id:'q12', type:'text', sDE:'Stärken', sEN:'Strengths',
+    de:'Stärke 3: In welchen Situationen zeigt diese Person ihr Bestes?',
+    en:'Strength 3: When does this person perform at their best?',
+    phDE:'z.B. unter Druck, bei komplexen Problemen…', phEN:'e.g. under pressure, with complex problems…' },
+  { id:'q13', type:'text', sDE:'Schwächen', sEN:'Weaknesses',
+    de:'Schwäche 1: Wo hat diese Person im Alltag Nachholbedarf?',
+    en:'Weakness 1: Where does this person have room to grow?',
+    phDE:'z.B. wird ungeduldig, wenn Dinge nicht nach Plan laufen…', phEN:'e.g. gets impatient when things don\'t go as planned…' },
+  { id:'q14', type:'text', sDE:'Schwächen', sEN:'Weaknesses',
+    de:'Schwäche 2: Was kostet diese Person manchmal Sympathien?',
+    en:'Weakness 2: What sometimes costs this person goodwill?',
+    phDE:'z.B. redet manchmal zu viel ohne zuzuhören…', phEN:'e.g. sometimes talks too much without listening…' },
+  { id:'q15', type:'text', sDE:'Schwächen', sEN:'Weaknesses',
+    de:'Schwäche 3: Welches Verhalten dieser Person nervt dich manchmal?',
+    en:'Weakness 3: What behavior of this person occasionally bothers you?',
+    phDE:'z.B. gibt ungern Fehler zu, zieht Entscheidungen in die Länge…', phEN:'e.g. reluctant to admit mistakes, delays decisions…' },
+  { id:'q16', type:'text', sDE:'Verhalten & Außenwirkung', sEN:'Behaviour & Perception',
+    de:'Gibt es negative Verhaltensweisen im Alltag, die dieser Person wahrscheinlich nicht bewusst sind?',
+    en:'Are there negative everyday behaviors this person is probably unaware of?',
+    phDE:'z.B. unterbricht andere im Gespräch, reagiert defensiv auf Kritik…', phEN:'e.g. interrupts others, reacts defensively to criticism…' },
+  { id:'q17', type:'text', sDE:'Verhalten & Außenwirkung', sEN:'Behaviour & Perception',
+    de:'Wie reagiert diese Person, wenn sie kritisiert wird oder Fehler macht?',
+    en:'How does this person react when criticised or when they make a mistake?',
+    phDE:'z.B. nimmt Feedback gut an / wird defensiv / zieht sich zurück…', phEN:'e.g. takes feedback well / becomes defensive / withdraws…' },
+  { id:'q18', type:'text', sDE:'Verhalten & Außenwirkung', sEN:'Behaviour & Perception',
+    de:'Was sollte der Kandidat über seine Wirkung auf andere wissen — etwas, das ihm im Assessment nützen oder schaden könnte?',
+    en:'What should the candidate know about how they come across — something that could help or hurt them in an assessment?',
+    phDE:'z.B. wirkt in unbekannten Gruppen zunächst distanziert, obwohl er ein starker Teamplayer ist…',
+    phEN:'e.g. initially appears distant in new groups, though they are a strong team player…' },
+];
+
+// ── State ──────────────────────────────────────────────────────────────────
+const S = {
+  lang: 'de', token: '', linkId: '', candidateName: '',
+  respondentName: '', relationship: 'Friend',
+  responses: {}, idx: 0,
+};
+
+// ── Helpers ────────────────────────────────────────────────────────────────
+const t = (de, en) => S.lang === 'de' ? de : en;
+const $ = id => document.getElementById(id);
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  $(id).classList.add('active');
+}
+
+function sbPost(path, body) {
+  return fetch(SB_URL + path, {
+    method: 'POST',
+    headers: { 'Content-Type':'application/json', 'apikey': SB_ANON, 'Authorization':'Bearer '+SB_ANON },
+    body: JSON.stringify(body),
+  });
+}
+
+function getToken() {
+  const p = new URLSearchParams(location.search);
+  if (p.get('token')) return p.get('token');
+  const parts = location.pathname.split('/').filter(Boolean);
+  const fi = parts.indexOf('feedback');
+  return fi >= 0 && parts[fi + 1] ? parts[fi + 1] : null;
+}
+
+// ── Init ───────────────────────────────────────────────────────────────────
+async function init() {
+  S.token = getToken();
+  if (!S.token) { showError(); return; }
+  try {
+    const res = await sbPost('/rest/v1/rpc/get_candidate_info_by_token', { p_token: S.token });
+    if (!res.ok) { showError(); return; }
+    const rows = await res.json();
+    if (!rows?.length) { showError(); return; }
+    S.linkId        = rows[0].link_id;
+    S.candidateName = rows[0].candidate_name || 'dem Kandidaten';
+    renderIntro();
+    show('screen-intro');
+  } catch(e) { console.error(e); showError(); }
+}
+
+function showError() {
+  $('txt-err-title').textContent = t('Ungültiger Link', 'Invalid Link');
+  $('txt-err-msg').textContent   = t(
+    'Dieser Feedback-Link ist nicht gültig oder abgelaufen. Bitte frage die Person, die ihn dir geschickt hat, nach einem neuen Link.',
+    'This feedback link is invalid or has expired. Please ask the person who sent it to you for a new link.'
+  );
+  show('screen-error');
+}
+
+// ── Intro ──────────────────────────────────────────────────────────────────
+function renderIntro() {
+  const first = S.candidateName.split(' ')[0];
+
+  $('txt-intro-body').innerHTML = t(
+    `Vielen Dank, dass du <strong>${first}</strong> bei der Vorbereitung auf sein Piloten-Assessment unterstützt! 🚀<br><br>Dein ehrliches Feedback ist ein echtes Geschenk — es hilft ${first}, blinde Flecken zu erkennen und sich bestmöglich vorzubereiten. Bitte beantworte alle Fragen so ehrlich und aufrichtig wie möglich. Es dauert weniger als 3 Minuten.`,
+    `Thank you so much for helping <strong>${first}</strong> prepare for their pilot assessment! 🚀<br><br>Your honest feedback is a real gift — it helps ${first} identify blind spots and prepare in the best way possible. Please answer as honestly as you can. It takes less than 3 minutes.`
+  );
+
+  $('txt-anon-pill').textContent   = t('🔒 Anonym & vertraulich', '🔒 Anonymous & confidential');
+  $('txt-name-label').textContent  = t('Wie möchtest du genannt werden?', 'What would you like to be called?');
+  $('inp-name').placeholder        = t('Dein Name oder Pseudonym', 'Your name or pseudonym');
+  $('txt-name-hint').textContent   = t(
+    'Ein Pseudonym ist völlig okay – der Kandidat sieht nie deinen Namen, nur die Gesamtauswertung.',
+    'A pseudonym is fine — the candidate will never see your name, only the overall analysis.'
+  );
+  $('txt-rel-label').textContent   = t('Wie kennst du diese Person?', 'How do you know this person?');
+  $('chip-friend').textContent     = t('👫 Freund/in', '👫 Friend');
+  $('chip-family').textContent     = t('🏠 Familie', '🏠 Family');
+  $('chip-colleague').textContent  = t('💼 Kollege/in', '💼 Colleague');
+  $('chip-fi').textContent         = t('✈️ Fluglehrer/in', '✈️ Flight Instructor');
+  $('chip-other').textContent      = t('💬 Sonstige', '💬 Other');
+  $('txt-anon-notice').textContent = t(
+    'Deine Antworten sind vollständig anonym. Der Kandidat sieht nie deinen Namen — nur die Gesamtauswertung aller Rückmeldungen.',
+    'Your answers are completely anonymous. The candidate will never see your name — only the combined analysis of all responses.'
+  );
+  $('txt-btn-start').textContent = t('Fragebogen starten →', 'Start Survey →');
+  $('lang-btn').textContent      = S.lang === 'de' ? 'EN' : 'DE';
+
+  // Name validation
+  $('inp-name').oninput = () => {
+    S.respondentName = $('inp-name').value.trim();
+    $('btn-start').disabled = !S.respondentName;
+  };
+
+  // Relationship chips
+  document.querySelectorAll('[data-rel]').forEach(chip => {
+    chip.onclick = () => {
+      document.querySelectorAll('[data-rel]').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      S.relationship = chip.dataset.rel;
+    };
+  });
+}
+
+function toggleLang() {
+  S.lang = S.lang === 'de' ? 'en' : 'de';
+  $('lang-btn').textContent = S.lang === 'de' ? 'EN' : 'DE';
+  const cur = document.querySelector('.screen.active').id;
+  if (cur === 'screen-intro')  renderIntro();
+  if (cur === 'screen-survey') renderQ();
+}
+
+// ── Survey ─────────────────────────────────────────────────────────────────
+function startSurvey() {
+  S.respondentName = $('inp-name').value.trim();
+  if (!S.respondentName) return;
+  S.idx = 0;
+  show('screen-survey');
+  renderQ();
+}
+
+function renderQ() {
+  const q = Qs[S.idx];
+  const total = Qs.length;
+
+  $('txt-q-counter').textContent = t(`Frage ${S.idx+1} von ${total}`, `Question ${S.idx+1} of ${total}`);
+  $('txt-q-section').textContent = S.lang === 'de' ? q.sDE : q.sEN;
+  $('progress-fill').style.width = `${(S.idx / total) * 100}%`;
+  $('btn-back').style.display    = S.idx > 0 ? 'flex' : 'none';
+  $('txt-btn-next').textContent  = S.idx === total-1 ? t('Absenden ✓', 'Submit ✓') : t('Weiter', 'Next');
+
+  const c = $('q-container');
+  c.innerHTML = '';
+
+  const sl = document.createElement('div'); sl.className = 'q-section-label';
+  sl.textContent = S.lang === 'de' ? q.sDE : q.sEN; c.appendChild(sl);
+
+  const qt = document.createElement('div'); qt.className = 'q-text';
+  qt.textContent = S.lang === 'de' ? q.de : q.en; c.appendChild(qt);
+
+  if      (q.type === 'trait')  renderTrait(c, q);
+  else if (q.type === 'choice') renderChoice(c, q);
+  else if (q.type === 'rating') renderRating(c, q);
+  else                          renderText(c, q);
+
+  updateNext();
+  c.scrollTop = 0;
+}
+
+function renderTrait(c, q) {
+  const opts    = S.lang === 'de' ? q.optDE : q.optEN;
+  const canon   = q.optDE;
+  const selected = S.responses[q.id]?.value || [];
+  const grid = document.createElement('div'); grid.className = 'trait-grid';
+  opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'trait-btn' + (selected.includes(canon[i]) ? ' active' : '');
+    btn.textContent = opt;
+    btn.onclick = () => {
+      const cur = S.responses[q.id]?.value || [];
+      const v   = canon[i];
+      const nxt = cur.includes(v) ? cur.filter(x => x !== v) : [...cur, v];
+      S.responses[q.id] = { type: 'multiple', value: nxt };
+      btn.classList.toggle('active', nxt.includes(v));
+      updateNext();
+    };
+    grid.appendChild(btn);
+  });
+  c.appendChild(grid);
+}
+
+function renderChoice(c, q) {
+  const opts   = S.lang === 'de' ? q.optDE : q.optEN;
+  const canon  = q.optDE;
+  const chosen = S.responses[q.id]?.value;
+  const list   = document.createElement('div'); list.className = 'choice-list';
+  opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-item' + (chosen === canon[i] ? ' active' : '');
+    btn.innerHTML = `<span class="choice-dot"></span><span>${opt}</span>`;
+    btn.onclick = () => {
+      S.responses[q.id] = { type: 'single', value: canon[i] };
+      list.querySelectorAll('.choice-item').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      updateNext();
+      setTimeout(() => { if (S.idx < Qs.length - 1) nextOrSubmit(); }, 380);
+    };
+    list.appendChild(btn);
+  });
+  c.appendChild(list);
+}
+
+function renderRating(c, q) {
+  const cur  = S.responses[q.id]?.value;
+  const row  = document.createElement('div'); row.className = 'rating-row';
+  for (let i = 1; i <= 5; i++) {
+    const btn = document.createElement('button');
+    btn.className = 'rating-btn' + (cur === i ? ' active' : '');
+    btn.textContent = i;
+    btn.onclick = () => {
+      S.responses[q.id] = { type: 'rating', value: i };
+      row.querySelectorAll('.rating-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      updateNext();
+      setTimeout(() => { if (S.idx < Qs.length - 1) nextOrSubmit(); }, 340);
+    };
+    row.appendChild(btn);
+  }
+  const lbl = document.createElement('div'); lbl.className = 'rating-labels';
+  lbl.innerHTML = `<span>${t('Schwach','Poor')}</span><span>${t('Sehr gut','Excellent')}</span>`;
+  c.appendChild(row); c.appendChild(lbl);
+}
+
+function renderText(c, q) {
+  const tag = document.createElement('span'); tag.className = 'optional-tag';
+  tag.textContent = t('Optional', 'Optional'); c.appendChild(tag);
+  const ta = document.createElement('textarea'); ta.className = 'open-ta';
+  ta.placeholder = S.lang === 'de' ? (q.phDE || '') : (q.phEN || '');
+  ta.value = S.responses[q.id]?.value || '';
+  ta.oninput = () => { S.responses[q.id] = { type: 'text', value: ta.value }; };
+  c.appendChild(ta);
+}
+
+function updateNext() {
+  const q = Qs[S.idx];
+  const ok = q.type === 'text' || !!S.responses[q.id];
+  $('btn-next').disabled = !ok;
+}
+
+function prevQ() { if (S.idx > 0) { S.idx--; renderQ(); } }
+function nextOrSubmit() {
+  if (S.idx < Qs.length - 1) { S.idx++; renderQ(); }
+  else { submitSurvey(); }
+}
+
+// ── Submit ─────────────────────────────────────────────────────────────────
+async function submitSurvey() {
+  const btn = $('btn-next');
+  btn.disabled = true;
+  $('txt-btn-next').textContent = t('Wird gesendet…', 'Sending…');
+
+  try {
+    // 1. Create respondent
+    const rid = crypto.randomUUID();
+    const r1 = await sbPost('/rest/v1/respondents', null); // override below
+    const rRes = await fetch(SB_URL + '/rest/v1/respondents', {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json', 'Prefer':'return=minimal', 'apikey':SB_ANON, 'Authorization':'Bearer '+SB_ANON },
+      body: JSON.stringify({ id:rid, feedback_link_id:S.linkId, name:S.respondentName, relationship:S.relationship }),
+    });
+    if (!rRes.ok) throw new Error('respondent: ' + rRes.status + ' ' + await rRes.text());
+
+    // 2. Submit answers
+    for (const [qid, ans] of Object.entries(S.responses)) {
+      const json = buildJson(ans);
+      if (!json) continue;
+      await fetch(SB_URL + '/rest/v1/survey_responses', {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json', 'Prefer':'return=minimal', 'apikey':SB_ANON, 'Authorization':'Bearer '+SB_ANON },
+        body: JSON.stringify({ id:crypto.randomUUID(), respondent_id:rid, question_id:qid, answer_json:json }),
+      });
+    }
+
+    // 3. Increment count
+    await fetch(SB_URL + '/rest/v1/rpc/increment_response_count', {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json', 'apikey':SB_ANON, 'Authorization':'Bearer '+SB_ANON },
+      body: JSON.stringify({ p_link_id: S.linkId }),
+    });
+
+    // Show completion
+    const first = S.candidateName.split(' ')[0];
+    $('txt-done-title').textContent = t('Vielen Dank! 🎉', 'Thank you! 🎉');
+    $('txt-done-msg').textContent = t(
+      `Dein Feedback wurde erfolgreich übermittelt, ${S.respondentName}! Du hast ${first} gerade einen echten Gefallen getan — und geholfen, eine wichtige Karriereentscheidung vorzubereiten. 🚀`,
+      `Your feedback has been submitted, ${S.respondentName}! You just did ${first} a real favour — helping them prepare for an important career step. 🚀`
+    );
+    show('screen-complete');
+
+  } catch(e) {
+    console.error(e);
+    btn.disabled = false;
+    $('txt-btn-next').textContent = t('Erneut versuchen', 'Try again');
+    alert(t('Fehler beim Senden. Bitte erneut versuchen.', 'Error sending. Please try again.'));
+  }
+}
+
+function buildJson(ans) {
+  if (!ans) return null;
+  if (ans.type === 'multiple') return ans.value?.length ? { type:'multiple', value:ans.value } : null;
+  if (ans.type === 'single')   return { type:'single',   value: ans.value };
+  if (ans.type === 'rating')   return { type:'rating',   value: ans.value };
+  if (ans.type === 'text')     return { type:'text',     value: (ans.value||'').trim() };
+  return null;
+}
+
+// ── Start ──────────────────────────────────────────────────────────────────
+init();
+</script>
+</body>
+</html>

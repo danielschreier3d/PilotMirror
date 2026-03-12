@@ -7,13 +7,10 @@ struct FeedbackLink: Identifiable, Codable {
     let createdAt:     Date
     var responseCount: Int
 
-    var shareURL: URL {
-        // For production: replace with pilotmirror.app domain
-        URL(string: "pilotmirror://feedback/\(token)")!
-    }
+    /// Web survey URL — update WebConfig.surveyBase after Vercel deploy
+    var shareURL: URL { URL(string: shareURLString)! }
 
     var shareURLString: String {
-        // Show universal link format to users; app handles both schemes
-        "https://pilotmirror.app/feedback/\(token)"
+        "\(WebConfig.surveyBase)/feedback/\(token)"
     }
 }
