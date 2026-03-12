@@ -31,7 +31,6 @@ struct FeedbackStatusView: View {
                     step1Card
                     step2Card
                     step3Card
-                    demoButton
                     Spacer(minLength: 40)
                 }
                 .padding(.top, 16)
@@ -345,20 +344,6 @@ struct FeedbackStatusView: View {
         .frame(maxWidth: .infinity)
     }
 
-    // MARK: - Demo
-
-    private var demoButton: some View {
-        Button {
-            loadMockData()
-            showResults = true
-        } label: {
-            Label(lang.t("Demo: Analyse anzeigen", "Demo: Show analysis"), systemImage: "flask.fill")
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(.white.opacity(0.35))
-                .padding(.vertical, 10)
-        }
-    }
-
     // MARK: - Share helpers
 
     private func openWhatsApp(_ url: String) {
@@ -381,32 +366,4 @@ struct FeedbackStatusView: View {
         if let u = URL(string: mail) { UIApplication.shared.open(u) }
     }
 
-    // MARK: - Mock data
-
-    private func loadMockData() {
-        let link = feedbackService.feedbackLink ?? FeedbackLink(
-            id: UUID().uuidString, sessionId: "demo-session",
-            token: "demo-token", createdAt: Date(), responseCount: 7
-        )
-        feedbackService.feedbackLink = FeedbackLink(
-            id: link.id, sessionId: link.sessionId,
-            token: link.token, createdAt: link.createdAt, responseCount: 7
-        )
-        surveyService.selfResponses = [
-            "q1":  .multipleChoice(["ruhig", "analytisch", "verantwortungsbewusst", "strukturiert"]),
-            "q2":  .singleChoice("Nach sorgfältiger Analyse"),
-            "q3":  .singleChoice("Ideen einzubringen"),
-            "q4":  .singleChoice("Ruhig & lösungsorientiert"),
-            "q5":  .rating(4), "q6": .rating(4), "q7": .rating(5),
-            "q8":  .rating(3), "q9": .rating(5),
-            "q10": .text("Sehr zuverlässig, immer gut vorbereitet"),
-            "q11": .text("Ruhig unter Druck, gibt anderen Stabilität"),
-            "q12": .text("Wenn es komplex wird — behält den Überblick"),
-            "q13": .text("Manchmal zu lange in der Analyse, bevor ich handele"),
-            "q14": .text("Trete in Gruppen nicht immer proaktiv auf"),
-            "q15": .text("Kann ungeduldig werden, wenn Dinge schlecht organisiert sind"),
-            "q16": .text(""), "q17": .text("Nehme Feedback gut an"),  "q18": .text(""),
-        ]
-        aiService.loadMockResult(assessmentType: auth.currentUser?.assessmentType?.rawValue ?? "General Pilot Assessment")
-    }
 }

@@ -5,9 +5,9 @@ import Foundation
 // ─────────────────────────────────────────────────────────────────────────────
 enum SupabaseConfig {
     /// https://app.supabase.com → Project Settings → API → Project URL
-    static let projectURL = "https://YOUR_PROJECT.supabase.co"
+    static let projectURL = "https://outsherttkwwuvihpkzn.supabase.co"
     /// https://app.supabase.com → Project Settings → API → anon / public key
-    static let anonKey    = "YOUR_SUPABASE_ANON_KEY"
+    static let anonKey    = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im91dHNoZXJ0dGt3d3V2aWhwa3puIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMyODE4NzgsImV4cCI6MjA4ODg1Nzg3OH0.KRFm5YghZPysybdTKtQRUX2Mr6pOKgyWgJ1gOnc-9as"
     /// OpenAI platform.openai.com → API Keys
     /// For production: move this call to a Supabase Edge Function instead
     static let openAIKey  = "sk-YOUR_OPENAI_API_KEY"
@@ -17,15 +17,9 @@ enum SupabaseConfig {
 // MARK: - Auth response DTOs
 // ─────────────────────────────────────────────────────────────────────────────
 struct SBAuthResponse: Decodable {
-    let accessToken:  String
-    let refreshToken: String
-    let user:         SBUser
-
-    enum CodingKeys: String, CodingKey {
-        case accessToken  = "access_token"
-        case refreshToken = "refresh_token"
-        case user
-    }
+    let accessToken:  String?   // SBDecoder convertFromSnakeCase: "access_token" → "accessToken"
+    let refreshToken: String?   // "refresh_token" → "refreshToken"
+    let user:         SBUser?
 }
 
 struct SBUser: Decodable {
@@ -74,21 +68,46 @@ final class SupabaseClient: ObservableObject {
 
     // MARK: – Auth
 
+    /// Called after email confirmation deep link — stores tokens without a server round-trip.
+    func applyAuthTokens(access: String, refresh: String) async throws {
+        // Fetch user info with the new access token
+        var req = URLRequest(url: URL(string: "\(base)/auth/v1/user")!)
+        req.httpMethod = "GET"
+        req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        req.setValue(anon, forHTTPHeaderField: "apikey")
+        req.setValue("Bearer \(access)", forHTTPHeaderField: "Authorization")
+        let (data, _) = try await URLSession.shared.data(for: req)
+        let user = try SBDecoder.decode(SBUser.self, from: data)
+        accessToken  = access
+        refreshToken = refresh
+        userId       = user.id
+        UserDefaults.standard.set(access,   forKey: "sb_at")
+        UserDefaults.standard.set(refresh,  forKey: "sb_rt")
+        UserDefaults.standard.set(user.id,  forKey: "sb_uid")
+    }
+
     func signUpEmail(email: String, password: String) async throws -> SBAuthResponse {
         let r: SBAuthResponse = try await authPost(
             "/auth/v1/signup", body: ["email": email, "password": password])
-        persistSession(r); return r
+        if r.accessToken != nil { persistSession(r) }
+        return r
     }
 
     func signInEmail(email: String, password: String) async throws -> SBAuthResponse {
         let r: SBAuthResponse = try await authPost(
             "/auth/v1/token?grant_type=password", body: ["email": email, "password": password])
+        guard r.accessToken != nil else {
+            throw SupabaseError.http(0, "Login fehlgeschlagen.")
+        }
         persistSession(r); return r
     }
 
     func signInApple(idToken: String) async throws -> SBAuthResponse {
         let r: SBAuthResponse = try await authPost(
             "/auth/v1/token?grant_type=id_token", body: ["provider": "apple", "id_token": idToken])
+        guard r.accessToken != nil else {
+            throw SupabaseError.http(0, "Apple Sign-In fehlgeschlagen.")
+        }
         persistSession(r); return r
     }
 
@@ -210,10 +229,12 @@ final class SupabaseClient: ObservableObject {
     }
 
     private func persistSession(_ r: SBAuthResponse) {
-        accessToken = r.accessToken; refreshToken = r.refreshToken; userId = r.user.id
+        accessToken  = r.accessToken
+        refreshToken = r.refreshToken
+        userId       = r.user?.id
         UserDefaults.standard.set(r.accessToken,  forKey: "sb_at")
         UserDefaults.standard.set(r.refreshToken, forKey: "sb_rt")
-        UserDefaults.standard.set(r.user.id,      forKey: "sb_uid")
+        UserDefaults.standard.set(r.user?.id,     forKey: "sb_uid")
     }
 
     private func authPost<T: Decodable>(_ path: String, body: [String: Any]) async throws -> T {
@@ -222,6 +243,7 @@ final class SupabaseClient: ObservableObject {
         r.httpMethod = "POST"
         r.setValue("application/json", forHTTPHeaderField: "Content-Type")
         r.setValue(anon, forHTTPHeaderField: "apikey")
+        r.setValue("Bearer \(anon)", forHTTPHeaderField: "Authorization")
         r.httpBody = try JSONSerialization.data(withJSONObject: body)
         let (data, res) = try await URLSession.shared.data(for: r)
         try validate(res, data)

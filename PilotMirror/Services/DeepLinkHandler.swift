@@ -22,9 +22,23 @@ final class DeepLinkHandler: ObservableObject {
     /// Set when a feedback link URL is opened. Cleared after survey is shown.
     @Published var pendingFeedbackToken: String?
 
+    /// Set when Supabase auth callback arrives (email confirmation or magic link).
+    @Published var pendingAuthTokens: (access: String, refresh: String)?
+
     private init() {}
 
     func handle(_ url: URL) {
+        // pilotmirror://auth/callback#access_token=...&refresh_token=...
+        if url.scheme == "pilotmirror", url.host == "auth" {
+            if let fragment = url.fragment {
+                let params = parseFragment(fragment)
+                if let at = params["access_token"], let rt = params["refresh_token"] {
+                    pendingAuthTokens = (access: at, refresh: rt)
+                }
+            }
+            return
+        }
+
         // pilotmirror://feedback/abc123
         if url.scheme == "pilotmirror", url.host == "feedback" {
             let token = url.pathComponents.filter { $0 != "/" }.first
@@ -42,7 +56,17 @@ final class DeepLinkHandler: ObservableObject {
         }
     }
 
-    func clearPendingToken() {
-        pendingFeedbackToken = nil
+    func clearPendingToken() { pendingFeedbackToken = nil }
+    func clearPendingAuth()  { pendingAuthTokens = nil }
+
+    private func parseFragment(_ fragment: String) -> [String: String] {
+        var result: [String: String] = [:]
+        for pair in fragment.split(separator: "&") {
+            let kv = pair.split(separator: "=", maxSplits: 1)
+            if kv.count == 2 {
+                result[String(kv[0])] = String(kv[1]).removingPercentEncoding ?? String(kv[1])
+            }
+        }
+        return result
     }
 }

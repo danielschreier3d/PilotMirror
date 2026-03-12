@@ -29,6 +29,15 @@ struct RootView: View {
     @State private var selectedAssessment: User.AssessmentType?
 
     var body: some View {
+        // Deep link: email confirmation callback
+        if let tokens = deepLink.pendingAuthTokens {
+            Color.clear.task {
+                try? await SupabaseClient.shared.applyAuthTokens(
+                    access: tokens.access, refresh: tokens.refresh)
+                await auth.restoreSession()
+                deepLink.clearPendingAuth()
+            }
+        }
         // Deep link: open respondent survey without requiring auth
         if let token = deepLink.pendingFeedbackToken {
             FeedbackSurveyView(mode: .respondent(token: token))
@@ -36,7 +45,7 @@ struct RootView: View {
                 .environmentObject(auth)
                 .onDisappear { deepLink.clearPendingToken() }
         } else if !auth.isAuthenticated {
-            OnboardingView()
+            NavigationStack { OnboardingView() }
         } else if auth.currentUser?.assessmentType == nil {
             NavigationStack {
                 AssessmentSelectView(selectedAssessment: $selectedAssessment)
@@ -98,7 +107,9 @@ struct MainTabView: View {
         }
         .tint(Color(hex: "4A9EF8"))
         .onAppear {
-            FeedbackService.shared.loadSavedLink()
+            if let userId = auth.currentUser?.id {
+                Task { await FeedbackService.shared.loadForUser(userId: userId) }
+            }
         }
     }
 }

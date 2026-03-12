@@ -66,6 +66,35 @@ final class FeedbackService: ObservableObject {
         return link
     }
 
+    // MARK: – Load user data from Supabase (called on app start after login)
+
+    func loadForUser(userId: String) async {
+        // 1. Find existing session (don't create one — that happens on self-assessment submit)
+        struct SessionRead: Decodable { let id: String }
+        guard let session: SessionRead = try? await sb.selectFirst(
+            from: "assessment_sessions",
+            filters: ["candidate_id": "eq.\(userId)"]
+        ) else { return }  // No session yet — user hasn't submitted self-assessment
+
+        // Cache session ID for other services
+        UserDefaults.standard.set(session.id, forKey: "pm_session_id")
+
+        // 2. Load self-responses
+        await SurveyService.shared.loadSelfResponses(userId: userId)
+
+        // 3. Load feedback link
+        if let record: FeedbackLinkRead = try? await sb.selectFirst(
+            from: "feedback_links",
+            filters: ["session_id": "eq.\(session.id)"]
+        ) {
+            let link = FeedbackLink(
+                id: record.id, sessionId: record.sessionId, token: record.token,
+                createdAt: record.createdAt, responseCount: record.responseCount)
+            feedbackLink = link
+            persist(link)
+        }
+    }
+
     // MARK: – Load saved link from cache
 
     func loadSavedLink() {

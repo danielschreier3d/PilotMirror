@@ -3,12 +3,9 @@ import AuthenticationServices
 
 struct OnboardingView: View {
     @EnvironmentObject var auth: AuthService
-    @State private var showEmailLogin = false
-    @State private var isSignUp = true
 
     var body: some View {
         ZStack {
-            // Background gradient
             LinearGradient(
                 colors: [Color(hex: "0A1628"), Color(hex: "0D2B55")],
                 startPoint: .top, endPoint: .bottom
@@ -40,11 +37,11 @@ struct OnboardingView: View {
 
                 // Value props
                 VStack(spacing: 14) {
-                    valueRow(icon: "person.2.fill", color: Color(hex: "4A9EF8"),
+                    valueRow(icon: "person.2.fill",        color: Color(hex: "4A9EF8"),
                              text: "Collect anonymous feedback from people you trust")
-                    valueRow(icon: "chart.bar.fill", color: Color(hex: "34C759"),
+                    valueRow(icon: "chart.bar.fill",        color: Color(hex: "34C759"),
                              text: "Compare self-perception vs external perception")
-                    valueRow(icon: "brain.head.profile", color: Color(hex: "FF9F0A"),
+                    valueRow(icon: "brain.head.profile",    color: Color(hex: "FF9F0A"),
                              text: "Get AI-powered advice for your assessment")
                 }
                 .padding(.horizontal, 32)
@@ -63,9 +60,28 @@ struct OnboardingView: View {
                     .frame(height: 52)
                     .clipShape(RoundedRectangle(cornerRadius: 14))
 
-                    // Email
+                    // Google Sign In
                     Button {
-                        showEmailLogin = true
+                        Task { await auth.signInWithGoogle() }
+                    } label: {
+                        HStack(spacing: 10) {
+                            Image(systemName: "globe")
+                                .font(.system(size: 18, weight: .medium))
+                            Text("Continue with Google")
+                                .fontWeight(.semibold)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 52)
+                        .background(.white)
+                        .foregroundStyle(Color(hex: "1a1a1a"))
+                        .clipShape(RoundedRectangle(cornerRadius: 14))
+                    }
+                    .disabled(auth.isLoading)
+
+                    // Email / Password
+                    NavigationLink {
+                        EmailAuthView()
+                            .environmentObject(auth)
                     } label: {
                         HStack {
                             Image(systemName: "envelope.fill")
@@ -79,6 +95,13 @@ struct OnboardingView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 14))
                     }
 
+                    if let err = auth.error {
+                        Text(err)
+                            .font(.caption)
+                            .foregroundStyle(Color(hex: "FF6B6B"))
+                            .multilineTextAlignment(.center)
+                    }
+
                     Text("By continuing you agree to our Terms & Privacy Policy.")
                         .font(.caption2)
                         .foregroundStyle(.white.opacity(0.4))
@@ -88,15 +111,13 @@ struct OnboardingView: View {
                 .padding(.bottom, 40)
             }
         }
-        .sheet(isPresented: $showEmailLogin) {
-            EmailAuthView()
-                .environmentObject(auth)
+        .overlay {
+            if auth.isLoading {
+                Color.black.opacity(0.3).ignoresSafeArea()
+                ProgressView().tint(.white)
+            }
         }
-        .alert("Error", isPresented: .constant(auth.error != nil)) {
-            Button("OK") { auth.error = nil }
-        } message: {
-            Text(auth.error ?? "")
-        }
+        .navigationBarHidden(true)
     }
 
     private func valueRow(icon: String, color: Color, text: String) -> some View {
@@ -118,38 +139,45 @@ struct OnboardingView: View {
     }
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
 // MARK: - Email Auth
-
+// ─────────────────────────────────────────────────────────────────────────────
 struct EmailAuthView: View {
     @EnvironmentObject var auth: AuthService
     @Environment(\.dismiss) var dismiss
     @State private var isSignUp = true
-    @State private var name = ""
-    @State private var email = ""
+    @State private var name     = ""
+    @State private var email    = ""
     @State private var password = ""
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                Color(hex: "0A1628").ignoresSafeArea()
+        ZStack {
+            Color(hex: "0A1628").ignoresSafeArea()
 
-                VStack(spacing: 20) {
+            ScrollView {
+                VStack(spacing: 24) {
+                    // Tab picker
                     Picker("Mode", selection: $isSignUp) {
                         Text("Create Account").tag(true)
                         Text("Sign In").tag(false)
                     }
                     .pickerStyle(.segmented)
                     .padding(.horizontal)
+                    .padding(.top, 8)
 
+                    // Fields
                     VStack(spacing: 14) {
                         if isSignUp {
-                            authField("Full Name", text: $name, icon: "person.fill")
+                            authField("Full Name", text: $name, icon: "person.fill",
+                                      keyboard: .default, capitalize: .words)
                         }
-                        authField("Email", text: $email, icon: "envelope.fill", keyboard: .emailAddress)
+                        authField("Email", text: $email, icon: "envelope.fill",
+                                  keyboard: .emailAddress, capitalize: .never)
                         authField("Password", text: $password, icon: "lock.fill", isSecure: true)
                     }
                     .padding(.horizontal)
 
+                    // Action button
                     Button {
                         Task {
                             if isSignUp {
@@ -157,7 +185,6 @@ struct EmailAuthView: View {
                             } else {
                                 await auth.signIn(email: email, password: password)
                             }
-                            if auth.isAuthenticated { dismiss() }
                         }
                     } label: {
                         Group {
@@ -175,25 +202,37 @@ struct EmailAuthView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 14))
                     }
                     .padding(.horizontal)
-                    .disabled(auth.isLoading)
+                    .disabled(auth.isLoading || email.isEmpty || password.isEmpty ||
+                              (isSignUp && name.isEmpty))
 
-                    Spacer()
-                }
-                .padding(.top, 20)
-            }
-            .navigationTitle(isSignUp ? "Create Account" : "Sign In")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
-                        .foregroundStyle(Color(hex: "4A9EF8"))
+                    // Error
+                    if let err = auth.error {
+                        Text(err)
+                            .font(.caption)
+                            .foregroundStyle(Color(hex: "FF6B6B"))
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal)
+                    }
                 }
             }
         }
+        .navigationTitle(isSignUp ? "Create Account" : "Sign In")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbarColorScheme(.dark, for: .navigationBar)
+        .onChange(of: auth.isAuthenticated) { _, authenticated in
+            if authenticated { dismiss() }
+        }
+        .onDisappear { auth.error = nil }
     }
 
-    private func authField(_ placeholder: String, text: Binding<String>, icon: String,
-                           keyboard: UIKeyboardType = .default, isSecure: Bool = false) -> some View {
+    private func authField(
+        _ placeholder: String,
+        text: Binding<String>,
+        icon: String,
+        keyboard: UIKeyboardType = .default,
+        capitalize: TextInputAutocapitalization = .never,
+        isSecure: Bool = false
+    ) -> some View {
         HStack(spacing: 12) {
             Image(systemName: icon)
                 .foregroundStyle(Color(hex: "4A9EF8"))
@@ -205,7 +244,7 @@ struct EmailAuthView: View {
                 TextField(placeholder, text: text)
                     .keyboardType(keyboard)
                     .autocorrectionDisabled()
-                    .textInputAutocapitalization(.never)
+                    .textInputAutocapitalization(capitalize)
                     .foregroundStyle(.white)
             }
         }
@@ -215,8 +254,9 @@ struct EmailAuthView: View {
     }
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
 // MARK: - Color helper
-
+// ─────────────────────────────────────────────────────────────────────────────
 extension Color {
     init(hex: String) {
         let h = hex.trimmingCharacters(in: .init(charactersIn: "#"))
@@ -230,6 +270,8 @@ extension Color {
 }
 
 #Preview {
-    OnboardingView()
-        .environmentObject(AuthService.shared)
+    NavigationStack {
+        OnboardingView()
+            .environmentObject(AuthService.shared)
+    }
 }

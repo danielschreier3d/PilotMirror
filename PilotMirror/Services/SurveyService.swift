@@ -12,11 +12,11 @@ private struct SelfResponseRead: Decodable {
 }
 
 private struct SessionRecord: Codable {
-    let id: String; let userId: String; let status: String
+    let id: String; let candidateId: String
 }
 
 private struct SessionInsert: Encodable {
-    let id: String; let userId: String; let status: String
+    let id: String; let candidateId: String
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -33,11 +33,11 @@ final class SurveyService: ObservableObject {
 
     private let sb = SupabaseClient.shared
 
-    private init() {
-        if let data = UserDefaults.standard.data(forKey: "pm_self_responses"),
-           let decoded = try? JSONDecoder().decode([String: AnswerValue].self, from: data) {
-            selfResponses = decoded
-        }
+    private init() {}   // responses loaded from Supabase on demand, not from cache on start
+
+    func clearLocalCache() {
+        selfResponses = [:]
+        UserDefaults.standard.removeObject(forKey: "pm_self_responses")
     }
 
     // MARK: – Submit self-assessment to backend
@@ -81,13 +81,13 @@ final class SurveyService: ObservableObject {
         if let cached = UserDefaults.standard.string(forKey: "pm_session_id") { return cached }
         if let existing: SessionRecord = try? await sb.selectFirst(
             from: "assessment_sessions",
-            filters: ["user_id": "eq.\(userId)", "status": "eq.active"]) {
+            filters: ["candidate_id": "eq.\(userId)"]) {
             UserDefaults.standard.set(existing.id, forKey: "pm_session_id")
             return existing.id
         }
         let newId = UUID().uuidString
         try? await sb.insert(into: "assessment_sessions",
-                             value: SessionInsert(id: newId, userId: userId, status: "active"))
+                             value: SessionInsert(id: newId, candidateId: userId))
         UserDefaults.standard.set(newId, forKey: "pm_session_id")
         return newId
     }
