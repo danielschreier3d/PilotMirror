@@ -9,7 +9,7 @@ private struct FeedbackLinkInsert: Encodable {
 
 private struct FeedbackLinkRead: Decodable {
     let id: String; let sessionId: String; let token: String
-    let responseCount: Int; let createdAt: Date
+    let responseCount: Int; let createdAt: Date?
 }
 
 private struct RespondentInsert: Encodable {
