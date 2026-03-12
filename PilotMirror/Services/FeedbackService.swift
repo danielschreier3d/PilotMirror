@@ -89,7 +89,7 @@ final class FeedbackService: ObservableObject {
         ) {
             let link = FeedbackLink(
                 id: record.id, sessionId: record.sessionId, token: record.token,
-                createdAt: record.createdAt, responseCount: record.responseCount)
+                createdAt: record.createdAt ?? Date(), responseCount: record.responseCount)
             feedbackLink = link
             persist(link)
         }
@@ -115,7 +115,7 @@ final class FeedbackService: ObservableObject {
             ) {
                 let updated = FeedbackLink(
                     id: record.id, sessionId: record.sessionId, token: record.token,
-                    createdAt: record.createdAt, responseCount: record.responseCount)
+                    createdAt: record.createdAt ?? Date(), responseCount: record.responseCount)
                 feedbackLink = updated
                 persist(updated)
             }

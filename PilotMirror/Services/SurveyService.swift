@@ -4,11 +4,26 @@ import Foundation
 // MARK: - Backend DTOs
 // ─────────────────────────────────────────────────────────────────────────────
 private struct SelfResponseInsert: Encodable {
-    let id: String; let sessionId: String; let questionId: String; let answerJson: AnswerValue
+    let id: String; let sessionId: String; let questionId: String
+    let answerType: String; let answerValue: String
 }
 
 private struct SelfResponseRead: Decodable {
-    let questionId: String; let answerJson: AnswerValue
+    let questionId: String; let answerType: String; let answerValue: String
+
+    var answer: AnswerValue {
+        switch answerType {
+        case "single":   return .singleChoice(answerValue)
+        case "multiple":
+            if let data = answerValue.data(using: .utf8),
+               let arr = try? JSONDecoder().decode([String].self, from: data) {
+                return .multipleChoice(arr)
+            }
+            return .multipleChoice([answerValue])
+        case "rating":   return .rating(Int(answerValue) ?? 0)
+        default:         return .text(answerValue)
+        }
+    }
 }
 
 private struct SessionRecord: Codable {
@@ -51,12 +66,15 @@ final class SurveyService: ObservableObject {
             UserDefaults.standard.set(data, forKey: "pm_self_responses")
         }
 
+        guard !candidateId.isEmpty else { return }
+
         guard let sessionId = await getOrCreateSession(userId: candidateId) else { return }
 
         for (questionId, answer) in responses {
             let record = SelfResponseInsert(
                 id: UUID().uuidString, sessionId: sessionId,
-                questionId: questionId, answerJson: answer)
+                questionId: questionId,
+                answerType: answer.typeString, answerValue: answer.valueString)
             try? await sb.insert(into: "self_responses", value: record)
         }
     }
@@ -68,7 +86,7 @@ final class SurveyService: ObservableObject {
         if let records: [SelfResponseRead] = try? await sb.select(
             from: "self_responses", filters: ["session_id": "eq.\(sessionId)"]) {
             selfResponses = Dictionary(uniqueKeysWithValues:
-                records.map { ($0.questionId, $0.answerJson) })
+                records.map { ($0.questionId, $0.answer) })
             if let data = try? JSONEncoder().encode(selfResponses) {
                 UserDefaults.standard.set(data, forKey: "pm_self_responses")
             }

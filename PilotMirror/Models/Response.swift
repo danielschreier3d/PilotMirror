@@ -29,6 +29,25 @@ enum AnswerValue: Codable, Equatable {
         }
     }
 
+    var typeString: String {
+        switch self {
+        case .text:           return "text"
+        case .singleChoice:   return "single"
+        case .multipleChoice: return "multiple"
+        case .rating:         return "rating"
+        }
+    }
+
+    var valueString: String {
+        switch self {
+        case .text(let v):           return v
+        case .singleChoice(let v):   return v
+        case .multipleChoice(let v):
+            return (try? String(data: JSONEncoder().encode(v), encoding: .utf8)) ?? v.joined(separator: ",")
+        case .rating(let v):         return "\(v)"
+        }
+    }
+
     var displayText: String {
         switch self {
         case .text(let t):           return t
