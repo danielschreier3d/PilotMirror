@@ -1,40 +1,72 @@
 import Foundation
 
+// ─────────────────────────────────────────────────────────────────────────────
+// MARK: - Backend DTOs
+// ─────────────────────────────────────────────────────────────────────────────
+private struct FeedbackLinkInsert: Encodable {
+    let id: String; let sessionId: String; let token: String; let responseCount: Int
+}
+
+private struct FeedbackLinkRead: Decodable {
+    let id: String; let sessionId: String; let token: String
+    let responseCount: Int; let createdAt: Date
+}
+
+private struct RespondentInsert: Encodable {
+    let id: String; let feedbackLinkId: String; let name: String; let relationship: String
+}
+
+private struct RespondentRead: Decodable {
+    let id: String
+}
+
+private struct SurveyResponseInsert: Encodable {
+    let id: String; let respondentId: String; let questionId: String; let answerJson: AnswerValue
+}
+
+// RPC return type for get_link_by_token
+private struct LinkTokenResult: Decodable {
+    let linkId: String; let sessionId: String
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// MARK: - FeedbackService
+// ─────────────────────────────────────────────────────────────────────────────
 @MainActor
 final class FeedbackService: ObservableObject {
     static let shared = FeedbackService()
 
     @Published var feedbackLink: FeedbackLink?
-    @Published var respondents: [Respondent] = []
-    @Published var isLoading = false
-    @Published var error: String?
+    @Published var respondents:  [Respondent] = []
+    @Published var isLoading  = false
+    @Published var error:       String?
+
+    private let sb = SupabaseClient.shared
 
     private init() {}
 
+    // MARK: – Create feedback link
+
     func createFeedbackLink(candidateId: String) async throws -> FeedbackLink {
-        isLoading = true
-        defer { isLoading = false }
+        isLoading = true; defer { isLoading = false }
 
-        let token = generateToken()
-        let link = FeedbackLink(
-            id: UUID().uuidString,
-            candidateId: candidateId,
-            token: token,
-            createdAt: Date(),
-            responseCount: 0
-        )
+        let sessionId = await SurveyService.shared.getOrCreateSession(userId: candidateId)
+            ?? UUID().uuidString
+        let token   = generateToken()
+        let linkId  = UUID().uuidString
 
-        // TODO: supabase.from("feedback_links").insert([
-        //   "id": link.id, "candidate_id": candidateId, "token": token
-        // ])
+        let record = FeedbackLinkInsert(
+            id: linkId, sessionId: sessionId, token: token, responseCount: 0)
+        try await sb.insert(into: "feedback_links", value: record)
 
+        let link = FeedbackLink(id: linkId, sessionId: sessionId,
+                                token: token, createdAt: Date(), responseCount: 0)
         feedbackLink = link
-        // Persist locally
-        if let data = try? JSONEncoder().encode(link) {
-            UserDefaults.standard.set(data, forKey: "pm_feedback_link")
-        }
+        persist(link)
         return link
     }
+
+    // MARK: – Load saved link from cache
 
     func loadSavedLink() {
         if let data = UserDefaults.standard.data(forKey: "pm_feedback_link"),
@@ -43,39 +75,101 @@ final class FeedbackService: ObservableObject {
         }
     }
 
+    // MARK: – Refresh response count from Supabase
+
     func refreshStatus() async {
         guard let link = feedbackLink else { return }
-        isLoading = true
-        defer { isLoading = false }
-        // TODO: let count = try await supabase.from("respondents")
-        //   .select("id", count: .exact)
-        //   .eq("feedback_link_id", link.id)
-        //   .execute().count
-        // Simulate increment for demo
-        let mockCount = min((feedbackLink?.responseCount ?? 0) + 1, 12)
-        feedbackLink = FeedbackLink(
-            id: link.id, candidateId: link.candidateId, token: link.token,
-            createdAt: link.createdAt, responseCount: mockCount
-        )
+        isLoading = true; defer { isLoading = false }
+        do {
+            if let record: FeedbackLinkRead = try await sb.selectFirst(
+                from: "feedback_links", filters: ["id": "eq.\(link.id)"]
+            ) {
+                let updated = FeedbackLink(
+                    id: record.id, sessionId: record.sessionId, token: record.token,
+                    createdAt: record.createdAt, responseCount: record.responseCount)
+                feedbackLink = updated
+                persist(updated)
+            }
+        } catch { self.error = error.localizedDescription }
     }
 
-    func submitRespondent(name: String, relationship: Respondent.RelationshipType, linkToken: String) async throws -> Respondent {
-        let respondent = Respondent(
-            id: UUID().uuidString,
-            feedbackLinkId: linkToken,
-            name: name,
-            relationship: relationship
-        )
-        // TODO: supabase.from("respondents").insert([...])
-        respondents.append(respondent)
-        return respondent
+    // MARK: – Submit full respondent survey (called from FeedbackSurveyView)
+
+    func submitRespondentSurvey(
+        token: String,
+        name: String,
+        relationship: Respondent.RelationshipType,
+        responses: [String: AnswerValue]
+    ) async throws {
+        isLoading = true; defer { isLoading = false }
+
+        // 1. Look up link by token (anon — no auth required)
+        let results: [LinkTokenResult] = try await sb.rpc(
+            function: "get_link_by_token",
+            params: ["p_token": token],
+            anonOnly: true)
+        guard let linkInfo = results.first else {
+            throw SupabaseError.noData
+        }
+
+        // 2. Create respondent record
+        let respondentId = UUID().uuidString
+        try await sb.insert(
+            into: "respondents",
+            value: RespondentInsert(
+                id: respondentId, feedbackLinkId: linkInfo.linkId,
+                name: name, relationship: relationship.rawValue),
+            anonOnly: true)
+
+        // 3. Submit all survey responses
+        for (questionId, answer) in responses {
+            try await sb.insert(
+                into: "survey_responses",
+                value: SurveyResponseInsert(
+                    id: UUID().uuidString, respondentId: respondentId,
+                    questionId: questionId, answerJson: answer),
+                anonOnly: true)
+        }
+
+        // 4. Increment response count
+        try await sb.rpcVoid(
+            function: "increment_response_count",
+            params: ["p_link_id": linkInfo.linkId],
+            anonOnly: true)
     }
 
-    func submitResponses(_ responses: [String: AnswerValue], respondentId: String) async throws {
-        // TODO: for each response insert into supabase.from("responses")
-        isLoading = true
-        defer { isLoading = false }
-        try await Task.sleep(nanoseconds: 800_000_000) // Simulate network
+    // MARK: – Load respondent survey responses for AI analysis
+
+    func loadRespondentResponses() async throws -> [[String: AnswerValue]] {
+        guard let link = feedbackLink else { return [] }
+
+        // Get all respondents for this link
+        let respondentRecords: [RespondentRead] = try await sb.select(
+            from: "respondents", filters: ["feedback_link_id": "eq.\(link.id)"])
+
+        // For each respondent, load their survey responses
+        struct SurveyRespRead: Decodable {
+            let respondentId: String; let questionId: String; let answerJson: AnswerValue
+        }
+
+        var allRespondentResponses: [[String: AnswerValue]] = []
+        for respondent in respondentRecords {
+            let records: [SurveyRespRead] = (try? await sb.select(
+                from: "survey_responses",
+                filters: ["respondent_id": "eq.\(respondent.id)"])) ?? []
+            let mapped = Dictionary(uniqueKeysWithValues:
+                records.map { ($0.questionId, $0.answerJson) })
+            if !mapped.isEmpty { allRespondentResponses.append(mapped) }
+        }
+        return allRespondentResponses
+    }
+
+    // MARK: – Private helpers
+
+    private func persist(_ link: FeedbackLink) {
+        if let data = try? JSONEncoder().encode(link) {
+            UserDefaults.standard.set(data, forKey: "pm_feedback_link")
+        }
     }
 
     private func generateToken() -> String {

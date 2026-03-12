@@ -213,8 +213,13 @@ struct FeedbackSurveyView: View {
                     candidateId: auth.currentUser?.id ?? "",
                     responses: responses
                 )
-            } else {
-                try? await FeedbackService.shared.submitResponses(responses, respondentId: UUID().uuidString)
+            } else if case .respondent(let token) = mode {
+                try? await FeedbackService.shared.submitRespondentSurvey(
+                    token: token,
+                    name: respondentName,
+                    relationship: respondentRelationship,
+                    responses: responses
+                )
             }
             await MainActor.run {
                 isSubmitting = false

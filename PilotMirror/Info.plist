@@ -22,5 +22,16 @@
 	</array>
 	<key>NSFaceIDUsageDescription</key>
 	<string>PilotMirror uses Face ID for secure sign-in.</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>pilotmirror</string>
+			</array>
+			<key>CFBundleURLName</key>
+			<string>com.pilotmirror.app</string>
+		</dict>
+	</array>
 </dict>
 </plist>

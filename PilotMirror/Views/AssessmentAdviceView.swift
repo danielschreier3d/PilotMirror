@@ -3,6 +3,7 @@ import SwiftUI
 struct AssessmentAdviceView: View {
     @EnvironmentObject var auth: AuthService
     @EnvironmentObject var lang: LanguageService
+    @ObservedObject private var aiService = AIAnalysisService.shared
 
     var body: some View {
         ZStack {
@@ -29,7 +30,9 @@ struct AssessmentAdviceView: View {
                     adviceCard(
                         icon: "person.3.fill", color: "4A9EF8",
                         title: lang.t("Gruppenübung", "Group Exercise"),
-                        tips: lang.isGerman ? [
+                        isPersonalized: !(aiService.result?.groupExerciseTips ?? []).isEmpty,
+                        tips: aiService.result.flatMap { $0.groupExerciseTips.isEmpty ? nil : $0.groupExerciseTips }
+                            ?? (lang.isGerman ? [
                             "Melde dich innerhalb der ersten 2 Minuten zu Wort — Schweigen wird als Desinteresse gewertet",
                             "Erkenne die Ideen anderer an, bevor du sie weiterentwickelst",
                             "Achte auf deine Redezeit — Qualität vor Quantität",
@@ -41,13 +44,15 @@ struct AssessmentAdviceView: View {
                             "Watch your airtime — quality over quantity",
                             "Offer to summarise the group's position — shows leadership",
                             "Stay visibly calm — assessors watch body language as much as words",
-                        ]
+                        ])
                     )
 
                     adviceCard(
                         icon: "mic.fill", color: "FF9F0A",
                         title: lang.t("Interview", "Interview"),
-                        tips: lang.isGerman ? [
+                        isPersonalized: !(aiService.result?.interviewTips ?? []).isEmpty,
+                        tips: aiService.result.flatMap { $0.interviewTips.isEmpty ? nil : $0.interviewTips }
+                            ?? (lang.isGerman ? [
                             "Nutze das STAR-Format: Situation, Task (Aufgabe), Action (Handlung), Result (Ergebnis)",
                             "Bereite 5 Beispiele für Entscheidungen unter Druck vor",
                             "Zeige Selbstreflexion — benenne eine echte Schwäche mit einer Entwicklungsgeschichte",
@@ -59,13 +64,15 @@ struct AssessmentAdviceView: View {
                             "Show self-awareness — acknowledge a real weakness with a recovery story",
                             "Research the airline's values and align your answers",
                             "Practice answering in under 90 seconds per question",
-                        ]
+                        ])
                     )
 
                     adviceCard(
                         icon: "arrow.triangle.branch", color: "34C759",
                         title: lang.t("Entscheidungsverhalten", "Decision Making"),
-                        tips: lang.isGerman ? [
+                        isPersonalized: !(aiService.result?.decisionMakingTips ?? []).isEmpty,
+                        tips: aiService.result.flatMap { $0.decisionMakingTips.isEmpty ? nil : $0.decisionMakingTips }
+                            ?? (lang.isGerman ? [
                             "Im Simulator: Kommuniziere deine Absicht laut, bevor du handelst",
                             "Übe zeitlich begrenzte Entscheidungen — max. 30 Sekunden für Routineentscheidungen",
                             "Verbalisiere deine Risikoeinschätzung in Rollenspielszenarien",
@@ -77,13 +84,15 @@ struct AssessmentAdviceView: View {
                             "Verbalize your risk assessment in role-play scenarios",
                             "If unsure, say what you're thinking — assessors value transparency",
                             "Show you can adapt when new information arrives mid-task",
-                        ]
+                        ])
                     )
 
                     adviceCard(
                         icon: "brain.head.profile", color: "6B5EE4",
                         title: lang.t("Selbstwahrnehmung", "Self-Awareness"),
-                        tips: lang.isGerman ? [
+                        isPersonalized: !(aiService.result?.selfAwarenessTips ?? []).isEmpty,
+                        tips: aiService.result.flatMap { $0.selfAwarenessTips.isEmpty ? nil : $0.selfAwarenessTips }
+                            ?? (lang.isGerman ? [
                             "Kenne dein Persönlichkeitsprofil — dein Report ist dein Leitfaden",
                             "Falls andere dich als zurückhaltend wahrnehmen: Übe selbstbewussteres Auftreten",
                             "Falls andere dich als dominant wahrnehmen: Übe aktives Zuhören",
@@ -95,7 +104,7 @@ struct AssessmentAdviceView: View {
                             "If others see you as dominant — practice active listening",
                             "Be consistent between interview answers and observed behavior",
                             "Assessors compare what you say about yourself with what they see",
-                        ]
+                        ])
                     )
 
                     Spacer(minLength: 40)
@@ -107,7 +116,7 @@ struct AssessmentAdviceView: View {
         .toolbarColorScheme(.dark, for: .navigationBar)
     }
 
-    private func adviceCard(icon: String, color: String, title: String, tips: [String]) -> some View {
+    private func adviceCard(icon: String, color: String, title: String, isPersonalized: Bool = false, tips: [String]) -> some View {
         VStack(alignment: .leading, spacing: 14) {
             HStack(spacing: 10) {
                 Image(systemName: icon)
@@ -119,6 +128,14 @@ struct AssessmentAdviceView: View {
                 Text(title)
                     .font(.headline)
                     .foregroundStyle(.white)
+                if isPersonalized {
+                    Text(lang.t("Personalisiert", "Personalized"))
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(Color(hex: "34C759"))
+                        .padding(.horizontal, 6).padding(.vertical, 2)
+                        .background(Color(hex: "34C759").opacity(0.15))
+                        .clipShape(Capsule())
+                }
             }
 
             VStack(alignment: .leading, spacing: 10) {
@@ -150,5 +167,6 @@ struct AssessmentAdviceView: View {
     NavigationStack {
         AssessmentAdviceView()
             .environmentObject(AuthService.shared)
+            .environmentObject(LanguageService.shared)
     }
 }

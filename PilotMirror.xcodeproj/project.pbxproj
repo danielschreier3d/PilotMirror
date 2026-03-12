@@ -19,6 +19,8 @@
 		CC000010000000000000000A /* SurveyService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000010000000000000000A /* SurveyService.swift */; };
 		CC000011000000000000000A /* AIAnalysisService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000011000000000000000A /* AIAnalysisService.swift */; };
 		CC000023000000000000000A /* LanguageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000023000000000000000A /* LanguageService.swift */; };
+		CC000024000000000000000A /* SupabaseClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000024000000000000000A /* SupabaseClient.swift */; };
+		CC000025000000000000000A /* DeepLinkHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000025000000000000000A /* DeepLinkHandler.swift */; };
 		CC000012000000000000000A /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000012000000000000000A /* OnboardingView.swift */; };
 		CC000013000000000000000A /* AssessmentSelectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000013000000000000000A /* AssessmentSelectView.swift */; };
 		CC000014000000000000000A /* CreateFeedbackLinkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000014000000000000000A /* CreateFeedbackLinkView.swift */; };
@@ -45,6 +47,8 @@
 		BB000010000000000000000A /* SurveyService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SurveyService.swift; sourceTree = "<group>"; };
 		BB000011000000000000000A /* AIAnalysisService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIAnalysisService.swift; sourceTree = "<group>"; };
 		BB000023000000000000000A /* LanguageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageService.swift; sourceTree = "<group>"; };
+		BB000024000000000000000A /* SupabaseClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseClient.swift; sourceTree = "<group>"; };
+		BB000025000000000000000A /* DeepLinkHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkHandler.swift; sourceTree = "<group>"; };
 		BB000012000000000000000A /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		BB000013000000000000000A /* AssessmentSelectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssessmentSelectView.swift; sourceTree = "<group>"; };
 		BB000014000000000000000A /* CreateFeedbackLinkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateFeedbackLinkView.swift; sourceTree = "<group>"; };
@@ -130,6 +134,8 @@
 				BB000010000000000000000A /* SurveyService.swift */,
 				BB000011000000000000000A /* AIAnalysisService.swift */,
 				BB000023000000000000000A /* LanguageService.swift */,
+				BB000024000000000000000A /* SupabaseClient.swift */,
+				BB000025000000000000000A /* DeepLinkHandler.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -239,6 +245,8 @@
 				CC000010000000000000000A /* SurveyService.swift in Sources */,
 				CC000011000000000000000A /* AIAnalysisService.swift in Sources */,
 				CC000023000000000000000A /* LanguageService.swift in Sources */,
+				CC000024000000000000000A /* SupabaseClient.swift in Sources */,
+				CC000025000000000000000A /* DeepLinkHandler.swift in Sources */,
 				CC000012000000000000000A /* OnboardingView.swift in Sources */,
 				CC000013000000000000000A /* AssessmentSelectView.swift in Sources */,
 				CC000014000000000000000A /* CreateFeedbackLinkView.swift in Sources */,

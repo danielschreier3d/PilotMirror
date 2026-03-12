@@ -47,13 +47,43 @@ struct ResultsView: View {
         .navigationTitle(lang.t("Dein Report", "Your Report"))
         .navigationBarTitleDisplayMode(.inline)
         .toolbarColorScheme(.dark, for: .navigationBar)
-        .onAppear {
-            if aiService.result == nil {
-                aiService.loadMockResult(
-                    assessmentType: auth.currentUser?.assessmentType?.rawValue ?? "General"
-                )
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                if let r = result {
+                    ShareLink(
+                        item: exportText(r),
+                        subject: Text("PilotMirror Report")
+                    ) {
+                        Image(systemName: "square.and.arrow.up")
+                            .foregroundStyle(Color(hex: "4A9EF8"))
+                    }
+                }
             }
         }
+        .onAppear {
+            if aiService.result == nil {
+                Task { await aiService.loadExistingResult() }
+            }
+        }
+    }
+
+    private func exportText(_ r: AnalysisResult) -> String {
+        var lines: [String] = ["# PilotMirror 360° Report", ""]
+        lines.append("## \(lang.t("Profil", "Profile"))")
+        lines.append(r.personalitySummary)
+        lines.append("")
+        lines.append("### \(lang.t("Stärken", "Strengths"))")
+        r.perceivedStrengths.forEach { lines.append("• \($0)") }
+        lines.append("")
+        lines.append("### \(lang.t("Entwicklungsfelder", "Development Areas"))")
+        r.possibleWeaknesses.forEach { lines.append("• \($0)") }
+        lines.append("")
+        lines.append("### \(lang.t("Selbst- vs. Fremdwahrnehmung", "Self vs. Others"))")
+        lines.append(r.selfVsOthers)
+        lines.append("")
+        lines.append("### \(lang.t("Empfehlung", "Recommendation"))")
+        lines.append(r.assessmentAdvice)
+        return lines.joined(separator: "\n")
     }
 
     // MARK: - Tab 1: Profil

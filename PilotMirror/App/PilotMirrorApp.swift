@@ -2,25 +2,40 @@ import SwiftUI
 
 @main
 struct PilotMirrorApp: App {
-    @StateObject private var auth = AuthService.shared
-    @StateObject private var lang = LanguageService.shared
+    @StateObject private var auth     = AuthService.shared
+    @StateObject private var lang     = LanguageService.shared
+    @StateObject private var deepLink = DeepLinkHandler.shared
 
     var body: some Scene {
         WindowGroup {
             RootView()
                 .environmentObject(auth)
                 .environmentObject(lang)
+                .environmentObject(deepLink)
                 .preferredColorScheme(.dark)
+                .onOpenURL { url in
+                    DeepLinkHandler.shared.handle(url)
+                }
         }
     }
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// MARK: - RootView
+// ─────────────────────────────────────────────────────────────────────────────
 struct RootView: View {
-    @EnvironmentObject var auth: AuthService
+    @EnvironmentObject var auth:     AuthService
+    @EnvironmentObject var deepLink: DeepLinkHandler
     @State private var selectedAssessment: User.AssessmentType?
 
     var body: some View {
-        if !auth.isAuthenticated {
+        // Deep link: open respondent survey without requiring auth
+        if let token = deepLink.pendingFeedbackToken {
+            FeedbackSurveyView(mode: .respondent(token: token))
+                .environmentObject(LanguageService.shared)
+                .environmentObject(auth)
+                .onDisappear { deepLink.clearPendingToken() }
+        } else if !auth.isAuthenticated {
             OnboardingView()
         } else if auth.currentUser?.assessmentType == nil {
             NavigationStack {
@@ -32,6 +47,9 @@ struct RootView: View {
     }
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// MARK: - MainTabView
+// ─────────────────────────────────────────────────────────────────────────────
 struct MainTabView: View {
     @EnvironmentObject var auth: AuthService
     @EnvironmentObject var lang: LanguageService

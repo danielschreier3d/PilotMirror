@@ -236,10 +236,10 @@ struct FeedbackStatusView: View {
                 ) {
                     Task {
                         let assessment = auth.currentUser?.assessmentType?.rawValue ?? "General"
-                        await aiService.analyze(
+                        let userId     = auth.currentUser?.id ?? ""
+                        await aiService.analyzeFromBackend(
                             assessmentType: assessment,
-                            selfResponses: surveyService.selfResponses,
-                            externalResponses: []
+                            userId: userId
                         )
                         if aiService.result != nil { showResults = true }
                     }
@@ -385,11 +385,11 @@ struct FeedbackStatusView: View {
 
     private func loadMockData() {
         let link = feedbackService.feedbackLink ?? FeedbackLink(
-            id: UUID().uuidString, candidateId: auth.currentUser?.id ?? "demo",
+            id: UUID().uuidString, sessionId: "demo-session",
             token: "demo-token", createdAt: Date(), responseCount: 7
         )
         feedbackService.feedbackLink = FeedbackLink(
-            id: link.id, candidateId: link.candidateId,
+            id: link.id, sessionId: link.sessionId,
             token: link.token, createdAt: link.createdAt, responseCount: 7
         )
         surveyService.selfResponses = [

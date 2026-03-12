@@ -62,9 +62,15 @@ struct AnalysisResult: Codable {
     let assessmentAdvice: String
     let generatedAt: Date
 
-    // Structured comparison data
-    let comparisonAreas: [ComparisonArea]
-    let traitStats: [TraitStat]
+    // Structured comparison data (computed from raw responses)
+    let comparisonAreas:   [ComparisonArea]
+    let traitStats:        [TraitStat]
     let forcedChoiceStats: [ForcedChoiceStat]
     let openTextResponses: [String]
+
+    // Personalized AI-generated tips per assessment category
+    let groupExerciseTips:  [String]
+    let interviewTips:      [String]
+    let decisionMakingTips: [String]
+    let selfAwarenessTips:  [String]
 }
