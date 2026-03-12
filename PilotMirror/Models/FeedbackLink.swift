@@ -11,6 +11,6 @@ struct FeedbackLink: Identifiable, Codable {
     var shareURL: URL { URL(string: shareURLString)! }
 
     var shareURLString: String {
-        "\(WebConfig.surveyBase)/feedback/\(token)"
+        "\(WebConfig.surveyBase)/?token=\(token)"
     }
 }
