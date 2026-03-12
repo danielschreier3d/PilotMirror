@@ -551,7 +551,7 @@ async function submitSurvey() {
       await fetch(SB_URL + '/rest/v1/survey_responses', {
         method: 'POST',
         headers: { 'Content-Type':'application/json', 'Prefer':'return=minimal', 'apikey':SB_ANON, 'Authorization':'Bearer '+SB_ANON },
-        body: JSON.stringify({ id:crypto.randomUUID(), respondent_id:rid, question_id:qid, answer_json:json }),
+        body: JSON.stringify({ id:crypto.randomUUID(), respondent_id:rid, question_id:qid, answer_type:json.type, answer_value:json.value }),
       });
     }
 
@@ -581,9 +581,9 @@ async function submitSurvey() {
 
 function buildJson(ans) {
   if (!ans) return null;
-  if (ans.type === 'multiple') return ans.value?.length ? { type:'multiple', value:ans.value } : null;
-  if (ans.type === 'single')   return { type:'single',   value: ans.value };
-  if (ans.type === 'rating')   return { type:'rating',   value: ans.value };
+  if (ans.type === 'multiple') return ans.value?.length ? { type:'multiple', value: JSON.stringify(ans.value) } : null;
+  if (ans.type === 'single')   return { type:'single',   value: String(ans.value) };
+  if (ans.type === 'rating')   return { type:'rating',   value: String(ans.value) };
   if (ans.type === 'text')     return { type:'text',     value: (ans.value||'').trim() };
   return null;
 }

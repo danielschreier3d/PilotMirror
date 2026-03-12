@@ -1,5 +1,21 @@
 import Foundation
 
+// Flexible JSON value decoder for survey answer_json
+private struct AnyCodable: Decodable {
+    let stringValue: String?
+    let intValue: Int?
+    let arrayValue: [String]?
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.singleValueContainer()
+        if let i = try? c.decode(Int.self)        { intValue = i; stringValue = nil; arrayValue = nil }
+        else if let d = try? c.decode(Double.self) { intValue = Int(d); stringValue = nil; arrayValue = nil }
+        else if let s = try? c.decode(String.self) { stringValue = s; intValue = nil; arrayValue = nil }
+        else if let a = try? c.decode([String].self) { arrayValue = a; stringValue = nil; intValue = nil }
+        else { stringValue = nil; intValue = nil; arrayValue = nil }
+    }
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // MARK: - Backend DTOs
 // ─────────────────────────────────────────────────────────────────────────────
@@ -18,6 +34,7 @@ private struct RespondentInsert: Encodable {
 
 private struct RespondentRead: Decodable {
     let id: String
+    let feedbackLinkId: String
 }
 
 private struct SurveyResponseInsert: Encodable {
@@ -172,25 +189,38 @@ final class FeedbackService: ObservableObject {
     func loadRespondentResponses() async throws -> [[String: AnswerValue]] {
         guard let link = feedbackLink else { return [] }
 
-        // Get all respondents for this link
-        let respondentRecords: [RespondentRead] = try await sb.select(
-            from: "respondents", filters: ["feedback_link_id": "eq.\(link.id)"])
-
-        // For each respondent, load their survey responses
-        struct SurveyRespRead: Decodable {
-            let respondentId: String; let questionId: String; let answerJson: AnswerValue
+        struct Row: Decodable {
+            let respondentId: String
+            let questionId: String
+            let answerType: String
+            let answerValue: String
         }
 
-        var allRespondentResponses: [[String: AnswerValue]] = []
-        for respondent in respondentRecords {
-            let records: [SurveyRespRead] = (try? await sb.select(
-                from: "survey_responses",
-                filters: ["respondent_id": "eq.\(respondent.id)"])) ?? []
-            let mapped = Dictionary(uniqueKeysWithValues:
-                records.map { ($0.questionId, $0.answerJson) })
-            if !mapped.isEmpty { allRespondentResponses.append(mapped) }
+        let rows: [Row] = try await sb.rpc(
+            function: "get_all_respondent_data",
+            params: ["p_link_id": link.id])
+
+        // Group rows by respondentId
+        var byRespondent: [String: [String: AnswerValue]] = [:]
+        for row in rows {
+            let ans: AnswerValue?
+            switch row.answerType {
+            case "single":   ans = .singleChoice(row.answerValue)
+            case "multiple":
+                if let data = row.answerValue.data(using: .utf8),
+                   let arr = try? JSONDecoder().decode([String].self, from: data) {
+                    ans = .multipleChoice(arr)
+                } else { ans = .multipleChoice([row.answerValue]) }
+            case "rating":   ans = Int(row.answerValue).map { .rating($0) }
+            case "text":     ans = .text(row.answerValue)
+            default:         ans = nil
+            }
+            if let ans {
+                byRespondent[row.respondentId, default: [:]][row.questionId] = ans
+            }
         }
-        return allRespondentResponses
+
+        return byRespondent.values.filter { !$0.isEmpty }.map { $0 }
     }
 
     // MARK: – Private helpers
