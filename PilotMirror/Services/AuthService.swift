@@ -1,6 +1,5 @@
 import Foundation
 import AuthenticationServices
-import UIKit
 
 // ─────────────────────────────────────────────────────────────────────────────
 // MARK: - Backend DTO for the `users` table
@@ -26,7 +25,6 @@ final class AuthService: NSObject, ObservableObject {
     @Published var pendingEmailConfirmation  = false
 
     private let sb = SupabaseClient.shared
-    private var googleSession: ASWebAuthenticationSession?
 
     private override init() {
         super.init()
@@ -74,46 +72,6 @@ final class AuthService: NSObject, ObservableObject {
                                         email: r.user?.email ?? "",
                                         name: name.isEmpty ? "Pilot" : name)
             } catch { self.error = error.localizedDescription }
-        }
-    }
-
-    // MARK: – Google Sign-In (via Supabase OAuth)
-
-    func signInWithGoogle() async {
-        isLoading = true; defer { isLoading = false }
-        error = nil
-
-        let urlString = "\(SupabaseConfig.projectURL)/auth/v1/authorize?provider=google&redirect_to=pilotmirror://auth/callback"
-        guard let url = URL(string: urlString) else { return }
-
-        do {
-            let callbackURL: URL = try await withCheckedThrowingContinuation { cont in
-                let session = ASWebAuthenticationSession(
-                    url: url,
-                    callbackURLScheme: "pilotmirror"
-                ) { url, err in
-                    if let err = err { cont.resume(throwing: err) }
-                    else if let url = url { cont.resume(returning: url) }
-                    else { cont.resume(throwing: URLError(.badURL)) }
-                }
-                session.presentationContextProvider = AuthWindowProvider.shared
-                session.prefersEphemeralWebBrowserSession = false
-                googleSession = session
-                session.start()
-            }
-
-            // Re-use existing deep link parsing
-            DeepLinkHandler.shared.handle(callbackURL)
-            if let tokens = DeepLinkHandler.shared.pendingAuthTokens {
-                try await sb.applyAuthTokens(access: tokens.access, refresh: tokens.refresh)
-                await restoreSession()
-                DeepLinkHandler.shared.clearPendingAuth()
-            }
-        } catch {
-            let asError = error as? ASWebAuthenticationSessionError
-            if asError?.code != .canceledLogin {
-                self.error = error.localizedDescription
-            }
         }
     }
 
@@ -192,18 +150,5 @@ final class AuthService: NSObject, ObservableObject {
     private func map(_ r: UserRecord) -> User {
         User(id: r.id, name: r.fullName, email: r.email,
              assessmentType: r.assessmentType.flatMap { User.AssessmentType(rawValue: $0) })
-    }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// MARK: - Presentation context for ASWebAuthenticationSession
-// ─────────────────────────────────────────────────────────────────────────────
-private final class AuthWindowProvider: NSObject, ASWebAuthenticationPresentationContextProviding {
-    static let shared = AuthWindowProvider()
-    func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
-        UIApplication.shared.connectedScenes
-            .compactMap { $0 as? UIWindowScene }
-            .flatMap { $0.windows }
-            .first { $0.isKeyWindow } ?? ASPresentationAnchor()
     }
 }

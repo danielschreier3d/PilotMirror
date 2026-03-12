@@ -45,7 +45,7 @@ struct RootView: View {
                 .environmentObject(auth)
                 .onDisappear { deepLink.clearPendingToken() }
         } else if !auth.isAuthenticated {
-            NavigationStack { OnboardingView() }
+            OnboardingView()
         } else if auth.currentUser?.assessmentType == nil {
             NavigationStack {
                 AssessmentSelectView(selectedAssessment: $selectedAssessment)
