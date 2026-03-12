@@ -182,6 +182,14 @@
       <span id="txt-anon-notice">Deine Antworten sind vollständig anonym. Der Kandidat sieht nie deinen Namen — nur die Gesamtauswertung aller Rückmeldungen.</span>
     </div>
 
+    <!-- Privacy consent -->
+    <label id="consent-box" style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:12px;cursor:pointer;margin-bottom:16px;">
+      <input type="checkbox" id="chk-consent" onchange="onConsentChange()" style="width:18px;height:18px;margin-top:2px;accent-color:#4A9EF8;flex-shrink:0;">
+      <span id="txt-consent" style="font-size:13px;color:rgba(255,255,255,.65);line-height:1.6;">
+        Ich stimme zu, dass meine Antworten anonym gespeichert und zur Erstellung eines KI-gestützten Persönlichkeitsreports verwendet werden. Dies ist eine Beta-Anwendung — kein Ersatz für professionelle Diagnostik.
+      </span>
+    </label>
+
     <button class="btn btn-primary" id="btn-start" disabled onclick="startSurvey()">
       <span id="txt-btn-start">Fragebogen starten →</span>
     </button>
@@ -380,11 +388,14 @@ function renderIntro() {
   $('txt-btn-start').textContent = t('Fragebogen starten →', 'Start Survey →');
   $('lang-btn').textContent      = S.lang === 'de' ? 'EN' : 'DE';
 
-  // Name validation
-  $('inp-name').oninput = () => {
-    S.respondentName = $('inp-name').value.trim();
-    $('btn-start').disabled = !S.respondentName;
-  };
+  // Name + consent validation
+  function updateStartBtn() {
+    const hasName    = $('inp-name').value.trim().length > 0;
+    const hasConsent = $('chk-consent').checked;
+    $('btn-start').disabled = !(hasName && hasConsent);
+  }
+  $('inp-name').oninput   = () => { S.respondentName = $('inp-name').value.trim(); updateStartBtn(); };
+  window.onConsentChange  = updateStartBtn;
 
   // Relationship chips
   document.querySelectorAll('[data-rel]').forEach(chip => {
@@ -477,7 +488,6 @@ function renderChoice(c, q) {
       list.querySelectorAll('.choice-item').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       updateNext();
-      setTimeout(() => { if (S.idx < Qs.length - 1) nextOrSubmit(); }, 380);
     };
     list.appendChild(btn);
   });
@@ -496,7 +506,6 @@ function renderRating(c, q) {
       row.querySelectorAll('.rating-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       updateNext();
-      setTimeout(() => { if (S.idx < Qs.length - 1) nextOrSubmit(); }, 340);
     };
     row.appendChild(btn);
   }
@@ -506,18 +515,19 @@ function renderRating(c, q) {
 }
 
 function renderText(c, q) {
-  const tag = document.createElement('span'); tag.className = 'optional-tag';
-  tag.textContent = t('Optional', 'Optional'); c.appendChild(tag);
   const ta = document.createElement('textarea'); ta.className = 'open-ta';
   ta.placeholder = S.lang === 'de' ? (q.phDE || '') : (q.phEN || '');
   ta.value = S.responses[q.id]?.value || '';
-  ta.oninput = () => { S.responses[q.id] = { type: 'text', value: ta.value }; };
+  ta.oninput = () => { S.responses[q.id] = { type: 'text', value: ta.value }; updateNext(); };
   c.appendChild(ta);
 }
 
 function updateNext() {
-  const q = Qs[S.idx];
-  const ok = q.type === 'text' || !!S.responses[q.id];
+  const q   = Qs[S.idx];
+  const ans = S.responses[q.id];
+  const ok  = q.type === 'text'
+    ? (ans?.value || '').trim().length >= 3
+    : !!ans;
   $('btn-next').disabled = !ok;
 }
 
