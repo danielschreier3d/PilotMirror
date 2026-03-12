@@ -124,12 +124,38 @@ final class AIAnalysisService: ObservableObject {
         func format(_ responses: [String: AnswerValue]) -> String {
             questions.compactMap { q in
                 guard let a = responses[q.id] else { return nil }
-                return "- \(q.text): \(a.displayText)"
+                let text = a.displayText.trimmingCharacters(in: .whitespacesAndNewlines)
+                // Skip clearly non-interpretable answers (< 3 chars, single letter, pure whitespace)
+                if q.type == .openText && text.count < 3 { return nil }
+                return "- \(q.text): \(text)"
             }.joined(separator: "\n")
         }
 
         return """
-        You are an expert aviation psychologist helping a pilot candidate prepare for a \(assessmentType) assessment.
+        You are an expert aviation psychologist conducting a structured 360-degree feedback analysis for a pilot candidate preparing for a \(assessmentType) selection process.
+
+        ## EVALUATION FRAMEWORK
+        You MUST assess the candidate on the following standardized aviation psychology dimensions, as used by selection boards (DLR, Lufthansa, Austrian Airlines, etc.):
+
+        1. **Teamfähigkeit & Kooperation** — Ability to collaborate, follow and lead within a crew (CRM)
+        2. **Kommunikation** — Clarity, assertiveness, active listening, openness
+        3. **Führungsverhalten** — Takes initiative when appropriate; adapts leader/follower role situationally
+        4. **Belastbarkeit & Stressresistenz** — Maintains performance and composure under pressure
+        5. **Selbstwahrnehmung & Reflexionsfähigkeit** — Accuracy of self-perception; openness to feedback
+        6. **Lernbereitschaft** — Receptiveness to new information, feedback, and personal development
+        7. **Entscheidungsverhalten** — Speed and quality of decisions; handles uncertainty appropriately
+        8. **Zuverlässigkeit & Verantwortungsbewusstsein** — Consistency, follow-through, accountability
+        9. **Soziale Kompetenz** — Empathy, conflict resolution, interpersonal sensitivity
+
+        ## ANSWER VALIDATION RULES
+        - Ignore any free-text answer shorter than 3 meaningful characters (e.g., "x", "ok", "?") — treat as unanswered.
+        - Spelling mistakes are acceptable and must NOT be used as a reason to discard an answer — interpret the intended meaning.
+        - If an answer is ambiguous but plausible, interpret it charitably.
+
+        ## CONSISTENCY REQUIREMENT
+        Your analysis must be deterministic and framework-based. Do NOT produce vague or generic output. Every strength and weakness must map to at least one of the 9 dimensions above. Assessment advice must be specific to \(assessmentType).
+
+        ## INPUT DATA
 
         SELF-PERCEPTION:
         \(format(selfResponses))
@@ -137,12 +163,13 @@ final class AIAnalysisService: ObservableObject {
         EXTERNAL PERCEPTION (\(externalResponses.count) respondents):
         \(externalResponses.enumerated().map { i, r in "Respondent \(i+1):\n\(format(r))" }.joined(separator: "\n\n"))
 
-        Respond in JSON with exactly these keys:
-        - personalitySummary: string (3-4 sentences)
-        - perceivedStrengths: string array (3-5 items)
-        - possibleWeaknesses: string array (2-3 items)
-        - selfVsOthers: string (key differences, 2-3 sentences)
-        - assessmentAdvice: string (specific tips for \(assessmentType), covering group exercises, interview, and decision-making)
+        ## OUTPUT
+        Respond in German. Respond in JSON with exactly these keys:
+        - personalitySummary: string (3-4 sentences summarizing the candidate's personality profile based on external perception, referencing the assessment dimensions)
+        - perceivedStrengths: string array (3-5 items, each prefixed with the relevant dimension, e.g. "Belastbarkeit: Bleibt auch unter Druck ruhig und lösungsorientiert")
+        - possibleWeaknesses: string array (2-4 items, each prefixed with the relevant dimension, honest and direct — no softening language)
+        - selfVsOthers: string (2-3 sentences on key discrepancies between self-rating and external perception, referencing specific dimensions)
+        - assessmentAdvice: string (concrete, specific advice for \(assessmentType) — cover group exercise behavior, interview technique, and decision-making under time pressure)
         """
     }
 

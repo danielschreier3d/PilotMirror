@@ -2,6 +2,7 @@ import SwiftUI
 
 struct AssessmentSelectView: View {
     @EnvironmentObject var auth: AuthService
+    @EnvironmentObject var lang: LanguageService
     @Binding var selectedAssessment: User.AssessmentType?
 
     var body: some View {
@@ -11,12 +12,14 @@ struct AssessmentSelectView: View {
             VStack(spacing: 0) {
                 // Header
                 VStack(spacing: 8) {
-                    Text("Which assessment are\nyou preparing for?")
+                    Text(lang.t("Für welches Assessment bereitest du dich vor?",
+                                "Which assessment are you preparing for?"))
                         .font(.system(size: 26, weight: .bold, design: .rounded))
                         .foregroundStyle(.white)
                         .multilineTextAlignment(.center)
 
-                    Text("This helps tailor your AI feedback report.")
+                    Text(lang.t("Hilft dabei, deinen KI-Report zu personalisieren.",
+                                "This helps tailor your AI feedback report."))
                         .font(.subheadline)
                         .foregroundStyle(.white.opacity(0.6))
                 }
@@ -45,7 +48,7 @@ struct AssessmentSelectView: View {
                     guard let type = selectedAssessment else { return }
                     auth.updateAssessmentType(type)
                 } label: {
-                    Text("Continue")
+                    Text(lang.t("Weiter", "Continue"))
                         .font(.headline)
                         .frame(maxWidth: .infinity)
                         .frame(height: 54)
@@ -66,6 +69,7 @@ struct AssessmentCard: View {
     let type: User.AssessmentType
     let isSelected: Bool
     let action: () -> Void
+    @EnvironmentObject var lang: LanguageService
 
     var body: some View {
         Button(action: action) {
@@ -81,7 +85,7 @@ struct AssessmentCard: View {
                     Text(type.rawValue)
                         .font(.headline)
                         .foregroundStyle(.white)
-                    Text(type.description)
+                    Text(lang.isGerman ? type.descriptionDE : type.descriptionEN)
                         .font(.caption)
                         .foregroundStyle(.white.opacity(0.55))
                         .fixedSize(horizontal: false, vertical: true)
@@ -108,6 +112,6 @@ struct AssessmentCard: View {
 }
 
 #Preview {
-    AssessmentSelectView(selectedAssessment: .constant(.dlr))
+    AssessmentSelectView(selectedAssessment: .constant(.general))
         .environmentObject(AuthService.shared)
 }

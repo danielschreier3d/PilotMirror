@@ -3,6 +3,7 @@ import SwiftUI
 struct ResultsView: View {
     @ObservedObject var aiService = AIAnalysisService.shared
     @EnvironmentObject var auth: AuthService
+    @EnvironmentObject var lang: LanguageService
     @State private var selectedTab = 0
 
     var result: AnalysisResult? { aiService.result }
@@ -15,9 +16,9 @@ struct ResultsView: View {
                 VStack(spacing: 0) {
                     // Tab picker (fixed, not scrolling)
                     Picker("", selection: $selectedTab) {
-                        Text("Profil").tag(0)
-                        Text("Vergleich").tag(1)
-                        Text("Rohdaten").tag(2)
+                        Text(lang.t("Profil", "Profile")).tag(0)
+                        Text(lang.t("Vergleich", "Comparison")).tag(1)
+                        Text(lang.t("Rohdaten", "Raw Data")).tag(2)
                     }
                     .pickerStyle(.segmented)
                     .padding(.horizontal)
@@ -38,12 +39,12 @@ struct ResultsView: View {
             } else {
                 VStack(spacing: 16) {
                     ProgressView().tint(Color(hex: "4A9EF8"))
-                    Text("Analyse wird erstellt…")
+                    Text(lang.t("Analyse wird erstellt…", "Generating analysis…"))
                         .foregroundStyle(.white.opacity(0.6))
                 }
             }
         }
-        .navigationTitle("Dein Report")
+        .navigationTitle(lang.t("Dein Report", "Your Report"))
         .navigationBarTitleDisplayMode(.inline)
         .toolbarColorScheme(.dark, for: .navigationBar)
         .onAppear {
@@ -60,7 +61,7 @@ struct ResultsView: View {
     @ViewBuilder
     private func profilContent(_ r: AnalysisResult) -> some View {
                 // "Das macht dich aus" — top traits with %
-                sectionCard(icon: "person.fill", color: "4A9EF8", title: "Das macht dich aus") {
+                sectionCard(icon: "person.fill", color: "4A9EF8", title: lang.t("Das macht dich aus", "Your Defining Traits")) {
                     VStack(alignment: .leading, spacing: 14) {
                         let topTraits = r.traitStats
                             .filter { $0.othersPercent >= 0.50 }
@@ -92,7 +93,7 @@ struct ResultsView: View {
                 }
 
                 // Stärken
-                sectionCard(icon: "star.fill", color: "34C759", title: "Stärken") {
+                sectionCard(icon: "star.fill", color: "34C759", title: lang.t("Stärken", "Strengths")) {
                     VStack(alignment: .leading, spacing: 12) {
                         ForEach(Array(r.perceivedStrengths.enumerated()), id: \.offset) { _, s in
                             HStack(alignment: .top, spacing: 12) {
@@ -109,7 +110,7 @@ struct ResultsView: View {
                 }
 
                 // Schwächen
-                sectionCard(icon: "exclamationmark.triangle.fill", color: "FF9F0A", title: "Schwächen") {
+                sectionCard(icon: "exclamationmark.triangle.fill", color: "FF9F0A", title: lang.t("Schwächen", "Weaknesses")) {
                     VStack(alignment: .leading, spacing: 12) {
                         ForEach(Array(r.possibleWeaknesses.enumerated()), id: \.offset) { _, w in
                             HStack(alignment: .top, spacing: 12) {
@@ -126,7 +127,7 @@ struct ResultsView: View {
                 }
 
                 // Advice
-                sectionCard(icon: "sparkles", color: "6B5EE4", title: "Empfehlung für dein Assessment") {
+                sectionCard(icon: "sparkles", color: "6B5EE4", title: lang.t("Empfehlung für dein Assessment", "Assessment Recommendations")) {
                     Text(r.assessmentAdvice)
                         .font(.subheadline)
                         .foregroundStyle(.white.opacity(0.85))
@@ -139,7 +140,7 @@ struct ResultsView: View {
     @ViewBuilder
     private func vergleichContent(_ r: AnalysisResult) -> some View {
         // Rating areas — Du vs. Andere
-        sectionCard(icon: "chart.bar.fill", color: "4A9EF8", title: "Bereiche — Du vs. Andere (1–5)") {
+        sectionCard(icon: "chart.bar.fill", color: "4A9EF8", title: lang.t("Bereiche — Du vs. Andere (1–5)", "Areas — You vs. Others (1–5)")) {
             VStack(spacing: 22) {
                 ForEach(r.comparisonAreas) { area in
                     areaComparisonRow(area)
@@ -148,7 +149,7 @@ struct ResultsView: View {
         }
 
         // Self vs Others summary
-        sectionCard(icon: "arrow.left.arrow.right", color: "FF9F0A", title: "Wo täuschst du dich?") {
+        sectionCard(icon: "arrow.left.arrow.right", color: "FF9F0A", title: lang.t("Wo täuschst du dich?", "Where Are You Off?")) {
             Text(r.selfVsOthers)
                 .font(.subheadline)
                 .foregroundStyle(.white.opacity(0.85))
@@ -158,7 +159,7 @@ struct ResultsView: View {
         // Surprise traits
         let surpriseTraits = r.traitStats.filter(\.surprise)
         if !surpriseTraits.isEmpty {
-            sectionCard(icon: "exclamationmark.bubble.fill", color: "FF6B6B", title: "Überraschende Unterschiede") {
+            sectionCard(icon: "exclamationmark.bubble.fill", color: "FF6B6B", title: lang.t("Überraschende Unterschiede", "Surprising Differences")) {
                 VStack(alignment: .leading, spacing: 10) {
                     ForEach(surpriseTraits) { t in
                         traitSurpriseRow(t)
@@ -182,7 +183,7 @@ struct ResultsView: View {
 
             // Du
             HStack(spacing: 8) {
-                Text("Du")
+                Text(lang.t("Du", "You"))
                     .font(.caption2)
                     .foregroundStyle(.white.opacity(0.5))
                     .frame(width: 40, alignment: .trailing)
@@ -202,7 +203,7 @@ struct ResultsView: View {
 
             // Andere
             HStack(spacing: 8) {
-                Text("Andere")
+                Text(lang.t("Andere", "Others"))
                     .font(.caption2)
                     .foregroundStyle(.white.opacity(0.5))
                     .frame(width: 40, alignment: .trailing)
@@ -241,12 +242,12 @@ struct ResultsView: View {
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.white)
                 HStack(spacing: 6) {
-                    Label(t.selfSelected ? "Du: Ja" : "Du: Nein",
+                    Label(t.selfSelected ? lang.t("Du: Ja", "You: Yes") : lang.t("Du: Nein", "You: No"),
                           systemImage: t.selfSelected ? "checkmark.circle.fill" : "xmark.circle.fill")
                         .font(.caption)
                         .foregroundStyle(t.selfSelected ? Color(hex: "34C759") : .white.opacity(0.4))
                     Text("·").foregroundStyle(.white.opacity(0.3))
-                    Text("Andere: \(Int(t.othersPercent * 100))%")
+                    Text(lang.t("Andere: \(Int(t.othersPercent * 100))%", "Others: \(Int(t.othersPercent * 100))%"))
                         .font(.caption)
                         .foregroundStyle(Color(hex: "FF6B6B"))
                 }
@@ -265,12 +266,12 @@ struct ResultsView: View {
     @ViewBuilder
     private func rohdatenContent(_ r: AnalysisResult) -> some View {
         // Trait stats
-        sectionCard(icon: "tag.fill", color: "4A9EF8", title: "Eigenschaften — wie oft genannt?") {
+        sectionCard(icon: "tag.fill", color: "4A9EF8", title: lang.t("Eigenschaften — wie oft genannt?", "Traits — How Often Mentioned?")) {
             VStack(spacing: 10) {
                 HStack(spacing: 4) {
                     Image(systemName: "person.fill").font(.caption2)
                         .foregroundStyle(Color(hex: "4A9EF8"))
-                    Text("Du hast dich so gesehen")
+                    Text(lang.t("Du hast dich so gesehen", "How you saw yourself"))
                         .font(.caption2).foregroundStyle(.white.opacity(0.4))
                     Spacer()
                 }
@@ -281,7 +282,7 @@ struct ResultsView: View {
         }
 
         // Forced choice
-        sectionCard(icon: "arrow.triangle.branch", color: "FF9F0A", title: "Entscheidungsstil — Antworten der anderen") {
+        sectionCard(icon: "arrow.triangle.branch", color: "FF9F0A", title: lang.t("Entscheidungsstil — Antworten der anderen", "Decision Style — Others' Answers")) {
             VStack(spacing: 20) {
                 ForEach(r.forcedChoiceStats) { stat in
                     forcedChoiceRow(stat)
@@ -291,7 +292,7 @@ struct ResultsView: View {
 
         // Open text
         if !r.openTextResponses.isEmpty {
-            sectionCard(icon: "text.bubble.fill", color: "6B5EE4", title: "Freitextantworten (\(r.openTextResponses.count))") {
+            sectionCard(icon: "text.bubble.fill", color: "6B5EE4", title: lang.t("Freitextantworten (\(r.openTextResponses.count))", "Open Responses (\(r.openTextResponses.count))")) {
                 VStack(alignment: .leading, spacing: 10) {
                     ForEach(Array(r.openTextResponses.enumerated()), id: \.offset) { _, text in
                         HStack(alignment: .top, spacing: 10) {
@@ -419,5 +420,6 @@ struct ResultsView: View {
     NavigationStack {
         ResultsView()
             .environmentObject(AuthService.shared)
+            .environmentObject(LanguageService.shared)
     }
 }

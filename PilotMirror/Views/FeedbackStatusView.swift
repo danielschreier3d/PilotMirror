@@ -5,6 +5,7 @@ struct FeedbackStatusView: View {
     @ObservedObject var surveyService = SurveyService.shared
     @ObservedObject var aiService = AIAnalysisService.shared
     @EnvironmentObject var auth: AuthService
+    @EnvironmentObject var lang: LanguageService
 
     @State private var showSelfAssessment = false
     @State private var showResults = false
@@ -38,7 +39,7 @@ struct FeedbackStatusView: View {
             .refreshable { await feedbackService.refreshStatus() }
         }
         .sheet(isPresented: $showSelfAssessment) {
-            FeedbackSurveyView(mode: .selfAssessment).environmentObject(auth)
+            FeedbackSurveyView(mode: .selfAssessment).environmentObject(auth).environmentObject(lang)
         }
         .sheet(isPresented: $showShareSheet) {
             if let link = feedbackService.feedbackLink {
@@ -54,7 +55,7 @@ struct FeedbackStatusView: View {
 
     private var header: some View {
         VStack(spacing: 6) {
-            Text("Dein Assessment-Plan")
+            Text(lang.t("Dein Assessment-Plan", "Your Assessment Plan"))
                 .font(.system(size: 24, weight: .bold, design: .rounded))
                 .foregroundStyle(.white)
             if let type = auth.currentUser?.assessmentType {
@@ -73,13 +74,17 @@ struct FeedbackStatusView: View {
     private var step1Card: some View {
         stepCard(
             number: 1,
-            title: "Self-Assessment ausfüllen",
-            subtitle: selfDone ? "Abgeschlossen" : "Beantworte denselben Fragebogen über dich selbst",
+            title: lang.t("Self-Assessment ausfüllen", "Complete Self-Assessment"),
+            subtitle: selfDone
+                ? lang.t("Abgeschlossen", "Completed")
+                : lang.t("Beantworte denselben Fragebogen über dich selbst",
+                          "Answer the same questionnaire about yourself"),
             done: selfDone,
             locked: false
         ) {
             if !selfDone {
-                actionButton("Jetzt starten", icon: "pencil.and.list.clipboard", color: "4A9EF8") {
+                actionButton(lang.t("Jetzt starten", "Start now"),
+                             icon: "pencil.and.list.clipboard", color: "4A9EF8") {
                     showSelfAssessment = true
                 }
             }
@@ -91,12 +96,14 @@ struct FeedbackStatusView: View {
     private var step2Card: some View {
         stepCard(
             number: 2,
-            title: "Link an mindestens 5 Personen senden",
+            title: lang.t("Link an mindestens 5 Personen senden", "Send link to at least 5 people"),
             subtitle: feedbackService.feedbackLink == nil
-                ? "Erstelle deinen persönlichen Feedback-Link"
+                ? lang.t("Erstelle deinen persönlichen Feedback-Link", "Create your personal feedback link")
                 : linkDone
-                    ? "\(responseCount)/\(targetResponses) Rückmeldungen — Report freigeschaltet, mehr ist besser!"
-                    : "\(responseCount) von \(minimumResponses) Minimum — \(minimumResponses - responseCount) fehlen noch",
+                    ? lang.t("\(responseCount)/\(targetResponses) Rückmeldungen — Report freigeschaltet, mehr ist besser!",
+                              "\(responseCount)/\(targetResponses) responses — report unlocked, more is better!")
+                    : lang.t("\(responseCount) von \(minimumResponses) Minimum — \(minimumResponses - responseCount) fehlen noch",
+                              "\(responseCount) of \(minimumResponses) minimum — \(minimumResponses - responseCount) missing"),
             done: linkDone,
             locked: false
         ) {
@@ -138,7 +145,7 @@ struct FeedbackStatusView: View {
                 }
             } else {
                 actionButton(
-                    isCreatingLink ? "Wird erstellt…" : "Link erstellen",
+                    isCreatingLink ? lang.t("Wird erstellt…", "Creating…") : lang.t("Link erstellen", "Create link"),
                     icon: "link.badge.plus",
                     color: selfDone ? "4A9EF8" : "8E8E93"
                 ) {
@@ -152,7 +159,7 @@ struct FeedbackStatusView: View {
                 }
                 .disabled(isCreatingLink || !selfDone)
                 if !selfDone {
-                    Text("Erst Self-Assessment abschließen")
+                    Text(lang.t("Erst Self-Assessment abschließen", "Complete self-assessment first"))
                         .font(.caption2)
                         .foregroundStyle(.white.opacity(0.35))
                         .frame(maxWidth: .infinity, alignment: .center)
@@ -190,15 +197,15 @@ struct FeedbackStatusView: View {
                 Text("0")
                 Spacer()
                 VStack(spacing: 1) {
-                    Text("5 min")
+                    Text(lang.t("5 min", "5 min"))
                         .foregroundStyle(responseCount >= 5 ? Color(hex: "34C759") : .white.opacity(0.5))
                     if responseCount >= 5 && responseCount < 12 {
-                        Text("✓ freigeschaltet")
+                        Text(lang.t("✓ freigeschaltet", "✓ unlocked"))
                             .foregroundStyle(Color(hex: "34C759"))
                     }
                 }
                 Spacer()
-                Text("12 ideal")
+                Text(lang.t("12 ideal", "12 ideal"))
                     .foregroundStyle(responseCount >= 12 ? Color(hex: "34C759") : .white.opacity(0.4))
             }
             .font(.caption2)
@@ -211,16 +218,18 @@ struct FeedbackStatusView: View {
     private var step3Card: some View {
         stepCard(
             number: 3,
-            title: "KI-Analyse starten",
+            title: lang.t("KI-Analyse starten", "Start AI Analysis"),
             subtitle: canAnalyze
-                ? "Alle Voraussetzungen erfüllt — Report kann erstellt werden"
-                : "Verfügbar sobald Self-Assessment und 5 Rückmeldungen vorliegen",
+                ? lang.t("Alle Voraussetzungen erfüllt — Report kann erstellt werden",
+                          "All requirements met — report can be generated")
+                : lang.t("Verfügbar sobald Self-Assessment und 5 Rückmeldungen vorliegen",
+                          "Available once self-assessment and 5 responses are complete"),
             done: aiService.result != nil,
             locked: !canAnalyze
         ) {
             if canAnalyze {
                 actionButton(
-                    aiService.isAnalyzing ? "Analysiere…" : "Report erstellen",
+                    aiService.isAnalyzing ? lang.t("Analysiere…", "Analyzing…") : lang.t("Report erstellen", "Generate report"),
                     icon: "sparkles",
                     color: "6B5EE4",
                     gradient: true
@@ -238,7 +247,7 @@ struct FeedbackStatusView: View {
                 .disabled(aiService.isAnalyzing)
             }
             if aiService.result != nil {
-                actionButton("Report anzeigen", icon: "doc.text.fill", color: "34C759") {
+                actionButton(lang.t("Report anzeigen", "View report"), icon: "doc.text.fill", color: "34C759") {
                     showResults = true
                 }
             }
@@ -343,7 +352,7 @@ struct FeedbackStatusView: View {
             loadMockData()
             showResults = true
         } label: {
-            Label("Demo: Analyse anzeigen", systemImage: "flask.fill")
+            Label(lang.t("Demo: Analyse anzeigen", "Demo: Show analysis"), systemImage: "flask.fill")
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(.white.opacity(0.35))
                 .padding(.vertical, 10)

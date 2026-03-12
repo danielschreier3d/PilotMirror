@@ -2,6 +2,7 @@ import SwiftUI
 
 struct AssessmentAdviceView: View {
     @EnvironmentObject var auth: AuthService
+    @EnvironmentObject var lang: LanguageService
 
     var body: some View {
         ZStack {
@@ -11,7 +12,7 @@ struct AssessmentAdviceView: View {
                 VStack(spacing: 20) {
                     // Header
                     VStack(spacing: 8) {
-                        Text("Preparation Guide")
+                        Text(lang.t("Vorbereitungsguide", "Preparation Guide"))
                             .font(.system(size: 22, weight: .bold, design: .rounded))
                             .foregroundStyle(.white)
                         if let type = auth.currentUser?.assessmentType {
@@ -27,20 +28,32 @@ struct AssessmentAdviceView: View {
 
                     adviceCard(
                         icon: "person.3.fill", color: "4A9EF8",
-                        title: "Group Exercise Tips",
-                        tips: [
+                        title: lang.t("Gruppenübung", "Group Exercise"),
+                        tips: lang.isGerman ? [
+                            "Melde dich innerhalb der ersten 2 Minuten zu Wort — Schweigen wird als Desinteresse gewertet",
+                            "Erkenne die Ideen anderer an, bevor du sie weiterentwickelst",
+                            "Achte auf deine Redezeit — Qualität vor Quantität",
+                            "Biete an, die Gruppenposition zusammenzufassen — zeigt Führungsstärke",
+                            "Bleib sichtbar ruhig — Assessoren beobachten Körpersprache genauso wie Worte",
+                        ] : [
                             "Speak up within the first 2 minutes — silence is misread as disinterest",
                             "Acknowledge others' ideas before building on them",
                             "Watch your airtime — quality over quantity",
                             "Offer to summarise the group's position — shows leadership",
-                            "Stay calm visibly — assessors watch body language as much as words",
+                            "Stay visibly calm — assessors watch body language as much as words",
                         ]
                     )
 
                     adviceCard(
                         icon: "mic.fill", color: "FF9F0A",
-                        title: "Interview Tips",
-                        tips: [
+                        title: lang.t("Interview", "Interview"),
+                        tips: lang.isGerman ? [
+                            "Nutze das STAR-Format: Situation, Task (Aufgabe), Action (Handlung), Result (Ergebnis)",
+                            "Bereite 5 Beispiele für Entscheidungen unter Druck vor",
+                            "Zeige Selbstreflexion — benenne eine echte Schwäche mit einer Entwicklungsgeschichte",
+                            "Recherchiere die Werte der Airline und stimme deine Antworten darauf ab",
+                            "Übe, Antworten in unter 90 Sekunden zu geben",
+                        ] : [
                             "Use STAR format: Situation, Task, Action, Result",
                             "Prepare 5 examples of decisions made under pressure",
                             "Show self-awareness — acknowledge a real weakness with a recovery story",
@@ -51,8 +64,14 @@ struct AssessmentAdviceView: View {
 
                     adviceCard(
                         icon: "arrow.triangle.branch", color: "34C759",
-                        title: "Decision Making",
-                        tips: [
+                        title: lang.t("Entscheidungsverhalten", "Decision Making"),
+                        tips: lang.isGerman ? [
+                            "Im Simulator: Kommuniziere deine Absicht laut, bevor du handelst",
+                            "Übe zeitlich begrenzte Entscheidungen — max. 30 Sekunden für Routineentscheidungen",
+                            "Verbalisiere deine Risikoeinschätzung in Rollenspielszenarien",
+                            "Bei Unsicherheit: Sag, was du denkst — Assessoren schätzen Transparenz",
+                            "Zeige, dass du dich anpassen kannst, wenn neue Informationen mitten in einer Aufgabe eintreffen",
+                        ] : [
                             "In simulators: state your intent out loud before acting",
                             "Practice time-boxed decisions — 30 seconds max for routine choices",
                             "Verbalize your risk assessment in role-play scenarios",
@@ -63,8 +82,14 @@ struct AssessmentAdviceView: View {
 
                     adviceCard(
                         icon: "brain.head.profile", color: "6B5EE4",
-                        title: "Self-Awareness",
-                        tips: [
+                        title: lang.t("Selbstwahrnehmung", "Self-Awareness"),
+                        tips: lang.isGerman ? [
+                            "Kenne dein Persönlichkeitsprofil — dein Report ist dein Leitfaden",
+                            "Falls andere dich als zurückhaltend wahrnehmen: Übe selbstbewussteres Auftreten",
+                            "Falls andere dich als dominant wahrnehmen: Übe aktives Zuhören",
+                            "Sei konsistent zwischen deinen Interview-Antworten und deinem beobachtbaren Verhalten",
+                            "Assessoren vergleichen, was du über dich sagst, mit dem, was sie beobachten",
+                        ] : [
                             "Know your personality profile — your report is your guide",
                             "If others see you as reserved — practice assertive phrasing",
                             "If others see you as dominant — practice active listening",
@@ -77,7 +102,7 @@ struct AssessmentAdviceView: View {
                 }
             }
         }
-        .navigationTitle("Preparation Guide")
+        .navigationTitle(lang.t("Vorbereitungsguide", "Preparation Guide"))
         .navigationBarTitleDisplayMode(.inline)
         .toolbarColorScheme(.dark, for: .navigationBar)
     }

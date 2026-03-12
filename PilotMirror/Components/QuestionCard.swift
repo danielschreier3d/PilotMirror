@@ -4,10 +4,11 @@ struct QuestionCard: View {
     let question: Question
     let answer: AnswerValue?
     let onAnswer: (AnswerValue) -> Void
+    @EnvironmentObject var lang: LanguageService
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
-            Text(question.text)
+            Text(question.displayText(isGerman: lang.isGerman))
                 .font(.system(size: 18, weight: .semibold, design: .rounded))
                 .foregroundStyle(.white)
                 .fixedSize(horizontal: false, vertical: true)
@@ -31,22 +32,23 @@ struct QuestionCard: View {
     // MARK: - Trait grid
 
     private var traitGrid: some View {
-        let options = question.options ?? []
+        let canonical = question.options ?? []
+        let display = question.displayOptions(isGerman: lang.isGerman) ?? canonical
         let selected: [String] = {
             if case .multipleChoice(let m) = answer { return m }
             return []
         }()
 
         return FlowLayout(spacing: 10) {
-            ForEach(options, id: \.self) { trait in
-                let isOn = selected.contains(trait)
+            ForEach(Array(zip(display, canonical)), id: \.1) { displayLabel, key in
+                let isOn = selected.contains(key)
                 Button {
                     var current = selected
-                    if isOn { current.removeAll { $0 == trait } }
-                    else { current.append(trait) }
+                    if isOn { current.removeAll { $0 == key } }
+                    else { current.append(key) }
                     onAnswer(.multipleChoice(current))
                 } label: {
-                    Text(trait)
+                    Text(displayLabel)
                         .font(.subheadline)
                         .padding(.horizontal, 14).padding(.vertical, 8)
                         .background(isOn ? Color(hex: "4A9EF8") : .white.opacity(0.08))
@@ -61,18 +63,20 @@ struct QuestionCard: View {
     // MARK: - Forced choice
 
     private var forcedChoiceButtons: some View {
-        VStack(spacing: 10) {
-            ForEach(question.options ?? [], id: \.self) { option in
+        let canonical = question.options ?? []
+        let display = question.displayOptions(isGerman: lang.isGerman) ?? canonical
+        return VStack(spacing: 10) {
+            ForEach(Array(zip(display, canonical)), id: \.1) { displayLabel, key in
                 let isSelected: Bool = {
-                    if case .singleChoice(let s) = answer { return s == option }
+                    if case .singleChoice(let s) = answer { return s == key }
                     return false
                 }()
 
                 Button {
-                    onAnswer(.singleChoice(option))
+                    onAnswer(.singleChoice(key))
                 } label: {
                     HStack {
-                        Text(option)
+                        Text(displayLabel)
                             .font(.subheadline)
                             .foregroundStyle(isSelected ? .white : .white.opacity(0.75))
                             .fixedSize(horizontal: false, vertical: true)
@@ -126,9 +130,9 @@ struct QuestionCard: View {
                 }
             }
             HStack {
-                Text("Low")
+                Text(lang.t("Niedrig", "Low"))
                 Spacer()
-                Text("High")
+                Text(lang.t("Hoch", "High"))
             }
             .font(.caption2)
             .foregroundStyle(.white.opacity(0.4))
@@ -140,7 +144,7 @@ struct QuestionCard: View {
     @State private var localText: String = ""
 
     private var openTextView: some View {
-        TextField(question.placeholder ?? "Antwort eingeben…", text: $localText, axis: .vertical)
+        TextField(question.displayPlaceholder(isGerman: lang.isGerman) ?? lang.t("Antwort eingeben…", "Enter your answer…"), text: $localText, axis: .vertical)
         .lineLimit(3...6)
         .foregroundStyle(.white)
         .padding(14)
@@ -211,6 +215,7 @@ struct FlowLayout: Layout {
             answer: .multipleChoice(["calm", "analytical"]),
             onAnswer: { _ in }
         )
+        .environmentObject(LanguageService.shared)
         .padding()
     }
 }

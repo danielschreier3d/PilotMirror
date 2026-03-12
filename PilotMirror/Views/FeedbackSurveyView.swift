@@ -8,6 +8,7 @@ enum SurveyMode {
 struct FeedbackSurveyView: View {
     let mode: SurveyMode
     @EnvironmentObject var auth: AuthService
+    @EnvironmentObject var lang: LanguageService
     @Environment(\.dismiss) var dismiss
 
     @State private var currentIndex = 0
@@ -47,21 +48,25 @@ struct FeedbackSurveyView: View {
                     .font(.system(size: 56))
                     .foregroundStyle(Color(hex: "4A9EF8"))
 
-                Text(mode.isRespondent ? "Your feedback is anonymous" : "Rate yourself honestly")
+                Text(mode.isRespondent
+                     ? lang.t("Dein Feedback ist anonym", "Your feedback is anonymous")
+                     : lang.t("Sei ehrlich zu dir selbst", "Rate yourself honestly"))
                     .font(.system(size: 22, weight: .bold, design: .rounded))
                     .foregroundStyle(.white)
                     .multilineTextAlignment(.center)
 
                 Text(mode.isRespondent
-                     ? "Your name will never be shown to the candidate. Your answers are confidential and used only to generate an anonymous report."
-                     : "Answer the same questions as your feedback providers. Be as honest as possible — this comparison is the core of your report.")
+                     ? lang.t("Dein Name wird dem Kandidaten nie angezeigt. Deine Antworten sind vertraulich und dienen ausschließlich der anonymen Auswertung.",
+                               "Your name will never be shown to the candidate. Your answers are confidential and used only to generate an anonymous report.")
+                     : lang.t("Beantworte dieselben Fragen wie deine Feedback-Geber. Sei so ehrlich wie möglich — dieser Vergleich ist der Kern deines Reports.",
+                               "Answer the same questions as your feedback providers. Be as honest as possible — this comparison is the core of your report."))
                     .font(.subheadline)
                     .foregroundStyle(.white.opacity(0.65))
                     .multilineTextAlignment(.center)
                     .lineSpacing(4)
                     .padding(.horizontal)
 
-                Text("Takes less than 3 minutes")
+                Text(lang.t("Dauert weniger als 3 Minuten", "Takes less than 3 minutes"))
                     .font(.caption)
                     .foregroundStyle(Color(hex: "34C759"))
             }
@@ -72,7 +77,7 @@ struct FeedbackSurveyView: View {
                     HStack {
                         Image(systemName: "person.fill")
                             .foregroundStyle(Color(hex: "4A9EF8"))
-                        TextField("Your first name", text: $respondentName)
+                        TextField(lang.t("Dein Vorname", "Your first name"), text: $respondentName)
                             .foregroundStyle(.white)
                             .autocorrectionDisabled()
                     }
@@ -97,7 +102,7 @@ struct FeedbackSurveyView: View {
             Button {
                 withAnimation { showIntro = false }
             } label: {
-                Text("Start Survey")
+                Text(lang.t("Umfrage starten", "Start Survey"))
                     .font(.headline)
                     .frame(maxWidth: .infinity)
                     .frame(height: 54)
@@ -119,11 +124,11 @@ struct FeedbackSurveyView: View {
             // Progress
             VStack(spacing: 8) {
                 HStack {
-                    Text("Question \(currentIndex + 1) of \(questions.count)")
+                    Text(lang.t("Frage \(currentIndex + 1) von \(questions.count)", "Question \(currentIndex + 1) of \(questions.count)"))
                         .font(.caption)
                         .foregroundStyle(.white.opacity(0.5))
                     Spacer()
-                    Text(currentQuestion.sectionTitle)
+                    Text(currentQuestion.displaySectionTitle(isGerman: lang.isGerman))
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(Color(hex: "4A9EF8"))
                 }
@@ -176,7 +181,7 @@ struct FeedbackSurveyView: View {
                         if isSubmitting {
                             ProgressView().tint(.white)
                         } else {
-                            Text(currentIndex < questions.count - 1 ? "Next" : "Submit")
+                            Text(currentIndex < questions.count - 1 ? lang.t("Weiter", "Next") : lang.t("Absenden", "Submit"))
                                 .fontWeight(.semibold)
                         }
                     }
@@ -229,12 +234,12 @@ struct FeedbackSurveyView: View {
                 .shadow(color: Color(hex: "34C759").opacity(0.4), radius: 20)
 
             VStack(spacing: 8) {
-                Text("Thank you!")
+                Text(lang.t("Vielen Dank!", "Thank you!"))
                     .font(.system(size: 28, weight: .bold, design: .rounded))
                     .foregroundStyle(.white)
                 Text(mode.isRespondent
-                     ? "Your anonymous feedback has been submitted."
-                     : "Self-assessment complete. Return to check your report status.")
+                     ? lang.t("Dein anonymes Feedback wurde übermittelt.", "Your anonymous feedback has been submitted.")
+                     : lang.t("Self-Assessment abgeschlossen. Gehe zurück, um deinen Report-Status zu prüfen.", "Self-assessment complete. Return to check your report status."))
                     .font(.subheadline)
                     .foregroundStyle(.white.opacity(0.65))
                     .multilineTextAlignment(.center)
@@ -244,7 +249,7 @@ struct FeedbackSurveyView: View {
             Button {
                 dismiss()
             } label: {
-                Text("Done")
+                Text(lang.t("Fertig", "Done"))
                     .font(.headline)
                     .frame(maxWidth: .infinity)
                     .frame(height: 54)
@@ -268,4 +273,5 @@ extension SurveyMode {
 #Preview {
     FeedbackSurveyView(mode: .selfAssessment)
         .environmentObject(AuthService.shared)
+        .environmentObject(LanguageService.shared)
 }
