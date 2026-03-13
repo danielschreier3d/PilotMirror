@@ -25,29 +25,34 @@
       -webkit-font-smoothing: antialiased;
     }
     #app { max-width: 480px; margin: 0 auto; min-height: 100dvh; display: flex; flex-direction: column; }
-    .screen { display: none; flex-direction: column; flex: 1; padding: 24px 20px; }
+
+    /* ── Screens ── */
+    .screen { display: none; flex-direction: column; flex: 1; }
     .screen.active { display: flex; }
-    .center-fill { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; text-align:center; }
+    .screen-pad { padding: 24px 20px; }
+    .center-fill { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; text-align:center; padding:24px 20px; }
+
+    /* ── Spinner ── */
     .spinner { width:36px; height:36px; border:3px solid rgba(74,158,248,.2); border-top-color:var(--accent); border-radius:50%; animation:spin .8s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Typography ── */
     h1 { font-size:22px; font-weight:700; line-height:1.3; }
     h2 { font-size:17px; font-weight:700; margin-bottom:10px; }
     p { font-size:15px; line-height:1.7; color:var(--dim); }
-    .label { font-size:13px; color:var(--faint); margin-bottom:6px; display:block; }
 
-    /* Nav bar */
-    .nav-bar { display:flex; align-items:center; justify-content:space-between; padding:16px 20px 8px; max-width:480px; margin:0 auto; width:100%; }
+    /* ── Nav bar ── */
+    .nav-bar { display:flex; align-items:center; justify-content:space-between; padding:16px 20px 8px; }
     .nav-title { font-size:17px; font-weight:700; }
     .nav-actions { display:flex; gap:10px; align-items:center; }
     .nav-btn { background:rgba(74,158,248,.15); border:1px solid rgba(74,158,248,.3); color:var(--accent); font-size:12px; font-weight:700; padding:5px 11px; border-radius:20px; cursor:pointer; font-family:inherit; }
-    .icon-btn { background:none; border:none; color:var(--accent); font-size:22px; cursor:pointer; padding:4px; line-height:1; }
+    .icon-btn { background:none; border:none; color:var(--accent); font-size:20px; cursor:pointer; padding:4px; line-height:1; }
 
-    /* Cards */
+    /* ── Cards ── */
     .card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:16px 18px; }
     .card+.card { margin-top:12px; }
-    .card-green { background:rgba(52,199,89,.06); border-color:rgba(52,199,89,.25); }
 
-    /* Fields */
+    /* ── Fields ── */
     .field { display:flex; align-items:center; gap:10px; background:rgba(255,255,255,.08); border:1.5px solid var(--border); border-radius:12px; padding:13px 16px; transition:border-color .2s; }
     .field:focus-within { border-color:var(--accent); }
     .field-icon { font-size:16px; flex-shrink:0; }
@@ -55,7 +60,7 @@
     .field input::placeholder { color:var(--faint); }
     .field+.field { margin-top:10px; }
 
-    /* Buttons */
+    /* ── Buttons ── */
     .btn { display:flex; align-items:center; justify-content:center; gap:8px; height:52px; border-radius:14px; border:none; font-size:16px; font-weight:600; font-family:inherit; cursor:pointer; transition:opacity .15s, transform .1s; width:100%; }
     .btn:active { transform:scale(.98); opacity:.9; }
     .btn:disabled { opacity:.3; cursor:not-allowed; }
@@ -65,1756 +70,1348 @@
     .btn-ghost { background:rgba(255,255,255,.08); border:1px solid var(--border); color:#fff; }
     .btn-sm { height:42px; font-size:14px; border-radius:12px; }
     .btn-danger { background:rgba(255,107,107,.15); border:1px solid rgba(255,107,107,.3); color:var(--red); }
+    .mt8  { margin-top:8px; }
     .mt12 { margin-top:12px; }
     .mt16 { margin-top:16px; }
     .mt20 { margin-top:20px; }
     .mt24 { margin-top:24px; }
-    .gap { flex:1; }
+    .gap  { flex:1; }
 
-    /* Tabs */
+    /* ── Report tabs ── */
     .tab-bar { display:flex; background:rgba(255,255,255,.07); border-radius:12px; padding:4px; margin-bottom:16px; }
     .tab-btn { flex:1; height:34px; border:none; border-radius:9px; background:none; color:var(--dim); font-size:13px; font-weight:600; font-family:inherit; cursor:pointer; transition:all .2s; }
     .tab-btn.active { background:rgba(74,158,248,.2); color:var(--accent); }
 
-    /* Auth */
+    /* ── Auth tabs ── */
     .auth-tabs { display:flex; background:rgba(255,255,255,.06); border-radius:12px; padding:4px; margin-bottom:20px; }
     .auth-tab { flex:1; height:38px; border:none; border-radius:9px; background:none; color:var(--dim); font-size:14px; font-weight:600; font-family:inherit; cursor:pointer; transition:all .2s; }
     .auth-tab.active { background:rgba(255,255,255,.12); color:var(--text); }
     .error-box { background:rgba(255,107,107,.1); border:1px solid rgba(255,107,107,.3); border-radius:11px; padding:12px 14px; font-size:13px; color:var(--red); margin-top:12px; display:none; }
 
-    /* Progress */
+    /* ── Progress ── */
     .prog-bar { height:5px; background:rgba(255,255,255,.1); border-radius:99px; overflow:hidden; }
     .prog-fill { height:100%; background:var(--accent); border-radius:99px; transition:width .35s ease; }
 
-    /* Step cards */
+    /* ── Dashboard step cards ── */
     .step-card { background:rgba(255,255,255,.06); border-radius:18px; padding:18px; margin-bottom:14px; }
     .step-card.done { background:rgba(52,199,89,.06); border:1px solid rgba(52,199,89,.2); }
     .step-card.locked { opacity:.55; }
     .step-header { display:flex; align-items:center; gap:14px; margin-bottom:14px; }
     .step-num { width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:700; flex-shrink:0; }
     .step-num.active { background:rgba(74,158,248,.2); color:var(--accent); }
-    .step-num.done { background:rgba(52,199,89,.2); color:var(--green); }
+    .step-num.done   { background:rgba(52,199,89,.2);  color:var(--green); }
     .step-num.locked { background:rgba(255,255,255,.05); color:var(--faint); }
     .step-meta h3 { font-size:15px; font-weight:600; color:var(--text); }
-    .step-meta p { font-size:13px; color:var(--dim); margin-top:2px; line-height:1.4; }
+    .step-meta p  { font-size:13px; color:var(--dim); margin-top:2px; line-height:1.4; }
     .step-meta p.done { color:var(--green); }
-    .step-meta p.locked { color:var(--faint); }
 
-    /* Link box */
-    .link-box { display:flex; align-items:center; gap:10px; background:rgba(255,255,255,.06); border:1px solid var(--border); border-radius:11px; padding:11px 14px; margin-top:10px; }
-    .link-url { flex:1; font-size:12px; color:var(--accent); font-family:monospace; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-    .copy-btn { background:none; border:none; font-size:18px; cursor:pointer; flex-shrink:0; }
-    .share-row { display:flex; gap:10px; margin-top:10px; }
-    .share-btn { flex:1; display:flex; flex-direction:column; align-items:center; gap:5px; cursor:pointer; background:none; border:none; }
-    .share-icon { width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:20px; }
-    .share-label { font-size:11px; color:var(--faint); }
+    /* ── Assessment select cards ── */
+    .assess-card { background:var(--card); border:2px solid var(--border); border-radius:16px; padding:18px; cursor:pointer; transition:border-color .2s, background .2s; display:flex; align-items:flex-start; gap:14px; }
+    .assess-card+.assess-card { margin-top:12px; }
+    .assess-card.selected { border-color:var(--accent); background:rgba(74,158,248,.07); }
+    .assess-icon { width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; }
+    .assess-text h3 { font-size:16px; font-weight:600; }
+    .assess-text p  { font-size:13px; color:var(--dim); margin-top:3px; line-height:1.5; }
+    .check-circle { width:24px; height:24px; border-radius:50%; border:2px solid var(--faint); margin-left:auto; flex-shrink:0; display:flex; align-items:center; justify-content:center; transition:all .2s; }
+    .check-circle.checked { background:var(--accent); border-color:var(--accent); }
+    .check-circle.checked::after { content:'✓'; color:#fff; font-size:13px; font-weight:700; }
 
-    /* Progress bar for responses */
-    .resp-bar-wrap { margin-top:8px; }
-    .resp-bar-track { height:8px; background:rgba(255,255,255,.08); border-radius:99px; overflow:hidden; position:relative; }
-    .resp-bar-fill { height:100%; border-radius:99px; transition:width .5s; }
-    .resp-labels { display:flex; justify-content:space-between; font-size:11px; color:var(--faint); margin-top:5px; }
+    /* ── Bottom tab bar ── */
+    .bottom-tab-bar { display:flex; background:rgba(10,22,40,.92); border-top:1px solid var(--border); padding:8px 0 max(8px, env(safe-area-inset-bottom)); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); }
+    .bottom-tab { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; background:none; border:none; cursor:pointer; padding:4px 0; color:var(--faint); font-family:inherit; }
+    .bottom-tab.active { color:var(--accent); }
+    .bottom-tab svg { width:24px; height:24px; fill:currentColor; }
+    .bottom-tab span { font-size:10px; font-weight:500; }
 
-    /* Survey */
-    .q-section { font-size:11px; font-weight:700; letter-spacing:.8px; text-transform:uppercase; color:var(--accent); margin-bottom:6px; }
-    .q-text { font-size:18px; font-weight:600; line-height:1.4; margin-bottom:18px; }
-    .trait-grid { display:grid; grid-template-columns:1fr 1fr; gap:9px; }
-    .trait-btn { padding:11px 12px; border-radius:10px; border:1.5px solid var(--border); background:rgba(255,255,255,.05); color:var(--dim); font-size:14px; font-weight:500; cursor:pointer; text-align:center; font-family:inherit; transition:all .12s; }
-    .trait-btn.active { border-color:var(--accent); background:rgba(74,158,248,.15); color:var(--accent); font-weight:600; }
-    .choice-list { display:flex; flex-direction:column; gap:10px; }
-    .choice-item { display:flex; align-items:center; gap:14px; padding:15px 16px; border-radius:13px; border:1.5px solid var(--border); background:rgba(255,255,255,.05); cursor:pointer; font-family:inherit; font-size:15px; font-weight:500; color:var(--text); width:100%; text-align:left; transition:all .12s; }
-    .choice-item.active { border-color:var(--accent); background:rgba(74,158,248,.12); color:var(--accent); }
-    .choice-dot { width:20px; height:20px; border-radius:50%; border:2px solid rgba(255,255,255,.25); flex-shrink:0; transition:all .12s; }
-    .choice-item.active .choice-dot { border-color:var(--accent); background:var(--accent); }
-    .rating-row { display:flex; gap:8px; }
-    .rating-btn { flex:1; aspect-ratio:1; border-radius:12px; border:1.5px solid var(--border); background:rgba(255,255,255,.05); color:var(--dim); font-size:18px; font-weight:700; cursor:pointer; font-family:inherit; display:flex; align-items:center; justify-content:center; transition:all .12s; }
-    .rating-btn.active { border-color:var(--accent); background:rgba(74,158,248,.2); color:var(--accent); }
-    .rating-labels { display:flex; justify-content:space-between; margin-top:7px; font-size:11px; color:var(--faint); }
-    .open-ta { width:100%; background:rgba(255,255,255,.08); border:1.5px solid var(--border); border-radius:12px; padding:13px 16px; color:var(--text); font-size:15px; font-family:inherit; outline:none; resize:none; min-height:110px; line-height:1.65; transition:border-color .2s; }
-    .open-ta:focus { border-color:var(--accent); }
-    .open-ta::placeholder { color:var(--faint); }
-    .nav-row { display:flex; gap:10px; margin-top:16px; flex-shrink:0; }
-    .back-btn { width:52px; height:52px; border-radius:14px; background:rgba(255,255,255,.08); border:1px solid var(--border); color:#fff; font-size:22px; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    /* ── Main shell ── */
+    #screen-main { display:none; flex-direction:column; flex:1; }
+    #screen-main.active { display:flex; }
+    .main-content { flex:1; overflow-y:auto; display:flex; flex-direction:column; }
+    .tab-page { display:none; flex-direction:column; flex:1; }
+    .tab-page.active { display:flex; }
 
-    /* Assessment type cards */
-    .assess-card { display:flex; align-items:center; gap:14px; padding:16px; border-radius:14px; border:1.5px solid var(--border); background:rgba(255,255,255,.05); cursor:pointer; transition:all .15s; margin-bottom:10px; }
-    .assess-card:active { transform:scale(.99); }
-    .assess-card:hover { border-color:var(--accent); background:rgba(74,158,248,.08); }
-    .assess-icon { font-size:26px; width:44px; text-align:center; flex-shrink:0; }
-    .assess-info h3 { font-size:15px; font-weight:600; }
-    .assess-info p { font-size:12px; color:var(--dim); margin-top:2px; }
+    /* ── Section card (sectionCard) ── */
+    .sc { background:rgba(255,255,255,.07); border-radius:18px; padding:18px; margin-bottom:12px; }
+    .sc-header { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+    .sc-icon { width:32px; height:32px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; }
+    .sc-title { font-size:16px; font-weight:700; color:var(--text); }
+    .sc-divider { height:1px; background:rgba(255,255,255,.08); margin:12px 0; }
+    .sc-body { font-size:15px; color:var(--dim); line-height:1.7; }
 
-    /* Privacy sections */
-    .privacy-section { padding:14px; background:rgba(255,255,255,.05); border-radius:14px; margin-bottom:10px; }
-    .privacy-section-hd { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
-    .priv-icon { font-size:14px; width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-    .privacy-section p { font-size:13px; color:rgba(255,255,255,.6); line-height:1.5; }
+    /* ── Trait chips ── */
+    .chip-wrap { display:flex; flex-wrap:wrap; gap:8px; margin-top:4px; }
+    .chip { background:rgba(74,158,248,.12); border:1px solid rgba(74,158,248,.3); color:var(--accent); font-size:13px; font-weight:500; padding:5px 12px; border-radius:20px; }
 
-    /* Report */
-    .report-scroll { flex:1; overflow-y:auto; padding-bottom:32px; }
-    .section-hd { font-size:12px; font-weight:700; letter-spacing:.7px; text-transform:uppercase; color:var(--accent); margin-bottom:10px; margin-top:20px; }
-    .ai-banner { display:flex; align-items:center; gap:12px; padding:14px 16px; background:rgba(107,94,228,.1); border:1px solid rgba(107,94,228,.25); border-radius:12px; margin-bottom:16px; font-size:14px; color:rgba(255,255,255,.7); }
-    .summary-text { font-size:15px; line-height:1.7; color:rgba(255,255,255,.85); }
-    .bullet-list { list-style:none; display:flex; flex-direction:column; gap:8px; }
-    .bullet-list li { padding:12px 14px; border-radius:11px; font-size:14px; line-height:1.5; }
-    .bullet-green { background:rgba(52,199,89,.08); border:1px solid rgba(52,199,89,.18); color:rgba(255,255,255,.85); }
-    .bullet-red { background:rgba(255,107,107,.08); border:1px solid rgba(255,107,107,.18); color:rgba(255,255,255,.85); }
-    .bullet-blue { background:rgba(74,158,248,.08); border:1px solid rgba(74,158,248,.18); color:rgba(255,255,255,.85); }
-    .advice-box { padding:16px; background:rgba(74,158,248,.07); border:1px solid rgba(74,158,248,.2); border-radius:13px; font-size:14px; color:rgba(255,255,255,.8); line-height:1.6; }
-    /* Trait bars */
-    .trait-row { display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid rgba(255,255,255,.06); }
-    .trait-row:last-child { border-bottom:none; }
-    .trait-name { font-size:14px; color:var(--text); width:130px; flex-shrink:0; }
-    .trait-bar-wrap { flex:1; height:8px; background:rgba(255,255,255,.08); border-radius:99px; overflow:hidden; }
-    .trait-bar { height:100%; border-radius:99px; transition:width .5s; }
-    .trait-self-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
-    .trait-pct { font-size:12px; color:var(--faint); width:36px; text-align:right; flex-shrink:0; }
-    /* Comparison bars */
-    .comp-row { padding:10px 0; border-bottom:1px solid rgba(255,255,255,.06); }
-    .comp-row:last-child { border-bottom:none; }
-    .comp-name { font-size:14px; font-weight:600; margin-bottom:6px; }
-    .comp-bar-row { display:flex; align-items:center; gap:8px; margin-bottom:4px; }
-    .comp-bar-label { font-size:11px; color:var(--faint); width:60px; flex-shrink:0; }
-    .comp-bar-track { flex:1; height:8px; background:rgba(255,255,255,.08); border-radius:99px; overflow:hidden; }
-    .comp-bar-fill { height:100%; border-radius:99px; transition:width .5s; }
-    .comp-bar-val { font-size:12px; color:var(--faint); width:30px; text-align:right; flex-shrink:0; }
-    .comp-gap { font-size:11px; padding:2px 8px; border-radius:6px; display:inline-block; margin-top:4px; font-weight:600; }
-    /* Forced choice */
-    .fc-question { font-size:13px; color:var(--dim); margin-bottom:8px; font-style:italic; }
-    .fc-option-row { display:flex; align-items:center; gap:8px; margin-bottom:6px; }
-    .fc-opt-label { font-size:13px; color:var(--text); flex:1; }
-    .fc-opt-bar-wrap { width:100px; height:7px; background:rgba(255,255,255,.08); border-radius:99px; overflow:hidden; flex-shrink:0; }
-    .fc-opt-bar { height:100%; background:var(--accent); border-radius:99px; transition:width .5s; }
-    .fc-opt-pct { font-size:12px; color:var(--faint); width:36px; text-align:right; flex-shrink:0; }
-    .fc-self-badge { font-size:10px; font-weight:700; background:rgba(52,199,89,.2); color:var(--green); padding:1px 6px; border-radius:5px; flex-shrink:0; }
-    /* Open text */
-    .open-q-section { margin-bottom:16px; }
-    .open-q-title { font-size:13px; font-weight:600; color:var(--accent); margin-bottom:8px; }
-    .open-q-answer { padding:10px 12px; background:rgba(255,255,255,.05); border-radius:10px; font-size:13px; color:rgba(255,255,255,.75); line-height:1.5; margin-bottom:6px; }
-    /* Assessment advice tips */
-    .tips-section { margin-bottom:20px; }
-    .tips-hd { font-size:14px; font-weight:700; margin-bottom:8px; color:var(--text); }
-    /* Chips */
-    .pill { display:inline-block; padding:3px 11px; border-radius:99px; font-size:12px; font-weight:600; }
-    .pill-accent { background:rgba(74,158,248,.15); color:var(--accent); }
-    .pill-green { background:rgba(52,199,89,.12); color:var(--green); }
+    /* ── Comparison bars ── */
+    .comp-row { margin-bottom:16px; }
+    .comp-labels { display:flex; justify-content:space-between; margin-bottom:6px; }
+    .comp-name  { font-size:14px; font-weight:500; }
+    .comp-delta { font-size:12px; font-weight:600; padding:2px 7px; border-radius:8px; }
+    .comp-delta.pos { background:rgba(52,199,89,.15); color:var(--green); }
+    .comp-delta.neg { background:rgba(255,107,107,.15); color:var(--red); }
+    .comp-delta.neu { background:rgba(255,255,255,.08); color:var(--dim); }
+    .bar-pair { display:flex; flex-direction:column; gap:5px; }
+    .bar-row  { display:flex; align-items:center; gap:8px; }
+    .bar-label { font-size:12px; color:var(--faint); width:42px; flex-shrink:0; }
+    .bar-track { flex:1; height:9px; background:rgba(255,255,255,.08); border-radius:99px; overflow:hidden; }
+    .bar-fill  { height:100%; border-radius:99px; transition:width .4s ease; }
+    .bar-pct   { font-size:12px; color:var(--dim); width:34px; text-align:right; flex-shrink:0; }
+
+    /* ── Rohdaten trait rows ── */
+    .rd-row { margin-bottom:14px; }
+    .rd-header { display:flex; align-items:center; gap:6px; margin-bottom:6px; }
+    .rd-dot { font-size:15px; }
+    .rd-name { font-size:14px; font-weight:500; }
+    .rd-bar-row { display:flex; align-items:center; gap:8px; }
+    .rd-bar-track { flex:1; height:8px; background:rgba(255,255,255,.08); border-radius:99px; overflow:hidden; }
+    .rd-bar-fill  { height:100%; border-radius:99px; background:var(--accent); }
+    .rd-pct { font-size:12px; color:var(--dim); width:34px; text-align:right; flex-shrink:0; }
+
+    /* ── Survey ── */
+    .q-text { font-size:18px; font-weight:600; line-height:1.5; margin-bottom:20px; }
+    .option-btn { display:flex; align-items:center; gap:12px; background:rgba(255,255,255,.06); border:2px solid transparent; border-radius:14px; padding:14px 16px; cursor:pointer; width:100%; font-family:inherit; color:var(--text); font-size:15px; text-align:left; margin-bottom:10px; transition:all .2s; }
+    .option-btn:hover, .option-btn.selected { border-color:var(--accent); background:rgba(74,158,248,.08); }
+    .option-check { width:22px; height:22px; border-radius:50%; border:2px solid var(--faint); flex-shrink:0; display:flex; align-items:center; justify-content:center; transition:all .2s; }
+    .option-btn.selected .option-check { background:var(--accent); border-color:var(--accent); }
+    .option-btn.selected .option-check::after { content:'✓'; color:#fff; font-size:12px; font-weight:700; }
+    .rating-row { display:flex; gap:8px; justify-content:space-between; margin-bottom:14px; }
+    .rating-btn { flex:1; height:48px; border-radius:12px; border:2px solid var(--border); background:rgba(255,255,255,.05); color:var(--text); font-size:17px; font-weight:600; font-family:inherit; cursor:pointer; transition:all .2s; }
+    .rating-btn.selected { border-color:var(--accent); background:rgba(74,158,248,.15); color:var(--accent); }
+    .rating-labels { display:flex; justify-content:space-between; font-size:11px; color:var(--faint); margin-top:-8px; margin-bottom:16px; padding:0 4px; }
+    textarea.text-input { width:100%; background:rgba(255,255,255,.08); border:1.5px solid var(--border); border-radius:12px; padding:14px 16px; color:var(--text); font-size:15px; font-family:inherit; resize:none; outline:none; line-height:1.6; transition:border-color .2s; min-height:120px; }
+    textarea.text-input:focus { border-color:var(--accent); }
+    textarea.text-input::placeholder { color:var(--faint); }
+
+    /* ── Tips ── */
+    .tip-section { margin-bottom:20px; }
+    .tip-section-header { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+    .tip-dot { width:12px; height:12px; border-radius:50%; flex-shrink:0; }
+    .tip-section-title { font-size:16px; font-weight:700; }
+    .tip-item { display:flex; gap:10px; margin-bottom:10px; }
+    .tip-num { width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0; margin-top:1px; }
+    .tip-text { font-size:14px; color:var(--dim); line-height:1.6; }
+
+    /* ── Privacy ── */
+    .privacy-section { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px; margin-bottom:12px; }
+    .privacy-section h3 { font-size:15px; font-weight:600; margin-bottom:8px; }
+    .privacy-section p  { font-size:13px; line-height:1.6; }
+
+    /* ── Misc ── */
+    .badge { display:inline-flex; align-items:center; gap:5px; background:rgba(74,158,248,.15); border:1px solid rgba(74,158,248,.3); color:var(--accent); font-size:11px; font-weight:600; padding:3px 8px; border-radius:8px; }
+    .badge-green { background:rgba(52,199,89,.15); border-color:rgba(52,199,89,.3); color:var(--green); }
+    .scrollable { overflow-y:auto; flex:1; }
+    .info-row { display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid rgba(255,255,255,.06); font-size:14px; }
+    .info-row:last-child { border-bottom:none; }
+    .info-key  { color:var(--dim); }
+    .info-val  { font-weight:500; }
+    .section-label { font-size:13px; font-weight:600; color:var(--faint); text-transform:uppercase; letter-spacing:.04em; margin-bottom:8px; margin-top:4px; }
+    .open-text-quote { font-size:14px; color:var(--dim); line-height:1.7; font-style:italic; padding:12px 0; border-bottom:1px solid rgba(255,255,255,.06); }
+    .open-text-quote:last-child { border-bottom:none; }
+
+    /* ── FC bar ── */
+    .fc-row { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+    .fc-label { font-size:13px; color:var(--dim); width:90px; flex-shrink:0; }
+    .fc-track  { flex:1; height:8px; background:rgba(255,255,255,.08); border-radius:99px; overflow:hidden; }
+    .fc-fill   { height:100%; background:var(--purple); border-radius:99px; }
+    .fc-count  { font-size:12px; color:var(--dim); width:24px; text-align:right; }
   </style>
 </head>
 <body>
 <div id="app">
 
-  <!-- LOADING -->
-  <div id="s-loading" class="screen active">
+  <!-- ══════════════════════════════════════════════════════ LOADING -->
+  <div id="screen-loading" class="screen active">
     <div class="center-fill">
-      <div style="font-size:48px">✈️</div>
       <div class="spinner"></div>
+      <p style="color:var(--faint);font-size:14px;">Loading…</p>
     </div>
   </div>
 
-  <!-- AUTH -->
-  <div id="s-auth" class="screen" style="justify-content:center;">
-    <div style="text-align:center;margin-bottom:32px;">
-      <div style="font-size:44px;margin-bottom:8px;">✈️</div>
-      <div style="font-size:24px;font-weight:700;letter-spacing:-.3px;">PilotMirror</div>
-      <div style="font-size:14px;color:var(--dim);margin-top:6px;">360° Feedback für dein Piloten-Assessment</div>
-    </div>
-    <div class="auth-tabs">
-      <button class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')">Anmelden</button>
-      <button class="auth-tab" id="tab-register" onclick="switchAuthTab('register')">Registrieren</button>
-    </div>
-    <!-- Login form -->
-    <div id="form-login">
-      <div class="field">
-        <span class="field-icon">✉️</span>
-        <input id="login-email" type="email" placeholder="E-Mail" autocomplete="email" inputmode="email">
+  <!-- ══════════════════════════════════════════════════════ AUTH -->
+  <div id="screen-auth" class="screen">
+    <div class="center-fill" style="justify-content:flex-start;padding-top:60px;gap:0;">
+      <div style="font-size:48px;margin-bottom:16px;">🪞</div>
+      <h1 style="font-size:28px;margin-bottom:8px;">PilotMirror</h1>
+      <p style="font-size:16px;line-height:1.6;margin-bottom:32px;max-width:280px;">Understand how others perceive you<br>before your pilot assessment.</p>
+
+      <div style="width:100%;max-width:380px;">
+        <div class="auth-tabs">
+          <button class="auth-tab active" id="tab-register" onclick="switchAuthTab('register')">Create Account</button>
+          <button class="auth-tab" id="tab-signin"   onclick="switchAuthTab('signin')">Sign In</button>
+        </div>
+
+        <div id="auth-register">
+          <div class="field">
+            <span class="field-icon">✉️</span>
+            <input type="email" id="reg-email" placeholder="Email" autocomplete="email">
+          </div>
+          <div class="field mt12">
+            <span class="field-icon">🔒</span>
+            <input type="password" id="reg-pw" placeholder="Password" autocomplete="new-password">
+          </div>
+          <div class="error-box" id="reg-error"></div>
+          <button class="btn btn-primary mt20" onclick="doRegister()">Create Account</button>
+          <p style="font-size:12px;color:var(--faint);text-align:center;margin-top:14px;">By continuing you agree to our Terms &amp; Privacy Policy.</p>
+        </div>
+
+        <div id="auth-signin" style="display:none;">
+          <div class="field">
+            <span class="field-icon">✉️</span>
+            <input type="email" id="si-email" placeholder="Email" autocomplete="email">
+          </div>
+          <div class="field mt12">
+            <span class="field-icon">🔒</span>
+            <input type="password" id="si-pw" placeholder="Password" autocomplete="current-password">
+          </div>
+          <div class="error-box" id="si-error"></div>
+          <button class="btn btn-primary mt20" onclick="doSignIn()">Sign In</button>
+          <p style="font-size:12px;color:var(--faint);text-align:center;margin-top:14px;">By continuing you agree to our Terms &amp; Privacy Policy.</p>
+        </div>
       </div>
-      <div class="field">
-        <span class="field-icon">🔑</span>
-        <input id="login-pw" type="password" placeholder="Passwort" autocomplete="current-password">
-      </div>
-      <div class="error-box" id="login-err"></div>
-      <button class="btn btn-primary mt16" id="btn-login" onclick="doLogin()">Anmelden</button>
-    </div>
-    <!-- Register form -->
-    <div id="form-register" style="display:none;">
-      <div class="field">
-        <span class="field-icon">👤</span>
-        <input id="reg-name" type="text" placeholder="Dein Name" autocomplete="name" autocapitalize="words">
-      </div>
-      <div class="field">
-        <span class="field-icon">✉️</span>
-        <input id="reg-email" type="email" placeholder="E-Mail" autocomplete="email" inputmode="email">
-      </div>
-      <div class="field">
-        <span class="field-icon">🔑</span>
-        <input id="reg-pw" type="password" placeholder="Passwort (min. 6 Zeichen)" autocomplete="new-password">
-      </div>
-      <div class="error-box" id="reg-err"></div>
-      <button class="btn btn-primary mt16" id="btn-register" onclick="doRegister()">Account erstellen</button>
-    </div>
-    <div style="margin-top:16px;text-align:center;">
-      <button class="nav-btn" onclick="toggleLang()" id="lang-btn-auth">EN</button>
     </div>
   </div>
 
-  <!-- EMAIL CONFIRM -->
-  <div id="s-email-confirm" class="screen">
+  <!-- ══════════════════════════════════════════════════════ EMAIL CONFIRM -->
+  <div id="screen-confirm" class="screen">
     <div class="center-fill">
-      <div style="font-size:48px">✉️</div>
-      <h1 id="txt-confirm-title">E-Mail bestätigen</h1>
-      <p id="txt-confirm-msg">Wir haben dir eine Bestätigungs-E-Mail gesendet. Bitte klicke auf den Link in der E-Mail und melde dich anschließend an.</p>
-      <button class="btn btn-ghost mt20" onclick="showScreen('s-auth')" id="btn-back-login">Zurück zum Login</button>
+      <div style="font-size:56px;">📬</div>
+      <h1>Check your email</h1>
+      <p style="max-width:280px;">We sent you a confirmation link. Click it, then come back here.</p>
+      <button class="btn btn-ghost mt16" style="max-width:240px;" onclick="showScreen('screen-auth')">Back to Sign In</button>
     </div>
   </div>
 
-  <!-- PRIVACY -->
-  <div id="s-privacy" class="screen">
-    <div style="text-align:center;padding:24px 0 20px;">
-      <div style="font-size:40px;margin-bottom:8px;">🔒</div>
-      <h1 id="txt-priv-title">Datenschutz & Nutzungsbedingungen</h1>
-      <p style="font-size:13px;margin-top:6px;" id="txt-priv-sub">Beta-Version — bitte lies die folgenden Hinweise sorgfältig.</p>
-    </div>
-    <div style="flex:1;overflow-y:auto;">
-      <div class="privacy-section">
-        <div class="privacy-section-hd">
-          <div class="priv-icon" style="background:rgba(74,158,248,.15);">👤</div>
-          <span style="font-size:14px;font-weight:600;" id="txt-priv1-title">Welche Daten werden gespeichert?</span>
-        </div>
-        <p id="txt-priv1-body">Deine E-Mail-Adresse, deine Antworten im Self-Assessment sowie die anonymen Rückmeldungen der Personen, die du zur Umfrage eingeladen hast. Diese Daten werden in einer gesicherten Cloud-Datenbank (Supabase) gespeichert.</p>
-      </div>
-      <div class="privacy-section">
-        <div class="privacy-section-hd">
-          <div class="priv-icon" style="background:rgba(107,94,228,.15);">✨</div>
-          <span style="font-size:14px;font-weight:600;" id="txt-priv2-title">KI-Analyse</span>
-        </div>
-        <p id="txt-priv2-body">Zur Erstellung deines persönlichen Reports werden deine Antworten und die Umfrage-Ergebnisse an einen KI-Dienst (Groq / Llama) übermittelt. Die Übertragung erfolgt verschlüsselt. Der KI-Anbieter speichert keine Anfragen dauerhaft.</p>
-      </div>
-      <div class="privacy-section">
-        <div class="privacy-section-hd">
-          <div class="priv-icon" style="background:rgba(52,199,89,.15);">👥</div>
-          <span style="font-size:14px;font-weight:600;" id="txt-priv3-title">Respondenten</span>
-        </div>
-        <p id="txt-priv3-body">Personen, die deinen Feedback-Link ausfüllen, geben ihren Namen und ihre Beziehung zu dir an. Diese Angaben sind nur für dich und den KI-Report sichtbar — nicht für Dritte.</p>
-      </div>
-      <div class="privacy-section">
-        <div class="privacy-section-hd">
-          <div class="priv-icon" style="background:rgba(255,159,10,.15);">⚠️</div>
-          <span style="font-size:14px;font-weight:600;" id="txt-priv4-title">Beta-Hinweis</span>
-        </div>
-        <p id="txt-priv4-body">Dies ist eine Beta-Version. Gespeicherte Daten können jederzeit ohne Vorankündigung gelöscht werden. Die App ist nicht für professionelle Einzel- oder Eignungsdiagnostik geeignet.</p>
-      </div>
-      <div class="privacy-section">
-        <div class="privacy-section-hd">
-          <div class="priv-icon" style="background:rgba(255,107,107,.15);">🗑️</div>
-          <span style="font-size:14px;font-weight:600;" id="txt-priv5-title">Datenlöschung</span>
-        </div>
-        <p id="txt-priv5-body">Du kannst die Löschung deiner Daten jederzeit durch das Senden einer E-Mail beantragen. Mit Registrierung stimmst du der Verarbeitung deiner Daten gemäß dieser Hinweise zu.</p>
-      </div>
-    </div>
-    <button class="btn btn-primary mt16" onclick="acceptPrivacy()" id="btn-accept-privacy">Verstanden & Fortfahren</button>
-  </div>
-
-  <!-- ASSESSMENT TYPE -->
-  <div id="s-assess" class="screen">
-    <div style="padding-bottom:16px;">
-      <h1 id="txt-assess-title">Für welches Assessment bereitest du dich vor?</h1>
-      <p style="margin-top:8px;font-size:14px;" id="txt-assess-sub">Diese Auswahl bestimmt die Empfehlungen in deinem Report.</p>
-    </div>
-    <div style="flex:1;overflow-y:auto;">
-      <div class="assess-card" onclick="selectAssessment('European Flight Academy')">
-        <div class="assess-icon">✈️</div>
-        <div class="assess-info">
-          <h3>European Flight Academy</h3>
-          <p id="txt-efa-desc">Vorbereitung auf das EFA Multi-Crew-Selection</p>
-        </div>
-      </div>
-      <div class="assess-card" onclick="selectAssessment('Austrian Airlines')">
-        <div class="assess-icon">🇦🇹</div>
-        <div class="assess-info">
-          <h3>Austrian Airlines</h3>
-          <p id="txt-aua-desc">Vorbereitung auf das Austrian Airlines Assessment</p>
-        </div>
-      </div>
-      <div class="assess-card" onclick="selectAssessment('Condor')">
-        <div class="assess-icon">☀️</div>
-        <div class="assess-info">
-          <h3>Condor</h3>
-          <p id="txt-condor-desc">Vorbereitung auf das Condor Piloten-Assessment</p>
-        </div>
-      </div>
-      <div class="assess-card" onclick="selectAssessment('AeroLogic')">
-        <div class="assess-icon">📦</div>
-        <div class="assess-info">
-          <h3>AeroLogic</h3>
-          <p id="txt-aero-desc">Vorbereitung auf das AeroLogic Assessment</p>
-        </div>
-      </div>
-      <div class="assess-card" onclick="selectAssessment('General Pilot Assessment')">
-        <div class="assess-icon">🎯</div>
-        <div class="assess-info">
-          <h3>General Pilot Assessment</h3>
-          <p id="txt-gen-desc">Allgemeines Piloten-Auswahlverfahren</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- DASHBOARD -->
-  <div id="s-dashboard" class="screen" style="padding:0;">
+  <!-- ══════════════════════════════════════════════════════ PRIVACY -->
+  <div id="screen-privacy" class="screen">
     <div class="nav-bar">
-      <div>
-        <div class="nav-title" id="dash-title">Dein Assessment-Plan</div>
-        <div style="margin-top:3px;"><span class="pill pill-accent" id="dash-assess-pill"></span></div>
-      </div>
-      <div class="nav-actions">
-        <button class="nav-btn" id="lang-btn-dash" onclick="toggleLang()">EN</button>
-        <button class="icon-btn" onclick="doSignOut()" title="Abmelden">⎋</button>
-      </div>
+      <div class="nav-title">Datenschutz</div>
     </div>
-    <div style="flex:1;overflow-y:auto;padding:8px 20px 40px;">
-      <div id="step1-card" class="step-card"></div>
-      <div id="step2-card" class="step-card"></div>
-      <div id="step3-card" class="step-card"></div>
+    <div class="scrollable screen-pad" style="padding-top:8px;">
+      <p style="margin-bottom:20px;font-size:15px;">Bitte lies unsere Datenschutzerklärung und stimme zu, bevor du die App nutzt.</p>
+
+      <div class="privacy-section">
+        <h3>📋 Welche Daten wir sammeln</h3>
+        <p>Wir speichern deine E-Mail-Adresse sowie die Ergebnisse deiner Selbstbewertung und des Fremdbildes durch deine Feedbackgeber. Es werden keine sensiblen Persönlichkeitsdaten ohne deine Zustimmung gespeichert.</p>
+      </div>
+      <div class="privacy-section">
+        <h3>🔒 Wie wir sie schützen</h3>
+        <p>Alle Daten werden verschlüsselt übertragen und in einer sicheren Datenbank (Supabase) gespeichert. Deine Daten sind nur für dich und ausdrücklich eingeladene Feedbackgeber sichtbar.</p>
+      </div>
+      <div class="privacy-section">
+        <h3>🤝 Deine Rechte</h3>
+        <p>Du kannst jederzeit dein Konto und alle gespeicherten Daten löschen lassen. Wende dich dafür an unseren Support.</p>
+      </div>
+      <div class="privacy-section">
+        <h3>🔎 KI-Analyse</h3>
+        <p>Die Ergebnisse werden mithilfe eines KI-Modells (Llama via Groq) analysiert. Es werden ausschließlich anonymisierte Bewertungsdaten übertragen – keine persönlichen Identifikationsmerkmale.</p>
+      </div>
+
+      <button class="btn btn-primary mt24" onclick="acceptPrivacy()">Zustimmen und fortfahren</button>
     </div>
   </div>
 
-  <!-- SURVEY -->
-  <div id="s-survey" class="screen">
-    <div style="padding-bottom:12px;flex-shrink:0;">
-      <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
-        <span class="label" id="txt-q-counter" style="margin:0;"></span>
-        <span style="font-size:12px;color:var(--accent);font-weight:600;" id="txt-q-section"></span>
-      </div>
-      <div class="prog-bar"><div class="prog-fill" id="survey-prog"></div></div>
+  <!-- ══════════════════════════════════════════════════════ ASSESSMENT SELECT -->
+  <div id="screen-assess" class="screen">
+    <div class="nav-bar">
+      <div class="nav-title">Assessment-Typ</div>
     </div>
-    <div id="q-container" style="flex:1;overflow-y:auto;padding-bottom:4px;"></div>
-    <div class="nav-row" style="flex-shrink:0;padding-bottom:16px;">
-      <button class="back-btn" id="survey-back" onclick="surveyPrev()">‹</button>
-      <button class="btn btn-primary" id="survey-next" onclick="surveyNext()">
-        <span id="txt-survey-next">Weiter</span>
+    <div class="scrollable screen-pad" style="padding-top:4px;display:flex;flex-direction:column;">
+      <h1 style="font-size:26px;font-weight:700;margin-bottom:8px;">Was für ein Assessment<br>machst du?</h1>
+      <p style="margin-bottom:24px;">Hilft dabei, deinen KI-Report zu personalisieren.</p>
+
+      <div id="assess-cards"></div>
+
+      <div class="gap"></div>
+      <button class="btn btn-primary mt20" id="btn-weiter" onclick="confirmAssessment()" disabled>Weiter</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ MAIN SHELL -->
+  <div id="screen-main" class="screen">
+    <!-- Nav bar -->
+    <div class="nav-bar" id="main-nav">
+      <div class="nav-title" id="main-nav-title">Dashboard</div>
+      <div class="nav-actions">
+        <button class="nav-btn" id="lang-btn" onclick="toggleLang()">DE</button>
+        <button class="icon-btn" onclick="doSignOut()" title="Sign out">⇥</button>
+      </div>
+    </div>
+
+    <!-- Tab pages -->
+    <div class="main-content scrollable">
+      <!-- Dashboard -->
+      <div id="tab-dashboard" class="tab-page active screen-pad" style="padding-top:8px;">
+        <div id="dashboard-body"></div>
+      </div>
+      <!-- Tips -->
+      <div id="tab-tips" class="tab-page screen-pad" style="padding-top:8px;">
+        <div id="tips-body"></div>
+      </div>
+    </div>
+
+    <!-- Bottom tab bar -->
+    <div class="bottom-tab-bar">
+      <button class="bottom-tab active" id="btab-dashboard" onclick="switchMainTab('dashboard')">
+        <svg viewBox="0 0 24 24"><path d="M3 3h8v8H3zm0 10h8v8H3zm10-10h8v8h-8zm0 10h8v8h-8z"/></svg>
+        <span>Dashboard</span>
+      </button>
+      <button class="bottom-tab" id="btab-tips" onclick="switchMainTab('tips')">
+        <svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 1 4 12.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26A7 7 0 0 1 12 2zm3 17H9v1a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1z"/></svg>
+        <span id="tips-tab-label">Tipps</span>
       </button>
     </div>
   </div>
 
-  <!-- SURVEY DONE -->
-  <div id="s-survey-done" class="screen">
-    <div class="center-fill">
-      <div style="font-size:64px;filter:drop-shadow(0 0 24px rgba(52,199,89,.4));">✅</div>
-      <h1 id="txt-sdone-title" style="margin-top:16px;">Self-Assessment abgeschlossen!</h1>
-      <p id="txt-sdone-msg" style="margin-top:8px;">Gehe zurück zum Dashboard, um deinen Report-Status zu prüfen.</p>
-      <button class="btn btn-primary mt24" onclick="afterSurveyDone()" id="btn-sdone">Zum Dashboard</button>
+  <!-- ══════════════════════════════════════════════════════ SURVEY -->
+  <div id="screen-survey" class="screen">
+    <div class="nav-bar">
+      <div class="nav-title" id="survey-nav-title">Selbstbild</div>
+      <button class="icon-btn" onclick="showScreen('screen-main')">✕</button>
+    </div>
+    <div class="screen-pad" style="padding-top:4px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <span style="font-size:13px;color:var(--faint);" id="q-counter">Frage 1 von 18</span>
+        <span style="font-size:13px;color:var(--faint);" id="q-pct">0%</span>
+      </div>
+      <div class="prog-bar" style="margin-bottom:20px;"><div class="prog-fill" id="survey-prog" style="width:0%"></div></div>
+      <div id="q-body"></div>
+      <div style="display:flex;gap:10px;margin-top:16px;">
+        <button class="btn btn-ghost btn-sm" style="width:auto;padding:0 20px;" id="btn-prev" onclick="surveyPrev()" style="display:none;">Zurück</button>
+        <button class="btn btn-primary btn-sm" id="btn-next" onclick="surveyNext()">Weiter</button>
+      </div>
     </div>
   </div>
 
-  <!-- REPORT -->
-  <div id="s-report" class="screen" style="padding:0;">
-    <div class="nav-bar">
-      <button class="icon-btn" onclick="showScreen('s-dashboard')" style="font-size:24px;">←</button>
-      <div class="nav-title" id="txt-report-title">Dein Report</div>
-      <button class="nav-btn" id="lang-btn-report" onclick="toggleLang()">EN</button>
+  <!-- ══════════════════════════════════════════════════════ SURVEY DONE -->
+  <div id="screen-survey-done" class="screen">
+    <div class="center-fill">
+      <div style="font-size:56px;">✅</div>
+      <h1>Danke!</h1>
+      <p style="max-width:280px;" id="survey-done-msg">Deine Antworten wurden gespeichert.</p>
+      <button class="btn btn-primary mt16" style="max-width:280px;" onclick="showScreen('screen-main')">Zurück zum Dashboard</button>
     </div>
-    <div style="padding:0 20px 8px;flex-shrink:0;">
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ REPORT -->
+  <div id="screen-report" class="screen">
+    <div class="nav-bar">
+      <div class="nav-title">Mein Report</div>
+      <button class="icon-btn" onclick="showScreen('screen-main')">←</button>
+    </div>
+    <div style="padding:0 20px 4px;">
       <div class="tab-bar">
-        <button class="tab-btn active" id="rtab-0" onclick="switchReportTab(0)" id="txt-rtab0">Profil</button>
-        <button class="tab-btn" id="rtab-1" onclick="switchReportTab(1)" id="txt-rtab1">Vergleich</button>
-        <button class="tab-btn" id="rtab-2" onclick="switchReportTab(2)" id="txt-rtab2">Rohdaten</button>
+        <button class="tab-btn active" id="rtab-profil"    onclick="switchReportTab('profil')">Profil</button>
+        <button class="tab-btn"        id="rtab-vergleich" onclick="switchReportTab('vergleich')">Vergleich</button>
+        <button class="tab-btn"        id="rtab-rohdaten"  onclick="switchReportTab('rohdaten')">Rohdaten</button>
       </div>
     </div>
-    <div id="report-content" class="report-scroll" style="padding:0 20px;"></div>
+    <div class="scrollable screen-pad" style="padding-top:4px;">
+      <div id="report-profil"></div>
+      <div id="report-vergleich" style="display:none;"></div>
+      <div id="report-rohdaten"  style="display:none;"></div>
+    </div>
   </div>
 
 </div><!-- #app -->
 
 <script>
-'use strict';
+// ─────────────────────────────────────────────────────────────────────────────
+// CONFIG
+// ─────────────────────────────────────────────────────────────────────────────
+const SUPA_URL = 'https://outsherttkwwuvihpkzn.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im91dHNoZXJ0dGt3d3V2aWhwa3puIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDYwMjA4NDUsImV4cCI6MjA2MTU5Njg0NX0.3jnbBZXlTHC5sFEAFKuVYkVGNzBUgsMjFp0h73VJkc4';
 
-// ── Config ─────────────────────────────────────────────────────────────────
-const SB_URL  = 'https://outsherttkwwuvihpkzn.supabase.co';
-const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im91dHNoZXJ0dGt3d3V2aWhwa3puIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMyODE4NzgsImV4cCI6MjA4ODg1Nzg3OH0.KRFm5YghZPysybdTKtQRUX2Mr6pOKgyWgJ1gOnc-9as';
-const ANALYZE_URL = SB_URL + '/functions/v1/analyze';
-const SURVEY_BASE = 'https://pilotmirrortest1.netlify.app';
+let accessToken = null;
+let currentUser = null;
+let isGerman = true;
+let selectedAssessType = null;
+let assessSessions = [];
+let feedbackLinks = [];
+let analysisResult = null;
+let surveyQuestions = [];
+let surveyAnswers = {};
+let surveyQIndex = 0;
+let surveyMode = 'self'; // 'self'
 
-// ── Questions ───────────────────────────────────────────────────────────────
-const Qs = [
-  { id:'q1', type:'trait', sDE:'Persönlichkeit', sEN:'Personality',
-    de:'Welche Eigenschaften beschreiben diese Person? Alle zutreffenden auswählen.',
-    en:'Which traits describe this person? Select all that apply.',
-    optDE:['ruhig','analytisch','selbstsicher','teamorientiert','verantwortungsbewusst','strukturiert','bedachtsam','spontan','dominant','zurückhaltend','empathisch','entschlossen'],
-    optEN:['calm','analytical','confident','team-oriented','responsible','structured','careful','spontaneous','dominant','reserved','empathetic','decisive'] },
-  { id:'q2', type:'choice', sDE:'Entscheidungsstil', sEN:'Decision Style',
-    de:'Diese Person entscheidet eher:', en:'This person tends to decide:',
-    optDE:['Schnell und intuitiv','Nach sorgfältiger Analyse'], optEN:['Quickly and intuitively','After careful analysis'] },
-  { id:'q3', type:'choice', sDE:'Entscheidungsstil', sEN:'Decision Style',
-    de:'In Gruppen tendiert diese Person dazu:', en:'In groups, this person tends to:',
-    optDE:['Die Diskussion zu führen','Ideen einzubringen','Erst zu beobachten'], optEN:['Lead the discussion','Contribute ideas','Observe first'] },
-  { id:'q4', type:'choice', sDE:'Entscheidungsstil', sEN:'Decision Style',
-    de:'Wenn etwas schiefläuft, reagiert diese Person:', en:'When something goes wrong, this person reacts:',
-    optDE:['Ruhig & lösungsorientiert','Gestresst aber funktional','Emotional/frustriert'], optEN:['Calm and solution-focused','Stressed but functional','Emotionally/frustrated'] },
-  { id:'q5', type:'rating', sDE:'Bewertungen', sEN:'Ratings', de:'Teamfähigkeit', en:'Teamwork' },
-  { id:'q6', type:'rating', sDE:'Bewertungen', sEN:'Ratings', de:'Stressresistenz', en:'Stress Resistance' },
-  { id:'q7', type:'rating', sDE:'Bewertungen', sEN:'Ratings', de:'Verantwortungsbewusstsein', en:'Responsibility' },
-  { id:'q8', type:'rating', sDE:'Bewertungen', sEN:'Ratings', de:'Kommunikation', en:'Communication' },
-  { id:'q9', type:'rating', sDE:'Bewertungen', sEN:'Ratings', de:'Zuverlässigkeit', en:'Reliability' },
-  { id:'q10', type:'text', sDE:'Stärken', sEN:'Strengths',
-    de:'Stärke 1: Was kann diese Person besonders gut?', en:'Strength 1: What is this person particularly good at?',
-    phDE:'z.B. hört gut zu, bleibt in Konflikten sachlich…', phEN:'e.g. listens well, stays calm in conflicts…' },
-  { id:'q11', type:'text', sDE:'Stärken', sEN:'Strengths',
-    de:'Stärke 2: Wofür wird diese Person von anderen geschätzt?', en:'Strength 2: What is this person appreciated for by others?',
-    phDE:'z.B. ist immer gut vorbereitet, motiviert andere…', phEN:'e.g. always well-prepared, motivates others…' },
-  { id:'q12', type:'text', sDE:'Stärken', sEN:'Strengths',
-    de:'Stärke 3: In welchen Situationen zeigt diese Person ihr Bestes?', en:'Strength 3: When does this person perform at their best?',
-    phDE:'z.B. unter Druck, bei komplexen Problemen…', phEN:'e.g. under pressure, with complex problems…' },
-  { id:'q13', type:'text', sDE:'Schwächen', sEN:'Weaknesses',
-    de:'Schwäche 1: Wo hat diese Person im Alltag Nachholbedarf?', en:'Weakness 1: Where does this person have room to grow?',
-    phDE:'z.B. wird ungeduldig, wenn Dinge nicht nach Plan laufen…', phEN:"e.g. gets impatient when things don't go as planned…" },
-  { id:'q14', type:'text', sDE:'Schwächen', sEN:'Weaknesses',
-    de:'Schwäche 2: Was kostet diese Person manchmal Sympathien?', en:'Weakness 2: What sometimes costs this person goodwill?',
-    phDE:'z.B. redet manchmal zu viel ohne zuzuhören…', phEN:'e.g. sometimes talks too much without listening…' },
-  { id:'q15', type:'text', sDE:'Schwächen', sEN:'Weaknesses',
-    de:'Schwäche 3: Welches Verhalten dieser Person nervt dich manchmal?', en:'Weakness 3: What behavior of this person occasionally bothers you?',
-    phDE:'z.B. gibt ungern Fehler zu, zieht Entscheidungen in die Länge…', phEN:'e.g. reluctant to admit mistakes, delays decisions…' },
-  { id:'q16', type:'text', sDE:'Verhalten & Außenwirkung', sEN:'Behaviour & Perception',
-    de:'Gibt es negative Verhaltensweisen im Alltag, die dieser Person wahrscheinlich nicht bewusst sind?', en:'Are there negative everyday behaviors this person is probably unaware of?',
-    phDE:'z.B. unterbricht andere im Gespräch, reagiert defensiv auf Kritik…', phEN:'e.g. interrupts others, reacts defensively to criticism…' },
-  { id:'q17', type:'text', sDE:'Verhalten & Außenwirkung', sEN:'Behaviour & Perception',
-    de:'Wie reagiert diese Person, wenn sie kritisiert wird oder Fehler macht?', en:'How does this person react when criticised or when they make a mistake?',
-    phDE:'z.B. nimmt Feedback gut an / wird defensiv / zieht sich zurück…', phEN:'e.g. takes feedback well / becomes defensive / withdraws…' },
-  { id:'q18', type:'text', sDE:'Verhalten & Außenwirkung', sEN:'Behaviour & Perception',
-    de:'Was sollte der Kandidat über seine Wirkung auf andere wissen — etwas, das ihm im Assessment nützen oder schaden könnte?', en:'What should the candidate know about how they come across — something that could help or hurt them in an assessment?',
-    phDE:'z.B. wirkt in unbekannten Gruppen zunächst distanziert, obwohl er ein starker Teamplayer ist…', phEN:'e.g. initially appears distant in new groups, though they are a strong team player…' },
-];
-
-// ── State ───────────────────────────────────────────────────────────────────
-const S = {
-  lang: localStorage.getItem('pm_lang') || 'de',
-  accessToken: localStorage.getItem('sb_at'),
-  userId: localStorage.getItem('sb_uid'),
-  user: null,
-  sessionId: localStorage.getItem('pm_session_id'),
-  feedbackLink: null,
-  selfDone: false,
-  reportData: null,
-  aiComputing: false,
-  surveyResponses: {},
-  surveyIdx: 0,
-  reportTab: 0,
-};
-
-try { S.feedbackLink = JSON.parse(localStorage.getItem('pm_fl') || 'null'); } catch(e) {}
-
-// ── Helpers ─────────────────────────────────────────────────────────────────
-const $ = id => document.getElementById(id);
-const t = (de, en) => S.lang === 'de' ? de : en;
-
-function uuid() {
-  return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
-    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16));
+// ─────────────────────────────────────────────────────────────────────────────
+// SUPABASE HELPERS
+// ─────────────────────────────────────────────────────────────────────────────
+async function supa(path, opts={}) {
+  const headers = { 'Content-Type':'application/json', 'apikey': SUPA_KEY, 'Authorization': `Bearer ${accessToken||SUPA_KEY}` };
+  const r = await fetch(SUPA_URL + path, { ...opts, headers: { ...headers, ...(opts.headers||{}) } });
+  if (!r.ok) { const t = await r.text(); throw new Error(t); }
+  const ct = r.headers.get('content-type')||'';
+  if (ct.includes('json') && r.status !== 204) return r.json();
+  return null;
+}
+async function supaRpc(fn, body={}) {
+  return supa('/rest/v1/rpc/' + fn, { method:'POST', body: JSON.stringify(body) });
+}
+async function supaSelect(table, params='') {
+  return supa('/rest/v1/' + table + '?' + params);
+}
+async function supaInsert(table, body) {
+  return supa('/rest/v1/' + table, { method:'POST', headers:{'Prefer':'return=representation'}, body: JSON.stringify(body) });
+}
+async function supaUpdate(table, body, params) {
+  return supa('/rest/v1/' + table + '?' + params, { method:'PATCH', headers:{'Prefer':'return=representation'}, body: JSON.stringify(body) });
+}
+async function supaDelete(table, params) {
+  return supa('/rest/v1/' + table + '?' + params, { method:'DELETE' });
 }
 
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  $(id).classList.add('active');
-}
-
-// ── Supabase API ─────────────────────────────────────────────────────────────
-function sbHeaders(token, extra) {
-  const tok = token || S.accessToken || SB_ANON;
-  return {
-    'Content-Type': 'application/json',
-    'apikey': SB_ANON,
-    'Authorization': 'Bearer ' + tok,
-    ...extra
-  };
-}
-
-async function sbGet(path, token) {
-  const r = await fetch(SB_URL + path, { headers: sbHeaders(token) });
-  if (!r.ok) throw new Error('GET ' + path + ': ' + r.status);
-  return r.json();
-}
-
-async function sbPost(path, body, extra, anonOnly) {
-  const tok = anonOnly ? SB_ANON : null;
-  const r = await fetch(SB_URL + path, {
-    method: 'POST',
-    headers: sbHeaders(tok, extra),
-    body: JSON.stringify(body),
-  });
-  return r;
-}
-
-async function sbSelect(table, filters) {
-  const qs = Object.entries(filters || {}).map(([k,v]) => `${k}=${v}`).join('&');
-  const path = `/rest/v1/${table}?select=*${qs ? '&' + qs : ''}`;
-  return sbGet(path);
-}
-
-async function sbInsert(table, body, anonOnly) {
-  const r = await sbPost(`/rest/v1/${table}`, body, { 'Prefer': 'return=minimal' }, anonOnly);
-  if (!r.ok) throw new Error('INSERT ' + table + ': ' + r.status + ' ' + await r.text());
-}
-
-async function sbUpsert(table, body, onConflict) {
-  const qs = onConflict ? `?on_conflict=${onConflict}` : '';
-  const r = await fetch(SB_URL + `/rest/v1/${table}${qs}`, {
-    method: 'POST',
-    headers: sbHeaders(null, { 'Prefer': 'return=minimal,resolution=merge-duplicates' }),
-    body: JSON.stringify(body),
-  });
-  if (!r.ok) throw new Error('UPSERT ' + table + ': ' + r.status + ' ' + await r.text());
-}
-
-async function sbUpdate(table, filter, body) {
-  const r = await fetch(SB_URL + `/rest/v1/${table}?${filter}`, {
-    method: 'PATCH',
-    headers: sbHeaders(),
-    body: JSON.stringify(body),
-  });
-  if (!r.ok) throw new Error('UPDATE ' + table + ': ' + r.status);
-}
-
-async function sbRpc(fn, params, anonOnly) {
-  const r = await sbPost('/rest/v1/rpc/' + fn, params, {}, anonOnly);
-  if (!r.ok) throw new Error('RPC ' + fn + ': ' + r.status + ' ' + await r.text());
-  return r.json();
-}
-
-// ── Auth ─────────────────────────────────────────────────────────────────────
-function switchAuthTab(tab) {
-  $('tab-login').classList.toggle('active', tab === 'login');
-  $('tab-register').classList.toggle('active', tab === 'register');
-  $('form-login').style.display = tab === 'login' ? 'block' : 'none';
-  $('form-register').style.display = tab === 'register' ? 'block' : 'none';
-  applyLangAuth();
-}
-
-async function doLogin() {
-  const email = $('login-email').value.trim();
-  const pw = $('login-pw').value;
-  $('login-err').style.display = 'none';
-  if (!email || !pw) return;
-  $('btn-login').disabled = true;
-  $('btn-login').textContent = t('Laden…', 'Loading…');
-  try {
-    const r = await (await sbPost('/auth/v1/token?grant_type=password', { email, password: pw }, {}, true)).json();
-    if (!r.access_token) throw new Error(r.error_description || r.msg || 'Login fehlgeschlagen');
-    await applySession(r.access_token, r.refresh_token, r.user?.id, email);
-  } catch(e) {
-    showAuthError('login-err', e.message);
-  } finally {
-    $('btn-login').disabled = false;
-    $('btn-login').textContent = t('Anmelden', 'Sign in');
+// ─────────────────────────────────────────────────────────────────────────────
+// AUTH
+// ─────────────────────────────────────────────────────────────────────────────
+async function init() {
+  // Try to restore session from localStorage
+  const saved = localStorage.getItem('pm_session');
+  if (saved) {
+    try {
+      const s = JSON.parse(saved);
+      accessToken = s.access_token;
+      // Refresh session
+      const r = await fetch(SUPA_URL + '/auth/v1/token?grant_type=refresh_token', {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json', 'apikey': SUPA_KEY },
+        body: JSON.stringify({ refresh_token: s.refresh_token })
+      });
+      if (r.ok) {
+        const d = await r.json();
+        accessToken = d.access_token;
+        localStorage.setItem('pm_session', JSON.stringify(d));
+        await loadUser();
+        return;
+      }
+    } catch(e) {}
   }
+  localStorage.removeItem('pm_session');
+  accessToken = null;
+  showScreen('screen-auth');
+}
+
+async function loadUser() {
+  try {
+    const u = await supa('/auth/v1/user');
+    currentUser = u;
+    // Check privacy
+    const privAccepted = localStorage.getItem('pm_privacy_accepted_' + u.id);
+    if (!privAccepted) { showScreen('screen-privacy'); return; }
+    // Load profile from users table
+    const rows = await supaSelect('users', `id=eq.${u.id}&select=*`);
+    if (rows && rows.length > 0) {
+      currentUser.profile = rows[0];
+    }
+    if (!currentUser.profile?.assessment_type) {
+      showScreen('screen-assess');
+      renderAssessCards();
+      return;
+    }
+    await loadMainData();
+    showScreen('screen-main');
+    renderDashboard();
+    renderTips();
+  } catch(e) {
+    console.error(e);
+    showScreen('screen-auth');
+  }
+}
+
+function switchAuthTab(tab) {
+  document.getElementById('tab-register').classList.toggle('active', tab==='register');
+  document.getElementById('tab-signin').classList.toggle('active', tab==='signin');
+  document.getElementById('auth-register').style.display = tab==='register' ? '' : 'none';
+  document.getElementById('auth-signin').style.display   = tab==='signin'   ? '' : 'none';
 }
 
 async function doRegister() {
-  const name = $('reg-name').value.trim();
-  const email = $('reg-email').value.trim();
-  const pw = $('reg-pw').value;
-  $('reg-err').style.display = 'none';
-  if (!name || !email || pw.length < 6) {
-    showAuthError('reg-err', t('Bitte alle Felder ausfüllen (Passwort min. 6 Zeichen).', 'Please fill all fields (password min. 6 chars).'));
-    return;
-  }
-  $('btn-register').disabled = true;
-  $('btn-register').textContent = t('Wird erstellt…', 'Creating…');
+  const email = document.getElementById('reg-email').value.trim();
+  const pw    = document.getElementById('reg-pw').value;
+  const errEl = document.getElementById('reg-error');
+  errEl.style.display = 'none';
+  if (!email || !pw) { showErr(errEl, 'Bitte E-Mail und Passwort eingeben.'); return; }
   try {
-    const r = await (await sbPost('/auth/v1/signup', { email, password: pw }, {}, true)).json();
-    if (r.access_token) {
-      // Email confirmation disabled — immediate session
-      await applySession(r.access_token, r.refresh_token, r.user?.id, email, name);
-    } else if (r.id || (r.identities && r.identities.length === 0)) {
-      // Email confirmation required
-      showScreen('s-email-confirm');
-    } else {
-      throw new Error(r.error_description || r.msg || 'Registrierung fehlgeschlagen');
-    }
-  } catch(e) {
-    showAuthError('reg-err', e.message);
-  } finally {
-    $('btn-register').disabled = false;
-    $('btn-register').textContent = t('Account erstellen', 'Create account');
-  }
+    const r = await fetch(SUPA_URL + '/auth/v1/signup', {
+      method:'POST', headers:{'Content-Type':'application/json','apikey':SUPA_KEY},
+      body: JSON.stringify({ email, password: pw })
+    });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.error_description || d.msg || 'Fehler');
+    showScreen('screen-confirm');
+  } catch(e) { showErr(errEl, e.message); }
 }
 
-function showAuthError(id, msg) {
-  const el = $(id);
-  el.textContent = msg;
-  el.style.display = 'block';
-}
-
-async function applySession(accessToken, refreshToken, userId, email, name) {
-  S.accessToken = accessToken;
-  S.userId = userId;
-  localStorage.setItem('sb_at', accessToken);
-  if (refreshToken) localStorage.setItem('sb_rt', refreshToken);
-  if (userId) localStorage.setItem('sb_uid', userId);
-
-  // Create or fetch user record
-  const existing = await sbSelect('users', { 'id': 'eq.' + userId });
-  if (existing.length > 0) {
-    S.user = {
-      id: existing[0].id,
-      name: existing[0].full_name,
-      email: existing[0].email,
-      assessmentType: existing[0].assessment_type,
-    };
-  } else {
-    const fullName = name || email.split('@')[0];
-    await sbInsert('users', { id: userId, email, full_name: fullName, assessment_type: null });
-    S.user = { id: userId, name: fullName, email, assessmentType: null };
-  }
-  await afterAuth();
-}
-
-async function afterAuth() {
-  // Check privacy
-  if (!localStorage.getItem('pm_privacy')) {
-    showScreen('s-privacy');
-    applyLang();
-    return;
-  }
-  // Check assessment type
-  if (!S.user?.assessmentType) {
-    showScreen('s-assess');
-    applyLang();
-    return;
-  }
-  await loadDashboardData();
-  showDashboard();
+async function doSignIn() {
+  const email = document.getElementById('si-email').value.trim();
+  const pw    = document.getElementById('si-pw').value;
+  const errEl = document.getElementById('si-error');
+  errEl.style.display = 'none';
+  if (!email || !pw) { showErr(errEl, 'Bitte E-Mail und Passwort eingeben.'); return; }
+  try {
+    const r = await fetch(SUPA_URL + '/auth/v1/token?grant_type=password', {
+      method:'POST', headers:{'Content-Type':'application/json','apikey':SUPA_KEY},
+      body: JSON.stringify({ email, password: pw })
+    });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.error_description || d.msg || 'Fehler');
+    accessToken = d.access_token;
+    localStorage.setItem('pm_session', JSON.stringify(d));
+    await loadUser();
+  } catch(e) { showErr(errEl, e.message); }
 }
 
 function doSignOut() {
-  localStorage.removeItem('sb_at');
-  localStorage.removeItem('sb_rt');
-  localStorage.removeItem('sb_uid');
-  localStorage.removeItem('pm_session_id');
-  localStorage.removeItem('pm_fl');
-  S.accessToken = null; S.userId = null; S.user = null;
-  S.sessionId = null; S.feedbackLink = null; S.selfDone = false;
-  S.surveyResponses = {}; S.reportData = null;
-  showScreen('s-auth');
-  applyLang();
+  localStorage.removeItem('pm_session');
+  accessToken = null; currentUser = null;
+  showScreen('screen-auth');
 }
 
-// ── Privacy ──────────────────────────────────────────────────────────────────
+function showErr(el, msg) { el.textContent = msg; el.style.display = 'block'; }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PRIVACY
+// ─────────────────────────────────────────────────────────────────────────────
 function acceptPrivacy() {
-  localStorage.setItem('pm_privacy', '1');
-  if (!S.user?.assessmentType) {
-    showScreen('s-assess');
+  localStorage.setItem('pm_privacy_accepted_' + currentUser.id, '1');
+  const rows = currentUser.profile;
+  if (!rows?.assessment_type) {
+    showScreen('screen-assess');
+    renderAssessCards();
   } else {
-    loadDashboardData().then(() => showDashboard());
+    loadMainData().then(() => { showScreen('screen-main'); renderDashboard(); renderTips(); });
   }
-  applyLang();
 }
 
-// ── Assessment type ──────────────────────────────────────────────────────────
-async function selectAssessment(type) {
-  S.user.assessmentType = type;
+// ─────────────────────────────────────────────────────────────────────────────
+// ASSESSMENT TYPE
+// ─────────────────────────────────────────────────────────────────────────────
+const ASSESS_TYPES = [
+  { id:'DLR_Pilot', icon:'✈️', bg:'rgba(74,158,248,.15)', title:'DLR Piloten-Assessment', desc:'Für Piloten-Bewerber bei der DLR oder ähnlichen Luft- und Raumfahrtorganisationen.' },
+  { id:'DLR_Other', icon:'🚀', bg:'rgba(107,94,228,.15)', title:'DLR Sonstiges Assessment', desc:'Andere Berufsgruppen oder spezifische Programme bei der DLR.' },
+  { id:'Airline',   icon:'🌐', bg:'rgba(52,199,89,.15)',  title:'Airline Assessment',       desc:'Auswahlverfahren bei einer kommerziellen Fluggesellschaft.' },
+  { id:'Other',     icon:'📋', bg:'rgba(255,159,10,.15)', title:'Sonstiges',                desc:'Andere Assessment-Center oder Auswahlverfahren.' },
+];
+
+function renderAssessCards() {
+  const cont = document.getElementById('assess-cards');
+  cont.innerHTML = ASSESS_TYPES.map(t => `
+    <div class="assess-card" id="ac-${t.id}" onclick="selectAssess('${t.id}')">
+      <div class="assess-icon" style="background:${t.bg};">${t.icon}</div>
+      <div class="assess-text"><h3>${t.title}</h3><p>${t.desc}</p></div>
+      <div class="check-circle" id="cc-${t.id}"></div>
+    </div>`).join('');
+}
+
+function selectAssess(id) {
+  selectedAssessType = id;
+  ASSESS_TYPES.forEach(t => {
+    document.getElementById('ac-'+t.id)?.classList.toggle('selected', t.id===id);
+    const cc = document.getElementById('cc-'+t.id);
+    if (cc) cc.className = 'check-circle' + (t.id===id ? ' checked' : '');
+  });
+  document.getElementById('btn-weiter').disabled = false;
+}
+
+async function confirmAssessment() {
+  if (!selectedAssessType) return;
   try {
-    await sbUpdate('users', 'id=eq.' + S.userId, { assessment_type: type });
-  } catch(e) { console.error(e); }
-  await loadDashboardData();
-  showDashboard();
+    // Upsert into users table
+    await supa('/rest/v1/users', {
+      method: 'POST',
+      headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' },
+      body: JSON.stringify({ id: currentUser.id, email: currentUser.email, assessment_type: selectedAssessType })
+    });
+    if (!currentUser.profile) currentUser.profile = {};
+    currentUser.profile.assessment_type = selectedAssessType;
+    await loadMainData();
+    showScreen('screen-main');
+    renderDashboard();
+    renderTips();
+  } catch(e) { alert('Fehler: ' + e.message); }
 }
 
-// ── Dashboard data loading ───────────────────────────────────────────────────
-async function loadDashboardData() {
-  if (!S.userId) return;
-
-  // Load session
-  if (!S.sessionId) {
-    const sessions = await sbSelect('assessment_sessions', { 'candidate_id': 'eq.' + S.userId });
-    if (sessions.length > 0) {
-      S.sessionId = sessions[0].id;
-      localStorage.setItem('pm_session_id', S.sessionId);
+// ─────────────────────────────────────────────────────────────────────────────
+// MAIN DATA
+// ─────────────────────────────────────────────────────────────────────────────
+async function loadMainData() {
+  try {
+    const uid = currentUser.id;
+    // Assessment sessions
+    const sessions = await supaSelect('assessment_sessions', `user_id=eq.${uid}&select=*&order=created_at.desc`);
+    assessSessions = sessions || [];
+    // Feedback links
+    const links = await supaSelect('feedback_links', `user_id=eq.${uid}&select=*&order=created_at.desc`);
+    feedbackLinks = links || [];
+    // Latest analysis
+    if (assessSessions.length > 0) {
+      const ar = await supaSelect('analysis_results', `session_id=eq.${assessSessions[0].id}&select=*&order=created_at.desc&limit=1`);
+      analysisResult = ar && ar.length > 0 ? ar[0] : null;
     }
-  }
-
-  // Check self-assessment
-  if (S.sessionId) {
-    const selfResp = await sbSelect('self_responses', { 'session_id': 'eq.' + S.sessionId });
-    S.selfDone = selfResp.length >= 5;
-  }
-
-  // Load feedback link
-  if (S.sessionId && !S.feedbackLink) {
-    const links = await sbSelect('feedback_links', { 'session_id': 'eq.' + S.sessionId });
-    if (links.length > 0) {
-      S.feedbackLink = links[0];
-      localStorage.setItem('pm_fl', JSON.stringify(S.feedbackLink));
-    }
-  } else if (S.feedbackLink && S.sessionId) {
-    // Refresh response count
-    const links = await sbSelect('feedback_links', { 'id': 'eq.' + S.feedbackLink.id });
-    if (links.length > 0) {
-      S.feedbackLink = links[0];
-      localStorage.setItem('pm_fl', JSON.stringify(S.feedbackLink));
-    }
-  }
+  } catch(e) { console.error('loadMainData', e); }
 }
 
-function showDashboard() {
+// ─────────────────────────────────────────────────────────────────────────────
+// MAIN SHELL NAV
+// ─────────────────────────────────────────────────────────────────────────────
+function switchMainTab(tab) {
+  ['dashboard','tips'].forEach(t => {
+    document.getElementById('tab-'+t).classList.toggle('active', t===tab);
+    document.getElementById('btab-'+t).classList.toggle('active', t===tab);
+  });
+  document.getElementById('main-nav-title').textContent = tab==='dashboard' ? 'Dashboard' : (isGerman ? 'Tipps' : 'Tips');
+}
+
+function toggleLang() {
+  isGerman = !isGerman;
+  document.getElementById('lang-btn').textContent = isGerman ? 'DE' : 'EN';
+  document.getElementById('tips-tab-label').textContent = isGerman ? 'Tipps' : 'Tips';
   renderDashboard();
-  showScreen('s-dashboard');
+  renderTips();
 }
 
-// ── Dashboard rendering ───────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// DASHBOARD
+// ─────────────────────────────────────────────────────────────────────────────
 function renderDashboard() {
-  applyLangDash();
-  renderStep1();
-  renderStep2();
-  renderStep3();
-}
+  const G = isGerman;
+  const session  = assessSessions[0] || null;
+  const link     = feedbackLinks[0] || null;
+  const selfDone = session?.self_completed || false;
+  const respCount = link?.response_count || 0;
+  const minResp   = 3;
+  const hasEnough = respCount >= minResp;
 
-function renderStep1() {
-  const done = S.selfDone;
-  const card = $('step1-card');
-  card.className = 'step-card' + (done ? ' done' : '');
-  card.innerHTML = `
-    <div class="step-header">
-      <div class="step-num ${done ? 'done' : 'active'}">${done ? '✓' : '1'}</div>
-      <div class="step-meta">
-        <h3>${t('Self-Assessment ausfüllen', 'Complete Self-Assessment')}</h3>
-        <p class="${done ? 'done' : ''}">${done
-          ? t('Abgeschlossen', 'Completed')
-          : t('Beantworte denselben Fragebogen über dich selbst', 'Answer the same questionnaire about yourself')
-        }</p>
-      </div>
-    </div>
-    ${!done ? `<button class="btn btn-primary btn-sm" onclick="startSurvey()">
-      ${t('Jetzt starten', 'Start now')}
-    </button>` : ''}
-  `;
-}
+  // Step 1: Self-assessment
+  const s1done = selfDone;
+  // Step 2: Feedback collected
+  const s2active = selfDone;
+  const s2done   = selfDone && hasEnough;
+  // Step 3: Report
+  const s3active = s2done;
+  const s3done   = !!analysisResult;
 
-function renderStep2() {
-  const done = S.feedbackLink?.response_count >= 5;
-  const hasLink = !!S.feedbackLink;
-  const count = S.feedbackLink?.response_count || 0;
-  const card = $('step2-card');
-  const locked = !S.selfDone;
-  card.className = 'step-card' + (done ? ' done' : locked ? ' locked' : '');
-
-  let content = '';
-  if (hasLink) {
-    const shareUrl = SURVEY_BASE + '/?token=' + S.feedbackLink.token;
-    const fillW = Math.min(count / 12, 1) * 100;
-    const markerPct = (5/12) * 100;
-    content = `
-      <div class="resp-bar-wrap">
-        <div class="resp-bar-track">
-          <div class="resp-bar-fill" style="width:${fillW}%;background:${count>=5?'var(--green)':'var(--accent)'}"></div>
-          <div style="position:absolute;top:-3px;left:${markerPct}%;width:2px;height:14px;background:rgba(255,255,255,.5)"></div>
-        </div>
-        <div class="resp-labels">
-          <span>0</span>
-          <span style="color:${count>=5?'var(--green)':'rgba(255,255,255,.5)'}">
-            5 min${count>=5?' ✓':''}
-          </span>
-          <span style="color:${count>=12?'var(--green)':'rgba(255,255,255,.4)'}">12 ${t('ideal','ideal')}</span>
+  const html = `
+    <div class="step-card ${s1done?'done':''}">
+      <div class="step-header">
+        <div class="step-num ${s1done?'done':'active'}">${s1done?'✓':'1'}</div>
+        <div class="step-meta">
+          <h3>${G?'Selbstbild erfassen':'Complete Self-Assessment'}</h3>
+          <p class="${s1done?'done':''}">
+            ${s1done ? (G?'Abgeschlossen':'Completed') : (G?'Beantworte 18 Fragen zu deiner Selbstwahrnehmung.':'Answer 18 questions about your self-perception.')}
+          </p>
         </div>
       </div>
-      <div class="link-box" style="margin-top:10px;">
-        <span class="link-url">${shareUrl}</span>
-        <button class="copy-btn" onclick="copyLink('${shareUrl}')" id="copy-btn">📋</button>
-      </div>
-      <div class="share-row">
-        <button class="share-btn" onclick="shareWA('${shareUrl}')">
-          <div class="share-icon" style="background:rgba(52,199,89,.15);">💬</div>
-          <span class="share-label">WhatsApp</span>
-        </button>
-        <button class="share-btn" onclick="shareMail('${shareUrl}')">
-          <div class="share-icon" style="background:rgba(255,159,10,.15);">✉️</div>
-          <span class="share-label">E-Mail</span>
-        </button>
-        <button class="share-btn" onclick="shareSMS('${shareUrl}')">
-          <div class="share-icon" style="background:rgba(74,158,248,.15);">💬</div>
-          <span class="share-label">SMS</span>
-        </button>
-        <button class="share-btn" onclick="shareNative('${shareUrl}')">
-          <div class="share-icon" style="background:rgba(255,255,255,.1);">↑</div>
-          <span class="share-label">${t('Mehr','More')}</span>
-        </button>
-      </div>
-      <button class="btn btn-ghost btn-sm mt12" onclick="refreshDash()">
-        ${t('↻ Aktualisieren', '↻ Refresh')}
-      </button>
-    `;
-  } else if (S.selfDone) {
-    content = `<button class="btn btn-primary btn-sm" id="btn-create-link" onclick="createLink()">
-      ${t('Link erstellen', 'Create link')}
-    </button>`;
-  } else {
-    content = `<p style="font-size:13px;color:var(--faint);">${t('Erst Self-Assessment abschließen', 'Complete self-assessment first')}</p>`;
-  }
-
-  card.innerHTML = `
-    <div class="step-header">
-      <div class="step-num ${done ? 'done' : locked ? 'locked' : 'active'}">${done ? '✓' : '2'}</div>
-      <div class="step-meta">
-        <h3>${t('Link an mindestens 5 Personen senden', 'Send link to at least 5 people')}</h3>
-        <p class="${done ? 'done' : locked ? 'locked' : ''}">
-          ${hasLink
-            ? (done
-              ? t(`${count}/12 Rückmeldungen — Report freigeschaltet!`, `${count}/12 responses — report unlocked!`)
-              : t(`${count} von 5 Minimum — ${5-count} fehlen noch`, `${count} of 5 minimum — ${5-count} to go`))
-            : (locked
-              ? t('Nach Self-Assessment verfügbar', 'Available after self-assessment')
-              : t('Erstelle deinen persönlichen Feedback-Link', 'Create your personal feedback link'))
-          }
-        </p>
-      </div>
+      ${!s1done ? `<button class="btn btn-primary btn-sm" onclick="startSelfSurvey()">${G?'Jetzt starten':'Start Now'}</button>` : ''}
     </div>
-    ${content}
-  `;
-}
 
-function renderStep3() {
-  const canAnalyze = S.selfDone && (S.feedbackLink?.response_count >= 5);
-  const hasResult = !!S.reportData;
-  const card = $('step3-card');
-  card.className = 'step-card' + (hasResult ? ' done' : !canAnalyze ? ' locked' : '');
-
-  let content = '';
-  if (canAnalyze) {
-    content = `<button class="btn btn-purple btn-sm" id="btn-analyze" onclick="runAnalysis()">
-      ${t('✦ Report erstellen', '✦ Generate report')}
-    </button>`;
-  }
-  if (hasResult) {
-    content += `<button class="btn btn-green btn-sm mt12" onclick="openReport()">
-      ${t('Report anzeigen', 'View report')}
-    </button>`;
-  }
-  if (!canAnalyze && !hasResult) {
-    content = `<p style="font-size:13px;color:var(--faint);">
-      ${t('Verfügbar sobald Self-Assessment und 5 Rückmeldungen vorliegen', 'Available once self-assessment and 5 responses are complete')}
-    </p>`;
-  }
-
-  card.innerHTML = `
-    <div class="step-header">
-      <div class="step-num ${hasResult ? 'done' : !canAnalyze ? 'locked' : 'active'}">${hasResult ? '✓' : '3'}</div>
-      <div class="step-meta">
-        <h3>${t('KI-Analyse starten', 'Start AI Analysis')}</h3>
-        <p class="${hasResult ? 'done' : !canAnalyze ? 'locked' : ''}">
-          ${hasResult
-            ? t('Report erstellt', 'Report generated')
-            : canAnalyze
-              ? t('Alle Voraussetzungen erfüllt', 'All requirements met')
-              : t('Warte auf Self-Assessment und 5 Rückmeldungen', 'Waiting for self-assessment and 5 responses')}
-        </p>
+    <div class="step-card ${s2done?'done':(!s2active?'locked':'')}">
+      <div class="step-header">
+        <div class="step-num ${s2done?'done':(s2active?'active':'locked')}">${s2done?'✓':'2'}</div>
+        <div class="step-meta">
+          <h3>${G?'Fremdbilder sammeln':'Collect Feedback'}</h3>
+          <p class="${s2done?'done':''}">
+            ${s2done
+              ? (G?`${respCount} Rückmeldungen erhalten`:`${respCount} responses received`)
+              : (s2active
+                  ? (G?`${respCount}/${minResp} Rückmeldungen – lade Kollegen ein`:`${respCount}/${minResp} responses – invite colleagues`)
+                  : (G?'Erst Selbstbild ausfüllen':'Complete self-assessment first'))}
+          </p>
+        </div>
       </div>
+      ${s2active && !s2done && link ? `
+        <div style="margin-bottom:10px;">
+          <div style="font-size:12px;color:var(--faint);margin-bottom:6px;">${G?'Feedback-Link:':'Feedback link:'}</div>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <div style="flex:1;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:10px;padding:8px 12px;font-size:12px;color:var(--dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${buildFeedbackUrl(link.token)}</div>
+            <button class="btn btn-ghost btn-sm" style="width:auto;padding:0 14px;" onclick="copyLink('${link.token}')">${G?'Kopieren':'Copy'}</button>
+          </div>
+        </div>` : ''}
+      ${s2active && !link ? `<button class="btn btn-primary btn-sm" onclick="createLink()">${G?'Link erstellen':'Create Link'}</button>` : ''}
     </div>
-    ${content}
-  `;
+
+    <div class="step-card ${s3done?'done':(!s3active?'locked':'')}">
+      <div class="step-header">
+        <div class="step-num ${s3done?'done':(s3active?'active':'locked')}">${s3done?'✓':'3'}</div>
+        <div class="step-meta">
+          <h3>${G?'KI-Report ansehen':'View AI Report'}</h3>
+          <p class="${s3done?'done':''}">
+            ${s3done
+              ? (G?'Dein persönlicher Report ist bereit':'Your personal report is ready')
+              : (s3active
+                  ? (G?'Starte die KI-Analyse':'Start AI analysis')
+                  : (G?'Benötigt mind. 3 Rückmeldungen':'Requires at least 3 responses'))}
+          </p>
+        </div>
+      </div>
+      ${s3active && !s3done ? `<button class="btn btn-purple btn-sm" onclick="runAnalysis()">${G?'✨ Analyse starten':'✨ Start Analysis'}</button>` : ''}
+      ${s3done ? `<button class="btn btn-primary btn-sm" onclick="openReport()">${G?'Report öffnen':'Open Report'}</button>` : ''}
+    </div>`;
+
+  document.getElementById('dashboard-body').innerHTML = html;
 }
 
-async function refreshDash() {
-  await loadDashboardData();
-  renderDashboard();
+function buildFeedbackUrl(token) {
+  return window.location.origin + '/feedback/' + token;
 }
-
-// ── Link creation & sharing ──────────────────────────────────────────────────
-function generateToken() {
-  const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-  return Array.from({length: 10}, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+function copyLink(token) {
+  navigator.clipboard.writeText(buildFeedbackUrl(token)).then(() => { showToast('Link kopiert!'); }).catch(() => {});
 }
 
 async function createLink() {
-  const btn = $('btn-create-link');
-  if (btn) { btn.disabled = true; btn.textContent = t('Wird erstellt…', 'Creating…'); }
   try {
-    // Ensure session exists
-    if (!S.sessionId) {
-      const newId = uuid();
-      await sbInsert('assessment_sessions', { id: newId, candidate_id: S.userId });
-      S.sessionId = newId;
-      localStorage.setItem('pm_session_id', newId);
+    let session = assessSessions[0];
+    if (!session) {
+      const s = await supaInsert('assessment_sessions', { user_id: currentUser.id });
+      session = s[0];
+      assessSessions = [session];
     }
-    const linkId = uuid();
-    const token = generateToken();
-    await sbInsert('feedback_links', { id: linkId, session_id: S.sessionId, token, response_count: 0 });
-    S.feedbackLink = { id: linkId, session_id: S.sessionId, token, response_count: 0 };
-    localStorage.setItem('pm_fl', JSON.stringify(S.feedbackLink));
+    const token = crypto.randomUUID();
+    const link = await supaInsert('feedback_links', { user_id: currentUser.id, session_id: session.id, token });
+    feedbackLinks = [link[0], ...feedbackLinks];
     renderDashboard();
-  } catch(e) {
-    alert(t('Fehler beim Erstellen des Links: ', 'Error creating link: ') + e.message);
-    if (btn) { btn.disabled = false; btn.textContent = t('Link erstellen', 'Create link'); }
-  }
+  } catch(e) { alert('Fehler: ' + e.message); }
 }
 
-function copyLink(url) {
-  navigator.clipboard?.writeText(url).catch(() => {});
-  const btn = $('copy-btn');
-  if (btn) { btn.textContent = '✅'; setTimeout(() => { if (btn) btn.textContent = '📋'; }, 2000); }
-}
-
-function shareWA(url) {
-  const msg = encodeURIComponent(t(
-    'Hey! Ich würde mich über dein anonymes Feedback für mein Piloten-Assessment freuen:\n' + url,
-    'Hey! I would appreciate your anonymous feedback for my pilot assessment:\n' + url
-  ));
-  window.open('https://wa.me/?text=' + msg, '_blank');
-}
-
-function shareMail(url) {
-  const sub = encodeURIComponent(t('Feedback-Bitte – PilotMirror', 'Feedback Request – PilotMirror'));
-  const body = encodeURIComponent(t(
-    `Hi,\n\nIch bereite mich auf mein Piloten-Assessment vor und würde mich sehr über dein anonymes Feedback freuen.\nDauert weniger als 3 Minuten:\n${url}\n\nVielen Dank!`,
-    `Hi,\n\nI'm preparing for my pilot assessment and would really appreciate your anonymous feedback.\nTakes less than 3 minutes:\n${url}\n\nThank you!`
-  ));
-  window.location.href = `mailto:?subject=${sub}&body=${body}`;
-}
-
-function shareSMS(url) {
-  const body = encodeURIComponent(t(
-    `Hey! Kannst du mir kurz anonymes Feedback geben? Dauert nur 3 Minuten: ${url}`,
-    `Hey! Can you give me quick anonymous feedback? Takes only 3 minutes: ${url}`
-  ));
-  window.location.href = `sms:&body=${body}`;
-}
-
-function shareNative(url) {
-  if (navigator.share) {
-    navigator.share({ title: 'PilotMirror Feedback', url }).catch(() => {});
-  } else {
-    copyLink(url);
-  }
-}
-
-// ── Survey ───────────────────────────────────────────────────────────────────
-function startSurvey() {
-  S.surveyResponses = {};
-  S.surveyIdx = 0;
-  showScreen('s-survey');
-  renderQ();
-}
-
-function renderQ() {
-  const q = Qs[S.surveyIdx];
-  const total = Qs.length;
-  $('txt-q-counter').textContent = t(`Frage ${S.surveyIdx+1} von ${total}`, `Question ${S.surveyIdx+1} of ${total}`);
-  $('txt-q-section').textContent = S.lang === 'de' ? q.sDE : q.sEN;
-  $('survey-prog').style.width = (S.surveyIdx / total * 100) + '%';
-  $('survey-back').style.visibility = S.surveyIdx > 0 ? 'visible' : 'hidden';
-  $('txt-survey-next').textContent = S.surveyIdx === total-1 ? t('Absenden ✓', 'Submit ✓') : t('Weiter', 'Next');
-
-  const c = $('q-container');
-  c.innerHTML = '';
-
-  const sl = Object.assign(document.createElement('div'), { className: 'q-section', textContent: S.lang === 'de' ? q.sDE : q.sEN });
-  const qt = Object.assign(document.createElement('div'), { className: 'q-text', textContent: S.lang === 'de' ? q.de : q.en });
-  c.appendChild(sl); c.appendChild(qt);
-
-  if      (q.type === 'trait')  renderTrait(c, q);
-  else if (q.type === 'choice') renderChoice(c, q);
-  else if (q.type === 'rating') renderRating(c, q);
-  else                          renderText(c, q);
-
-  updateSurveyNext();
-  c.scrollTop = 0;
-}
-
-function renderTrait(c, q) {
-  const opts = S.lang === 'de' ? q.optDE : q.optEN;
-  const canon = q.optDE;
-  const selected = S.surveyResponses[q.id]?.value || [];
-  const grid = Object.assign(document.createElement('div'), { className: 'trait-grid' });
-  opts.forEach((opt, i) => {
-    const btn = Object.assign(document.createElement('button'), {
-      className: 'trait-btn' + (selected.includes(canon[i]) ? ' active' : ''),
-      textContent: opt,
-    });
-    btn.onclick = () => {
-      const cur = S.surveyResponses[q.id]?.value || [];
-      const v = canon[i];
-      const nxt = cur.includes(v) ? cur.filter(x => x !== v) : [...cur, v];
-      S.surveyResponses[q.id] = { type: 'multiple', value: nxt };
-      btn.classList.toggle('active', nxt.includes(v));
-      updateSurveyNext();
-    };
-    grid.appendChild(btn);
-  });
-  c.appendChild(grid);
-}
-
-function renderChoice(c, q) {
-  const opts = S.lang === 'de' ? q.optDE : q.optEN;
-  const canon = q.optDE;
-  const chosen = S.surveyResponses[q.id]?.value;
-  const list = Object.assign(document.createElement('div'), { className: 'choice-list' });
-  opts.forEach((opt, i) => {
-    const btn = document.createElement('button');
-    btn.className = 'choice-item' + (chosen === canon[i] ? ' active' : '');
-    btn.innerHTML = `<span class="choice-dot"></span><span>${opt}</span>`;
-    btn.onclick = () => {
-      S.surveyResponses[q.id] = { type: 'single', value: canon[i] };
-      list.querySelectorAll('.choice-item').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      updateSurveyNext();
-    };
-    list.appendChild(btn);
-  });
-  c.appendChild(list);
-}
-
-function renderRating(c, q) {
-  const cur = S.surveyResponses[q.id]?.value;
-  const row = Object.assign(document.createElement('div'), { className: 'rating-row' });
-  for (let i = 1; i <= 5; i++) {
-    const btn = Object.assign(document.createElement('button'), {
-      className: 'rating-btn' + (cur === i ? ' active' : ''),
-      textContent: i,
-    });
-    btn.onclick = () => {
-      S.surveyResponses[q.id] = { type: 'rating', value: i };
-      row.querySelectorAll('.rating-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      updateSurveyNext();
-    };
-    row.appendChild(btn);
-  }
-  const lbl = Object.assign(document.createElement('div'), { className: 'rating-labels',
-    innerHTML: `<span>${t('Schwach','Poor')}</span><span>${t('Sehr gut','Excellent')}</span>` });
-  c.appendChild(row); c.appendChild(lbl);
-}
-
-function renderText(c, q) {
-  const ta = Object.assign(document.createElement('textarea'), { className: 'open-ta' });
-  ta.placeholder = S.lang === 'de' ? (q.phDE || '') : (q.phEN || '');
-  ta.value = S.surveyResponses[q.id]?.value || '';
-  ta.rows = 4;
-  ta.oninput = () => { S.surveyResponses[q.id] = { type: 'text', value: ta.value }; updateSurveyNext(); };
-  c.appendChild(ta);
-  // Optional hint
-  const hint = Object.assign(document.createElement('p'), {
-    textContent: t('Optional — du kannst auch überspringen', 'Optional — you can skip'),
-    style: 'font-size:12px;color:var(--faint);margin-top:8px;'
-  });
-  c.appendChild(hint);
-}
-
-function updateSurveyNext() {
-  const q = Qs[S.surveyIdx];
-  const ans = S.surveyResponses[q.id];
-  const ok = q.type === 'text' ? true : !!ans;
-  $('survey-next').disabled = !ok;
-}
-
-function surveyPrev() { if (S.surveyIdx > 0) { S.surveyIdx--; renderQ(); } }
-
-function surveyNext() {
-  if (S.surveyIdx < Qs.length - 1) { S.surveyIdx++; renderQ(); }
-  else submitSurvey();
-}
-
-async function submitSurvey() {
-  const btn = $('survey-next');
-  btn.disabled = true;
-  $('txt-survey-next').textContent = t('Wird gespeichert…', 'Saving…');
-
-  try {
-    // Ensure session exists
-    if (!S.sessionId) {
-      const newId = uuid();
-      await sbInsert('assessment_sessions', { id: newId, candidate_id: S.userId });
-      S.sessionId = newId;
-      localStorage.setItem('pm_session_id', newId);
-    }
-
-    // Submit each response
-    for (const [qid, ans] of Object.entries(S.surveyResponses)) {
-      const built = buildAnswerRecord(ans);
-      if (!built) continue;
-      await sbInsert('self_responses', {
-        id: uuid(), session_id: S.sessionId, question_id: qid,
-        answer_type: built.type, answer_value: built.value
-      });
-    }
-
-    S.selfDone = true;
-    showScreen('s-survey-done');
-    applyLang();
-  } catch(e) {
-    alert(t('Fehler beim Speichern: ', 'Error saving: ') + e.message);
-    btn.disabled = false;
-    $('txt-survey-next').textContent = t('Erneut versuchen', 'Try again');
-  }
-}
-
-function afterSurveyDone() {
-  loadDashboardData().then(() => showDashboard());
-}
-
-function buildAnswerRecord(ans) {
-  if (!ans) return null;
-  if (ans.type === 'multiple') return ans.value?.length ? { type:'multiple', value: JSON.stringify(ans.value) } : null;
-  if (ans.type === 'single') return ans.value ? { type:'single', value: ans.value } : null;
-  if (ans.type === 'rating') return ans.value ? { type:'rating', value: String(ans.value) } : null;
-  if (ans.type === 'text') return ans.value?.trim().length >= 3 ? { type:'text', value: ans.value.trim() } : null;
-  return null;
-}
-
-// ── Analysis ─────────────────────────────────────────────────────────────────
 async function runAnalysis() {
-  const btn = $('btn-analyze');
-  if (btn) { btn.disabled = true; btn.textContent = t('⏳ Analysiere…', '⏳ Analyzing…'); }
-
+  showToast(isGerman ? 'Analyse läuft…' : 'Analysis running…');
   try {
-    // Load self-responses
-    const selfRows = await sbSelect('self_responses', { 'session_id': 'eq.' + S.sessionId });
-    const selfResp = {};
-    for (const row of selfRows) {
-      selfResp[row.question_id] = parseAnswerRow(row.answer_type, row.answer_value);
-    }
-
-    // Load respondent data
-    const respRows = await sbRpc('get_all_respondent_data', { p_link_id: S.feedbackLink.id });
-    const byRespondent = {};
-    for (const row of respRows) {
-      if (!byRespondent[row.respondent_id]) byRespondent[row.respondent_id] = {};
-      byRespondent[row.respondent_id][row.question_id] = parseAnswerRow(row.answer_type, row.answer_value);
-    }
-    const extResps = Object.values(byRespondent).filter(r => Object.keys(r).length > 0);
-
-    if (extResps.length < 5) {
-      alert(t(`Zu wenig Antworten: ${extResps.length} geladen.`, `Not enough responses: ${extResps.length} loaded.`));
-      if (btn) { btn.disabled = false; btn.textContent = t('✦ Report erstellen', '✦ Generate report'); }
-      return;
-    }
-
-    // Compute stats immediately
-    const compAreas = computeComparisonAreas(selfResp, extResps);
-    const traitStats = computeTraitStats(selfResp, extResps);
-    const fcStats = computeForcedChoiceStats(selfResp, extResps);
-    const openByQ = collectOpenTextByQuestion(extResps);
-
-    S.reportData = {
-      comparisonAreas: compAreas,
-      traitStats,
-      forcedChoiceStats: fcStats,
-      openTextByQuestion: openByQ,
-      aiResult: null,
-    };
-    S.aiComputing = true;
+    const session = assessSessions[0];
+    const r = await fetch(SUPA_URL + '/functions/v1/analyze', {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json', 'Authorization': `Bearer ${accessToken}` },
+      body: JSON.stringify({ session_id: session.id })
+    });
+    if (!r.ok) throw new Error(await r.text());
+    const d = await r.json();
+    // Reload analysis
+    const ar = await supaSelect('analysis_results', `session_id=eq.${session.id}&select=*&order=created_at.desc&limit=1`);
+    analysisResult = ar && ar.length > 0 ? ar[0] : null;
     renderDashboard();
-    openReport();
+    showToast(isGerman ? '✅ Analyse abgeschlossen!' : '✅ Analysis complete!');
+  } catch(e) { alert('Fehler: ' + e.message); }
+}
 
-    // Run AI in background
-    const prompt = buildPrompt(S.user.assessmentType || 'General', selfResp, extResps);
-    try {
-      const aiJson = await callEdgeFunction(prompt);
-      const parsed = parseAiResult(aiJson);
-      if (parsed) {
-        S.reportData.aiResult = parsed;
-        S.aiComputing = false;
-        // Store to Supabase
-        await storeAnalysis(S.reportData);
-        if (document.getElementById('s-report').classList.contains('active')) {
-          renderReportContent();
-        }
-      }
-    } catch(e) {
-      S.aiComputing = false;
-      console.error('AI error:', e);
+async function openReport() {
+  showScreen('screen-report');
+  await buildReport();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// REPORT
+// ─────────────────────────────────────────────────────────────────────────────
+async function buildReport() {
+  document.getElementById('report-profil').innerHTML    = '<div class="center-fill"><div class="spinner"></div></div>';
+  document.getElementById('report-vergleich').innerHTML = '';
+  document.getElementById('report-rohdaten').innerHTML  = '';
+
+  try {
+    const session = assessSessions[0];
+    if (!session) return;
+
+    // Self responses
+    const selfRows = await supaSelect('self_responses', `session_id=eq.${session.id}&select=*`);
+    // Respondent data
+    const link = feedbackLinks[0];
+    let respData = [];
+    if (link) {
+      try { respData = await supaRpc('get_all_respondent_data', { p_link_id: link.id }) || []; } catch(e){}
     }
 
+    const analysis = analysisResult;
+    renderReportProfil(selfRows||[], respData, analysis);
+    renderReportVergleich(selfRows||[], respData);
+    renderReportRohdaten(selfRows||[], respData);
   } catch(e) {
-    alert(t('Fehler: ', 'Error: ') + e.message);
-    if (btn) { btn.disabled = false; btn.textContent = t('✦ Report erstellen', '✦ Generate report'); }
+    document.getElementById('report-profil').innerHTML = `<p style="color:var(--red)">Fehler: ${e.message}</p>`;
   }
 }
 
-function parseAnswerRow(type, value) {
-  switch(type) {
-    case 'single':   return { type: 'single', value };
-    case 'multiple':
-      try { return { type: 'multiple', value: JSON.parse(value) }; }
-      catch(e) { return { type: 'multiple', value: [value] }; }
-    case 'rating':   return { type: 'rating', value: parseInt(value) || 0 };
-    case 'text':     return { type: 'text', value };
-    default:         return { type: 'text', value };
-  }
-}
-
-async function callEdgeFunction(prompt) {
-  const r = await fetch(ANALYZE_URL, {
-    method: 'POST',
-    headers: sbHeaders(null, {}),
-    body: JSON.stringify({ prompt }),
-    signal: AbortSignal.timeout(120000),
-  });
-  const data = await r.json();
-  if (data.error) throw new Error(data.error);
-  return data.result;
-}
-
-function parseAiResult(json) {
-  try {
-    let cleaned = json.trim();
-    if (cleaned.startsWith('```')) {
-      cleaned = cleaned.split('\n').slice(1).join('\n');
-      if (cleaned.endsWith('```')) cleaned = cleaned.slice(0, -3);
-      cleaned = cleaned.trim();
-    }
-    const obj = JSON.parse(cleaned);
-    return {
-      personalitySummary: obj.personalitySummary || '',
-      strengths: obj.strengths || [],
-      weaknesses: obj.weaknesses || [],
-      selfVsOthers: obj.selfVsOthers || '',
-      assessmentAdvice: obj.assessmentAdvice || '',
-      groupExerciseTips: obj.groupExerciseTips || [],
-      interviewTips: obj.interviewTips || [],
-      decisionMakingTips: obj.decisionMakingTips || [],
-      selfAwarenessTips: obj.selfAwarenessTips || [],
-    };
-  } catch(e) { return null; }
-}
-
-async function storeAnalysis(data) {
-  if (!S.sessionId) return;
-  const ai = data.aiResult || {};
-  const record = {
-    id: uuid(),
-    session_id: S.sessionId,
-    personality_summary: ai.personalitySummary || '',
-    strengths: ai.strengths || [],
-    weaknesses: ai.weaknesses || [],
-    self_vs_others: ai.selfVsOthers || '',
-    assessment_advice: ai.assessmentAdvice || '',
-    group_exercise_tips: ai.groupExerciseTips || [],
-    interview_tips: ai.interviewTips || [],
-    decision_making_tips: ai.decisionMakingTips || [],
-    self_awareness_tips: ai.selfAwarenessTips || [],
-    open_text_responses: Object.values(data.openTextByQuestion || {}).flat(),
-    comparison_areas: JSON.stringify(data.comparisonAreas || []),
-    trait_stats: JSON.stringify(data.traitStats || []),
-    forced_choice_stats: JSON.stringify(data.forcedChoiceStats || []),
-  };
-  try { await sbUpsert('analysis_results', record, 'session_id'); } catch(e) { console.error(e); }
-}
-
-async function loadExistingAnalysis() {
-  if (!S.sessionId) return;
-  try {
-    const rows = await sbSelect('analysis_results', { 'session_id': 'eq.' + S.sessionId });
-    if (!rows.length) return;
-    const r = rows[0];
-    let compAreas = [], traitStats = [], fcStats = [];
-    try { compAreas = JSON.parse(r.comparison_areas || '[]'); } catch(e) {}
-    try { traitStats = JSON.parse(r.trait_stats || '[]'); } catch(e) {}
-    try { fcStats = JSON.parse(r.forced_choice_stats || '[]'); } catch(e) {}
-
-    S.reportData = {
-      comparisonAreas: compAreas,
-      traitStats,
-      forcedChoiceStats: fcStats,
-      openTextByQuestion: {},
-      aiResult: {
-        personalitySummary: r.personality_summary || '',
-        strengths: r.strengths || [],
-        weaknesses: r.weaknesses || [],
-        selfVsOthers: r.self_vs_others || '',
-        assessmentAdvice: r.assessment_advice || '',
-        groupExerciseTips: r.group_exercise_tips || [],
-        interviewTips: r.interview_tips || [],
-        decisionMakingTips: r.decision_making_tips || [],
-        selfAwarenessTips: r.self_awareness_tips || [],
-      },
-    };
-  } catch(e) { console.error(e); }
-}
-
-// ── Stats computation ─────────────────────────────────────────────────────────
-function computeComparisonAreas(selfResp, extResps) {
-  const ratingQs = [
-    { id:'q5', name:'Teamwork' }, { id:'q6', name:'Stressresistenz' },
-    { id:'q7', name:'Verantwortung' }, { id:'q8', name:'Kommunikation' },
-    { id:'q9', name:'Zuverlässigkeit' },
-  ];
-  return ratingQs.map(q => {
-    const selfVal = selfResp[q.id]?.type === 'rating' ? selfResp[q.id].value : 0;
-    const otherVals = extResps.filter(r => r[q.id]?.type === 'rating').map(r => r[q.id].value);
-    if (!otherVals.length) return null;
-    const avg = otherVals.reduce((a,b) => a+b, 0) / otherVals.length;
-    return { id: q.id, name: q.name, selfRating: selfVal, othersAverage: avg };
-  }).filter(Boolean);
-}
-
-function computeTraitStats(selfResp, extResps) {
-  const traits = ['ruhig','analytisch','selbstsicher','teamorientiert','verantwortungsbewusst',
-    'strukturiert','bedachtsam','spontan','dominant','zurückhaltend','empathisch','entschlossen'];
-  const traitsEN = ['calm','analytical','confident','team-oriented','responsible',
-    'structured','careful','spontaneous','dominant','reserved','empathetic','decisive'];
-  const selfSel = new Set(selfResp['q1']?.type === 'multiple' ? selfResp['q1'].value : []);
-  return traits.map((tr, i) => {
-    const cnt = extResps.filter(r => r['q1']?.type === 'multiple' && r['q1'].value.includes(tr)).length;
-    return { id: 'trait_'+i, name: tr, nameEN: traitsEN[i], selfSelected: selfSel.has(tr),
-      othersPercent: extResps.length ? cnt / extResps.length : 0 };
+function switchReportTab(tab) {
+  ['profil','vergleich','rohdaten'].forEach(t => {
+    document.getElementById('rtab-'+t).classList.toggle('active', t===tab);
+    document.getElementById('report-'+t).style.display = t===tab ? '' : 'none';
   });
 }
 
-function computeForcedChoiceStats(selfResp, extResps) {
-  const fcQs = [
-    { id:'q2', text:'Entscheidet eher...' },
-    { id:'q3', text:'In Gruppen tendiert diese Person...' },
-    { id:'q4', text:'Wenn etwas schiefläuft...' },
-  ];
-  return fcQs.map(q => {
-    const qDef = Qs.find(x => x.id === q.id);
-    const opts = qDef.optDE;
-    const selfChoice = selfResp[q.id]?.type === 'single' ? selfResp[q.id].value : '';
-    const counts = {};
-    opts.forEach(o => counts[o] = 0);
-    extResps.forEach(r => {
-      if (r[q.id]?.type === 'single' && counts.hasOwnProperty(r[q.id].value)) counts[r[q.id].value]++;
-    });
-    const total = extResps.length;
-    const results = {};
-    for (const [k,v] of Object.entries(counts)) results[k] = total > 0 ? v/total : 0;
-    return { id: q.id, question: q.text, selfChoice, results, opts, optsEN: qDef.optEN };
-  });
+// ── sectionCard helper ──
+function scHtml(iconBg, icon, title, body) {
+  return `<div class="sc">
+    <div class="sc-header">
+      <div class="sc-icon" style="background:${iconBg};">${icon}</div>
+      <div class="sc-title">${title}</div>
+    </div>
+    <div class="sc-divider"></div>
+    <div class="sc-body">${body}</div>
+  </div>`;
 }
 
-function isMeaningfulText(t) {
-  const s = t.toLowerCase();
-  if (s.length < 4) return false;
-  const letters = [...s].filter(c => /[a-züäöß\s]/.test(c)).length;
-  if (letters / s.length < 0.6) return false;
-  const nonAnswers = ['keine ahnung','weiß nicht','weiss nicht','kann ich nicht','nichts sagen',
-    'no idea',"don't know",'n/a','keine angabe','nichts','nein','ja','gut','okay','ok','---','...'];
-  return !nonAnswers.some(na => s.startsWith(na) || s === na);
-}
-
-function collectOpenTextByQuestion(extResps) {
-  const openIds = ['q10','q11','q12','q13','q14','q15','q16','q17','q18'];
-  const grouped = {};
-  for (const resp of extResps) {
-    for (const id of openIds) {
-      const a = resp[id];
-      if (a?.type === 'text') {
-        const v = a.value.trim();
-        if (isMeaningfulText(v)) {
-          if (!grouped[id]) grouped[id] = [];
-          grouped[id].push(v);
-        }
-      }
-    }
-  }
-  return grouped;
-}
-
-// ── Prompt builder ────────────────────────────────────────────────────────────
-function buildPrompt(assessmentType, selfResp, extResps) {
-  function formatResp(resp) {
-    return Qs.map(q => {
-      const a = resp[q.id];
-      if (!a) return null;
-      let text = '';
-      if (a.type === 'multiple') text = a.value?.join(', ') || '';
-      else if (a.type === 'single') text = a.value || '';
-      else if (a.type === 'rating') text = a.value + '/5';
-      else if (a.type === 'text') text = a.value || '';
-      if (a.type === 'text' && text.length < 3) return null;
-      const qText = q.de;
-      return `- ${qText}: ${text}`;
-    }).filter(Boolean).join('\n');
-  }
-
-  return `You are an expert aviation psychologist conducting a structured 360-degree feedback analysis for a pilot candidate preparing for a ${assessmentType} selection process.
-
-## EVALUATION FRAMEWORK
-Assess the candidate on these aviation psychology dimensions:
-1. Teamfähigkeit & Kooperation — collaboration, CRM
-2. Kommunikation — clarity, assertiveness, active listening
-3. Führungsverhalten — initiative, leader/follower adaptability
-4. Belastbarkeit & Stressresistenz — composure under pressure
-5. Selbstwahrnehmung & Reflexionsfähigkeit — accuracy of self-perception
-6. Lernbereitschaft — openness to feedback and development
-7. Entscheidungsverhalten — speed and quality of decisions
-8. Zuverlässigkeit & Verantwortungsbewusstsein — consistency, accountability
-9. Soziale Kompetenz — empathy, conflict resolution
-
-## VALIDATION RULES — CRITICAL
-Before using any free-text answer, check if it contains a MEANINGFUL, QUESTION-RELEVANT statement.
-IGNORE the answer entirely if it: contains no real words, is a refusal or non-answer (keine Ahnung, weiß nicht, n/a), is off-topic, is shorter than 4 meaningful characters, or is a filler phrase with no specific content.
-
-## INPUT DATA
-
-SELF-PERCEPTION:
-${formatResp(selfResp)}
-
-EXTERNAL PERCEPTION (${extResps.length} respondents):
-${extResps.map((r,i) => `Respondent ${i+1}:\n${formatResp(r)}`).join('\n\n')}
-
-## OUTPUT
-Respond in German. Return JSON with exactly these keys:
-- personalitySummary: string (3-4 sentences, references dimensions)
-- strengths: string array (3-5 items, prefixed with dimension name)
-- weaknesses: string array (2-4 items, prefixed with dimension name, honest and direct)
-- selfVsOthers: string (2-3 sentences on key discrepancies)
-- assessmentAdvice: string (concrete advice specific to ${assessmentType})
-- groupExerciseTips: string array (3-5 specific, personalized tips for group exercise)
-- interviewTips: string array (3-5 specific, personalized tips for interview)
-- decisionMakingTips: string array (3-5 specific tips for decision-making exercises)
-- selfAwarenessTips: string array (3-5 tips based on the self vs others gap)`;
-}
-
-// ── Report rendering ──────────────────────────────────────────────────────────
-function openReport() {
-  S.reportTab = 0;
-  updateReportTabBtns();
-  renderReportContent();
-  showScreen('s-report');
-  applyLangReport();
-}
-
-function switchReportTab(i) {
-  S.reportTab = i;
-  updateReportTabBtns();
-  renderReportContent();
-}
-
-function updateReportTabBtns() {
-  [0,1,2].forEach(i => $('rtab-'+i)?.classList.toggle('active', i === S.reportTab));
-}
-
-function renderReportContent() {
-  const d = S.reportData;
-  if (!d) return;
-  const c = $('report-content');
-  if (S.reportTab === 0) c.innerHTML = renderProfilTab(d);
-  else if (S.reportTab === 1) c.innerHTML = renderVergleichTab(d);
-  else c.innerHTML = renderRohdatenTab(d);
-}
-
-function renderProfilTab(d) {
-  const ai = d.aiResult;
+// ── Profil tab ──
+function renderReportProfil(selfRows, respData, analysis) {
   let html = '';
 
-  if (S.aiComputing) {
-    html += `<div class="ai-banner">
-      <div class="spinner" style="width:20px;height:20px;border-width:2px;"></div>
-      <span>${t('KI-Analyse läuft…', 'AI analysis running…')}</span>
+  // Trait chips: traits where ≥50% of respondents selected
+  const traitCounts = computeTraitCounts(respData);
+  const totalResp = countRespondents(respData);
+  const highTraits = totalResp > 0
+    ? Object.entries(traitCounts)
+        .filter(([,n]) => n/totalResp >= 0.5)
+        .sort((a,b) => b[1]-a[1])
+    : [];
+
+  if (highTraits.length > 0) {
+    html += `<div class="sc" style="margin-bottom:12px;">
+      <div class="sc-header"><div class="sc-icon" style="background:rgba(74,158,248,.15);">👥</div><div class="sc-title">Wie andere dich wahrnehmen</div></div>
+      <div class="sc-divider"></div>
+      <div class="chip-wrap">
+        ${highTraits.map(([name, n]) => `<span class="chip">${name} ${Math.round(n/totalResp*100)}%</span>`).join('')}
+      </div>
     </div>`;
   }
 
-  if (ai?.personalitySummary) {
-    html += `<div class="section-hd">${t('Persönlichkeitsprofil', 'Personality Profile')}</div>
-    <p class="summary-text">${esc(ai.personalitySummary)}</p>`;
-  }
-
-  if (ai?.strengths?.length) {
-    html += `<div class="section-hd">${t('Stärken (wahrgenommen)', 'Perceived Strengths')}</div>
-    <ul class="bullet-list">
-    ${ai.strengths.map(s => `<li class="bullet-green">✓ ${esc(s)}</li>`).join('')}
-    </ul>`;
-  }
-
-  if (ai?.weaknesses?.length) {
-    html += `<div class="section-hd">${t('Entwicklungsfelder', 'Areas for Development')}</div>
-    <ul class="bullet-list">
-    ${ai.weaknesses.map(s => `<li class="bullet-red">△ ${esc(s)}</li>`).join('')}
-    </ul>`;
-  }
-
-  if (ai?.assessmentAdvice) {
-    html += `<div class="section-hd">${t('Assessment-Empfehlung', 'Assessment Advice')}</div>
-    <div class="advice-box">${esc(ai.assessmentAdvice)}</div>`;
-  }
-
-  // Tips sections
-  const tipSections = [
-    { key: 'groupExerciseTips', de: 'Gruppenübungen', en: 'Group Exercises', icon: '👥' },
-    { key: 'interviewTips', de: 'Interview', en: 'Interview', icon: '🎤' },
-    { key: 'decisionMakingTips', de: 'Entscheidungsübungen', en: 'Decision-Making', icon: '⚡' },
-    { key: 'selfAwarenessTips', de: 'Selbstwahrnehmung', en: 'Self-Awareness', icon: '🪞' },
-  ];
-  tipSections.forEach(sec => {
-    const tips = ai?.[sec.key];
-    if (tips?.length) {
-      html += `<div class="section-hd">${sec.icon} ${t(sec.de, sec.en)}</div>
-      <ul class="bullet-list">
-      ${tips.map(tip => `<li class="bullet-blue">• ${esc(tip)}</li>`).join('')}
-      </ul>`;
+  // AI sections
+  if (analysis) {
+    const parsed = parseAnalysis(analysis.result_json || analysis.result || '');
+    if (parsed.staerken?.length) {
+      html += scHtml('rgba(52,199,89,.15)', '✓', 'Stärken', parsed.staerken.map(s=>`<div style="display:flex;gap:8px;margin-bottom:6px;"><span style="color:var(--green);flex-shrink:0;">✓</span><span>${s}</span></div>`).join(''));
     }
-  });
+    if (parsed.entwicklung?.length) {
+      html += scHtml('rgba(255,159,10,.15)', '▲', 'Entwicklungsbereiche', parsed.entwicklung.map(s=>`<div style="display:flex;gap:8px;margin-bottom:6px;"><span style="color:var(--orange);flex-shrink:0;">▲</span><span>${s}</span></div>`).join(''));
+    }
+    if (parsed.empfehlung) {
+      html += scHtml('rgba(107,94,228,.15)', '✨', 'Empfehlung', `<p>${parsed.empfehlung}</p>`);
+    }
+    if (parsed.persoenlichkeit) {
+      html += scHtml('rgba(74,158,248,.15)', '🧠', 'Persönlichkeitsprofil', `<p>${parsed.persoenlichkeit}</p>`);
+    }
+  }
 
-  if (!ai) {
-    html += `<div style="text-align:center;padding:40px 0;color:var(--faint);">
-      <div style="font-size:32px;margin-bottom:12px;">📊</div>
-      <p>${t('Die Statistiken sind im Vergleich-Tab. KI-Analyse läuft im Hintergrund.', 'Stats are in the Comparison tab. AI analysis running in background.')}</p>
+  if (!html) {
+    html = `<div class="center-fill" style="padding:40px 0;">
+      <p style="color:var(--faint);text-align:center;">Noch keine Daten vorhanden.</p>
     </div>`;
   }
 
-  return html;
+  document.getElementById('report-profil').innerHTML = html;
 }
 
-function renderVergleichTab(d) {
+// ── Vergleich tab ──
+function renderReportVergleich(selfRows, respData) {
+  const questions = getSurveyQuestions();
+  const totalResp = countRespondents(respData);
   let html = '';
 
-  // Comparison areas
-  if (d.comparisonAreas?.length) {
-    html += `<div class="section-hd">${t('Selbst vs. Außenwahrnehmung', 'Self vs. External Perception')}</div>
-    <div class="card">`;
-    d.comparisonAreas.forEach(a => {
-      const delta = a.selfRating - a.othersAverage;
-      const absD = Math.abs(delta);
-      const gapColor = absD < 0.2 ? '#34C759' : delta > 0.5 ? '#FF6B6B' : delta < -0.5 ? '#4A9EF8' : '#FF9F0A';
-      const gapLabel = absD < 0.2
-        ? t('Übereinstimmung','Agreement')
-        : delta > 0 ? t('Du schätzt dich höher','You rate yourself higher') : t('Andere sehen dich stärker','Others see you stronger');
-      html += `<div class="comp-row">
-        <div class="comp-name">${esc(a.name)}</div>
-        <div class="comp-bar-row">
-          <span class="comp-bar-label">${t('Selbst','Self')}</span>
-          <div class="comp-bar-track"><div class="comp-bar-fill" style="width:${a.selfRating/5*100}%;background:var(--accent)"></div></div>
-          <span class="comp-bar-val">${a.selfRating.toFixed(1)}</span>
-        </div>
-        <div class="comp-bar-row">
-          <span class="comp-bar-label">${t('Andere','Others')}</span>
-          <div class="comp-bar-track"><div class="comp-bar-fill" style="width:${a.othersAverage/5*100}%;background:var(--green)"></div></div>
-          <span class="comp-bar-val">${a.othersAverage.toFixed(1)}</span>
-        </div>
-        <span class="comp-gap" style="background:${gapColor}22;color:${gapColor};">${gapLabel}</span>
-      </div>`;
+  // Compute self avg per question
+  const selfByQ = {};
+  selfRows.forEach(row => { selfByQ[row.question_id] = row; });
+
+  // Compute others avg per question (rating only)
+  const othersSum = {}; const othersCount = {};
+  respData.forEach(resp => {
+    const answers = resp.answers || [];
+    answers.forEach(a => {
+      if (a.answer_type !== 'rating') return;
+      const v = parseFloat(a.answer_value);
+      if (isNaN(v)) return;
+      othersSum[a.question_id] = (othersSum[a.question_id]||0) + v;
+      othersCount[a.question_id] = (othersCount[a.question_id]||0) + 1;
     });
-    html += '</div>';
-  }
-
-  // Self vs Others AI text
-  if (d.aiResult?.selfVsOthers) {
-    html += `<div class="section-hd">${t('Selbstbild vs. Fremdbild', 'Self Image vs. External Image')}</div>
-    <p class="summary-text">${esc(d.aiResult.selfVsOthers)}</p>`;
-  }
-
-  // Trait stats
-  if (d.traitStats?.length) {
-    html += `<div class="section-hd">${t('Persönlichkeitseigenschaften', 'Personality Traits')}</div>
-    <div class="card">
-    <p style="font-size:12px;color:var(--faint);margin-bottom:12px;">
-      ${t('Balken = % der Feedback-Geber. Punkt = deine Selbsteinschätzung', 'Bar = % of respondents. Dot = your self-assessment')}
-    </p>`;
-    const sorted = [...d.traitStats].sort((a,b) => b.othersPercent - a.othersPercent);
-    sorted.forEach(tr => {
-      const pct = Math.round(tr.othersPercent * 100);
-      const dotColor = tr.selfSelected ? 'var(--accent)' : 'rgba(255,255,255,.2)';
-      const barColor = tr.othersPercent > 0.6 ? 'var(--green)' : tr.othersPercent > 0.3 ? 'var(--accent)' : 'rgba(255,255,255,.3)';
-      const name = S.lang === 'de' ? tr.name : (tr.nameEN || tr.name);
-      html += `<div class="trait-row">
-        <span class="trait-name">${esc(name)}</span>
-        <div class="trait-bar-wrap"><div class="trait-bar" style="width:${tr.othersPercent*100}%;background:${barColor}"></div></div>
-        <div class="trait-self-dot" style="background:${dotColor};border:2px solid ${tr.selfSelected ? 'var(--accent)' : 'rgba(255,255,255,.25)'}"></div>
-        <span class="trait-pct">${pct}%</span>
-      </div>`;
-    });
-    html += '</div>';
-  }
-
-  // Forced choice stats
-  if (d.forcedChoiceStats?.length) {
-    html += `<div class="section-hd">${t('Entscheidungsstil', 'Decision Style')}</div>`;
-    d.forcedChoiceStats.forEach(fc => {
-      html += `<div class="card" style="margin-bottom:12px;">
-        <p class="fc-question">${esc(fc.question)}</p>`;
-      fc.opts.forEach((opt, i) => {
-        const pct = Math.round((fc.results[opt] || 0) * 100);
-        const isSelf = fc.selfChoice === opt;
-        const dispOpt = S.lang === 'de' ? opt : (fc.optsEN?.[i] || opt);
-        html += `<div class="fc-option-row">
-          <span class="fc-opt-label">${esc(dispOpt)}</span>
-          ${isSelf ? `<span class="fc-self-badge">${t('Ich','Me')}</span>` : ''}
-          <div class="fc-opt-bar-wrap"><div class="fc-opt-bar" style="width:${pct}%;background:${isSelf?'var(--green)':'var(--accent)'}"></div></div>
-          <span class="fc-opt-pct">${pct}%</span>
-        </div>`;
-      });
-      html += '</div>';
-    });
-  }
-
-  return html || `<p style="color:var(--faint);text-align:center;padding:40px 0;">${t('Noch keine Daten', 'No data yet')}</p>`;
-}
-
-function renderRohdatenTab(d) {
-  let html = '';
-  const openQs = Qs.filter(q => q.type === 'text');
-  const byQ = d.openTextByQuestion || {};
-
-  let hasAny = false;
-  openQs.forEach(q => {
-    const answers = byQ[q.id];
-    if (!answers?.length) return;
-    hasAny = true;
-    const title = S.lang === 'de' ? q.de : q.en;
-    html += `<div class="open-q-section">
-      <div class="open-q-title">${esc(title)}</div>
-      ${answers.map(a => `<div class="open-q-answer">"${esc(a)}"</div>`).join('')}
-    </div>`;
   });
 
-  if (!hasAny) {
-    html = `<div style="text-align:center;padding:40px 0;color:var(--faint);">
-      <p>${t('Keine Freitext-Antworten vorhanden', 'No open text responses available')}</p>
-    </div>`;
-  }
+  const ratingQs = questions.filter(q => q.type === 'rating');
+  const surpriseRows = [];
 
-  return html;
-}
-
-function esc(str) {
-  if (!str) return '';
-  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-// ── Language ─────────────────────────────────────────────────────────────────
-function toggleLang() {
-  S.lang = S.lang === 'de' ? 'en' : 'de';
-  localStorage.setItem('pm_lang', S.lang);
-  applyLang();
-}
-
-function applyLang() {
-  const activeScreen = document.querySelector('.screen.active')?.id;
-  if (activeScreen === 's-auth') applyLangAuth();
-  else if (activeScreen === 's-privacy') applyLangPrivacy();
-  else if (activeScreen === 's-assess') applyLangAssess();
-  else if (activeScreen === 's-dashboard') applyLangDash();
-  else if (activeScreen === 's-survey') renderQ();
-  else if (activeScreen === 's-survey-done') applyLangSurveyDone();
-  else if (activeScreen === 's-report') applyLangReport();
-  else if (activeScreen === 's-email-confirm') applyLangEmailConfirm();
-  // Update all lang buttons
-  ['lang-btn-auth','lang-btn-dash','lang-btn-report'].forEach(id => {
-    const el = $(id);
-    if (el) el.textContent = S.lang === 'de' ? 'EN' : 'DE';
-  });
-}
-
-function applyLangAuth() {
-  $('tab-login').textContent = t('Anmelden', 'Sign in');
-  $('tab-register').textContent = t('Registrieren', 'Register');
-  $('btn-login').textContent = t('Anmelden', 'Sign in');
-  $('btn-register').textContent = t('Account erstellen', 'Create account');
-  $('login-email').placeholder = t('E-Mail', 'Email');
-  $('login-pw').placeholder = t('Passwort', 'Password');
-  $('reg-name').placeholder = t('Dein Name', 'Your name');
-  $('reg-email').placeholder = t('E-Mail', 'Email');
-  $('reg-pw').placeholder = t('Passwort (min. 6 Zeichen)', 'Password (min. 6 chars)');
-}
-
-function applyLangPrivacy() {
-  $('txt-priv-title').textContent = t('Datenschutz & Nutzungsbedingungen', 'Privacy & Terms of Use');
-  $('txt-priv-sub').textContent = t('Beta-Version — bitte lies die folgenden Hinweise sorgfältig.', 'Beta version — please read the following information carefully.');
-  $('txt-priv1-title').textContent = t('Welche Daten werden gespeichert?', 'What data is stored?');
-  $('txt-priv1-body').textContent = t('Deine E-Mail-Adresse, deine Antworten im Self-Assessment sowie die anonymen Rückmeldungen der Personen, die du zur Umfrage eingeladen hast.', 'Your email address, your self-assessment answers, and the anonymous responses from people you invited to the survey.');
-  $('txt-priv2-title').textContent = t('KI-Analyse', 'AI Analysis');
-  $('txt-priv2-body').textContent = t('Zur Erstellung deines persönlichen Reports werden deine Antworten und die Umfrage-Ergebnisse an einen KI-Dienst (Groq / Llama) übermittelt. Die Übertragung erfolgt verschlüsselt.', 'To generate your personal report, your answers and survey results are sent to an AI service (Groq / Llama). Transmission is encrypted.');
-  $('txt-priv3-title').textContent = t('Respondenten', 'Respondents');
-  $('txt-priv3-body').textContent = t('Personen, die deinen Feedback-Link ausfüllen, geben ihren Namen und ihre Beziehung zu dir an. Diese Angaben sind nur für dich sichtbar.', 'People who complete your feedback link provide their name and relationship to you. This information is only visible to you.');
-  $('txt-priv4-title').textContent = t('Beta-Hinweis', 'Beta Notice');
-  $('txt-priv4-body').textContent = t('Dies ist eine Beta-Version. Gespeicherte Daten können jederzeit ohne Vorankündigung gelöscht werden. Die App ersetzt keine professionelle Diagnostik.', 'This is a beta version. Stored data may be deleted at any time without notice. The app does not replace professional assessment.');
-  $('txt-priv5-title').textContent = t('Datenlöschung', 'Data Deletion');
-  $('txt-priv5-body').textContent = t('Du kannst die Löschung deiner Daten jederzeit beantragen. Mit Registrierung stimmst du der Verarbeitung zu.', 'You can request data deletion at any time. By registering, you consent to data processing.');
-  $('btn-accept-privacy').textContent = t('Verstanden & Fortfahren', 'Understood & Continue');
-}
-
-function applyLangAssess() {
-  $('txt-assess-title').textContent = t('Für welches Assessment bereitest du dich vor?', 'Which assessment are you preparing for?');
-  $('txt-assess-sub').textContent = t('Diese Auswahl bestimmt die Empfehlungen in deinem Report.', 'This determines the recommendations in your report.');
-  $('txt-efa-desc').textContent = t('Vorbereitung auf das EFA Multi-Crew-Selection', 'Prepare for the EFA multi-crew selection');
-  $('txt-aua-desc').textContent = t('Vorbereitung auf das Austrian Airlines Assessment', 'Prepare for the Austrian Airlines assessment');
-  $('txt-condor-desc').textContent = t('Vorbereitung auf das Condor Piloten-Assessment', 'Prepare for the Condor pilot assessment');
-  $('txt-aero-desc').textContent = t('Vorbereitung auf das AeroLogic Assessment', 'Prepare for the AeroLogic assessment');
-  $('txt-gen-desc').textContent = t('Allgemeines Piloten-Auswahlverfahren', 'General airline pilot selection process');
-}
-
-function applyLangDash() {
-  $('dash-title').textContent = t('Dein Assessment-Plan', 'Your Assessment Plan');
-  $('dash-assess-pill').textContent = S.user?.assessmentType || '';
-  const lb = $('lang-btn-dash');
-  if (lb) lb.textContent = S.lang === 'de' ? 'EN' : 'DE';
-  renderStep1(); renderStep2(); renderStep3();
-}
-
-function applyLangSurveyDone() {
-  $('txt-sdone-title').textContent = t('Self-Assessment abgeschlossen!', 'Self-Assessment complete!');
-  $('txt-sdone-msg').textContent = t('Gehe zurück zum Dashboard, um deinen Report-Status zu prüfen.', 'Go back to the dashboard to check your report status.');
-  $('btn-sdone').textContent = t('Zum Dashboard', 'To Dashboard');
-}
-
-function applyLangReport() {
-  $('txt-report-title').textContent = t('Dein Report', 'Your Report');
-  $('rtab-0').textContent = t('Profil', 'Profile');
-  $('rtab-1').textContent = t('Vergleich', 'Comparison');
-  $('rtab-2').textContent = t('Rohdaten', 'Raw Data');
-  const lb = $('lang-btn-report');
-  if (lb) lb.textContent = S.lang === 'de' ? 'EN' : 'DE';
-  renderReportContent();
-}
-
-function applyLangEmailConfirm() {
-  $('txt-confirm-title').textContent = t('E-Mail bestätigen', 'Confirm your email');
-  $('txt-confirm-msg').textContent = t(
-    'Wir haben dir eine Bestätigungs-E-Mail gesendet. Bitte klicke auf den Link und melde dich anschließend an.',
-    'We sent you a confirmation email. Please click the link and then sign in.'
-  );
-  $('btn-back-login').textContent = t('Zurück zum Login', 'Back to sign in');
-}
-
-// ── Init ─────────────────────────────────────────────────────────────────────
-async function init() {
-  // Apply lang to auth screen initially
-  const lb = $('lang-btn-auth');
-  if (lb) lb.textContent = S.lang === 'de' ? 'EN' : 'DE';
-
-  if (!S.accessToken || !S.userId) {
-    showScreen('s-auth');
-    applyLangAuth();
+  if (ratingQs.length === 0 || totalResp === 0) {
+    html = `<p style="color:var(--faint);text-align:center;padding:40px 0;">Noch keine Fremdbild-Daten vorhanden.</p>`;
+    document.getElementById('report-vergleich').innerHTML = html;
     return;
   }
 
-  // Restore session: fetch user
-  try {
-    const rows = await sbSelect('users', { 'id': 'eq.' + S.userId });
-    if (!rows.length) { doSignOut(); return; }
-    S.user = {
-      id: rows[0].id, name: rows[0].full_name,
-      email: rows[0].email, assessmentType: rows[0].assessment_type,
-    };
+  ratingQs.forEach(q => {
+    const selfRow = selfByQ[q.id];
+    const selfVal = selfRow ? parseFloat(selfRow.answer_value) : null;
+    const othersAvg = othersCount[q.id] ? othersSum[q.id]/othersCount[q.id] : null;
 
-    // Check privacy
-    if (!localStorage.getItem('pm_privacy')) {
-      showScreen('s-privacy'); applyLangPrivacy(); return;
+    if (selfVal === null && othersAvg === null) return;
+
+    const selfPct   = selfVal   !== null ? (selfVal-1)/4*100   : null;
+    const othersPct = othersAvg !== null ? (othersAvg-1)/4*100 : null;
+    const delta = (selfVal !== null && othersAvg !== null) ? selfVal - othersAvg : null;
+
+    let deltaHtml = '';
+    if (delta !== null && Math.abs(delta) >= 0.2) {
+      const sign = delta > 0 ? '+' : '';
+      const cls  = Math.abs(delta) < 0.2 ? 'neu' : (delta > 0 ? 'pos' : 'neg');
+      deltaHtml = `<span class="comp-delta ${cls}">Δ ${sign}${delta.toFixed(1)}</span>`;
     }
-    // Check assessment type
-    if (!S.user.assessmentType) {
-      showScreen('s-assess'); applyLangAssess(); return;
+
+    if (delta !== null && Math.abs(delta) > 0.4) {
+      surpriseRows.push({ q, selfVal, othersAvg, delta });
     }
-    // Load dashboard data
-    await loadDashboardData();
-    // Try to load existing analysis
-    if (S.sessionId) await loadExistingAnalysis();
-    showDashboard();
-  } catch(e) {
-    console.error('Init error:', e);
-    showScreen('s-auth');
+
+    html += `<div class="comp-row">
+      <div class="comp-labels">
+        <span class="comp-name" style="font-size:13px;color:var(--dim);">${q.text}</span>
+        ${deltaHtml}
+      </div>
+      <div class="bar-pair">
+        ${selfPct !== null ? `<div class="bar-row">
+          <span class="bar-label">Du</span>
+          <div class="bar-track"><div class="bar-fill" style="width:${selfPct.toFixed(1)}%;background:var(--accent);"></div></div>
+          <span class="bar-pct">${selfVal?.toFixed(1)}</span>
+        </div>` : ''}
+        ${othersPct !== null ? `<div class="bar-row">
+          <span class="bar-label">Andere</span>
+          <div class="bar-track"><div class="bar-fill" style="width:${othersPct.toFixed(1)}%;background:rgba(255,255,255,.35);"></div></div>
+          <span class="bar-pct">${othersAvg?.toFixed(1)}</span>
+        </div>` : ''}
+      </div>
+    </div>`;
+  });
+
+  // Surprise section
+  if (surpriseRows.length > 0) {
+    html += `<div class="sc" style="margin-top:16px;">
+      <div class="sc-header"><div class="sc-icon" style="background:rgba(255,159,10,.15);">⚡</div><div class="sc-title">Überraschende Unterschiede</div></div>
+      <div class="sc-divider"></div>
+      ${surpriseRows.map(({q, selfVal, othersAvg, delta}) => {
+        const sign = delta > 0 ? '+' : '';
+        return `<div style="margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,.06);">
+          <div style="font-size:14px;font-weight:500;margin-bottom:4px;">${q.text}</div>
+          <div style="font-size:13px;color:var(--dim);">Du: ${selfVal?.toFixed(1)} · Andere: ${othersAvg?.toFixed(1)} · Δ ${sign}${delta.toFixed(1)}</div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  }
+
+  document.getElementById('report-vergleich').innerHTML = html || `<p style="color:var(--faint);text-align:center;padding:40px 0;">Keine Vergleichsdaten.</p>`;
+}
+
+// ── Rohdaten tab ──
+function renderReportRohdaten(selfRows, respData) {
+  const totalResp = countRespondents(respData);
+  let html = '';
+
+  // Self answers by question id
+  const selfByQ = {};
+  selfRows.forEach(r => { selfByQ[r.question_id] = r; });
+
+  // Trait selections
+  const traitQs = getSurveyQuestions().filter(q => q.type === 'multiple' && q.isTraitQ);
+  const traitCounts = computeTraitCounts(respData);
+  const selfTraitIds = new Set();
+  traitQs.forEach(q => {
+    const sr = selfByQ[q.id];
+    if (sr) {
+      try { const arr = JSON.parse(sr.answer_value); arr.forEach(v=>selfTraitIds.add(v)); } catch(e){}
+    }
+  });
+
+  if (Object.keys(traitCounts).length > 0 && totalResp > 0) {
+    html += `<div class="section-label">Eigenschaften</div>`;
+    const sorted = Object.entries(traitCounts).sort((a,b)=>b[1]-a[1]);
+    sorted.forEach(([name, count]) => {
+      const pct = count/totalResp*100;
+      const isSelf = selfTraitIds.has(name);
+      html += `<div class="rd-row">
+        <div class="rd-header">
+          <span class="rd-dot" style="color:${isSelf?'var(--accent)':'rgba(255,255,255,.3)'};">●</span>
+          <span class="rd-name">${name}</span>
+        </div>
+        <div class="rd-bar-row">
+          <div class="rd-bar-track"><div class="rd-bar-fill" style="width:${pct.toFixed(1)}%;"></div></div>
+          <span class="rd-pct">${Math.round(pct)}%</span>
+        </div>
+      </div>`;
+    });
+  }
+
+  // Forced choice
+  const fcQs = getSurveyQuestions().filter(q => q.type === 'single' && q.isFCQ);
+  if (fcQs.length > 0 && totalResp > 0) {
+    html += `<div class="section-label" style="margin-top:16px;">Forced Choice</div>`;
+    fcQs.forEach(q => {
+      const counts = {};
+      (q.options||[]).forEach(o => counts[o] = 0);
+      respData.forEach(resp => {
+        const a = (resp.answers||[]).find(a=>a.question_id===q.id);
+        if (a && counts[a.answer_value] !== undefined) counts[a.answer_value]++;
+      });
+      const sorted = Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+      html += `<div style="margin-bottom:16px;">
+        <div style="font-size:13px;font-weight:500;color:var(--dim);margin-bottom:8px;">${q.text}</div>
+        ${sorted.map(([opt,cnt]) => `<div class="fc-row">
+          <span class="fc-label">${opt}</span>
+          <div class="fc-track"><div class="fc-fill" style="width:${(cnt/totalResp*100).toFixed(1)}%;"></div></div>
+          <span class="fc-count">${cnt}</span>
+        </div>`).join('')}
+      </div>`;
+    });
+  }
+
+  // Open text
+  const textQs = getSurveyQuestions().filter(q => q.type === 'text');
+  if (textQs.length > 0) {
+    textQs.forEach(q => {
+      const texts = [];
+      respData.forEach(resp => {
+        const a = (resp.answers||[]).find(a=>a.question_id===q.id && a.answer_value);
+        if (a) texts.push(a.answer_value);
+      });
+      if (texts.length > 0) {
+        html += `<div class="section-label" style="margin-top:16px;">${q.text}</div>`;
+        html += texts.map(t => `<div class="open-text-quote">„${t}"</div>`).join('');
+      }
+    });
+  }
+
+  if (!html) {
+    html = `<p style="color:var(--faint);text-align:center;padding:40px 0;">Noch keine Rohdaten vorhanden.</p>`;
+  }
+
+  document.getElementById('report-rohdaten').innerHTML = html;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ANALYSIS PARSE
+// ─────────────────────────────────────────────────────────────────────────────
+function parseAnalysis(raw) {
+  let obj = {};
+  if (typeof raw === 'object' && raw !== null) { obj = raw; }
+  else if (typeof raw === 'string') {
+    // Strip ```json fences
+    const stripped = raw.replace(/^```json\s*/,'').replace(/\s*```\s*$/,'').trim();
+    try { obj = JSON.parse(stripped); } catch(e) { return {}; }
+  }
+  return {
+    staerken:      obj.staerken || obj.strengths || [],
+    entwicklung:   obj.entwicklung || obj.areas_for_development || [],
+    empfehlung:    obj.empfehlung || obj.recommendation || '',
+    persoenlichkeit: obj.persoenlichkeit || obj.personality_summary || obj.personality_profile || ''
+  };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// TRAIT COUNTS
+// ─────────────────────────────────────────────────────────────────────────────
+function countRespondents(respData) {
+  return new Set(respData.map(r=>r.respondent_id||r.id)).size;
+}
+
+function computeTraitCounts(respData) {
+  const counts = {};
+  const respondents = {};
+  // Group by respondent
+  respData.forEach(row => {
+    const rid = row.respondent_id || row.id;
+    if (!respondents[rid]) respondents[rid] = [];
+    respondents[rid].push(row);
+  });
+  Object.values(respondents).forEach(rows => {
+    const seen = new Set();
+    rows.forEach(row => {
+      const answers = row.answers || [];
+      answers.forEach(a => {
+        if (a.answer_type !== 'multiple') return;
+        let vals = [];
+        try { vals = JSON.parse(a.answer_value); } catch(e) {}
+        vals.forEach(v => {
+          if (!seen.has(v)) { seen.add(v); counts[v] = (counts[v]||0) + 1; }
+        });
+      });
+    });
+  });
+  return counts;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SURVEY QUESTIONS
+// ─────────────────────────────────────────────────────────────────────────────
+function getSurveyQuestions() {
+  return [
+    { id:'q1', type:'multiple', isTraitQ:true, text:'Welche Eigenschaften treffen am besten auf diese Person zu? (Mehrfachauswahl möglich)',
+      options:['Analytisch','Teamorientiert','Führungsstark','Belastbar','Kommunikativ','Empathisch','Entscheidungsfreudig','Detailorientiert','Flexibel','Durchsetzungsstark','Zuverlässig','Kreativ','Selbstreflektiert','Motivierend'] },
+    { id:'q2', type:'rating', text:'Wie gut kann diese Person unter Druck arbeiten?', min:1, max:5 },
+    { id:'q3', type:'rating', text:'Wie gut kommuniziert diese Person in Stresssituationen?', min:1, max:5 },
+    { id:'q4', type:'rating', text:'Wie gut arbeitet diese Person im Team?', min:1, max:5 },
+    { id:'q5', type:'rating', text:'Wie gut trifft diese Person Entscheidungen unter Zeitdruck?', min:1, max:5 },
+    { id:'q6', type:'rating', text:'Wie gut kann diese Person Prioritäten setzen?', min:1, max:5 },
+    { id:'q7', type:'rating', text:'Wie gut geht diese Person mit Rückschlägen um?', min:1, max:5 },
+    { id:'q8', type:'rating', text:'Wie offen ist diese Person für Feedback?', min:1, max:5 },
+    { id:'q9', type:'rating', text:'Wie verlässlich ist diese Person bei der Aufgabenerfüllung?', min:1, max:5 },
+    { id:'q10', type:'rating', text:'Wie gut kann diese Person komplexe Informationen verarbeiten?', min:1, max:5 },
+    { id:'q11', type:'single', isFCQ:true, text:'Welche Rolle übernimmt diese Person typischerweise in einem Team?',
+      options:['Anführer/in','Umsetzer/in','Koordinator/in','Berater/in','Kreativkopf'] },
+    { id:'q12', type:'single', isFCQ:true, text:'Was ist die größte Stärke dieser Person?',
+      options:['Technisches Know-how','Soziale Kompetenz','Analytisches Denken','Führungsqualitäten','Belastbarkeit'] },
+    { id:'q13', type:'rating', text:'Wie gut passt diese Person zu einem anspruchsvollen Assessment-Verfahren?', min:1, max:5 },
+    { id:'q14', type:'rating', text:'Wie gut kann diese Person mit Unsicherheit und Mehrdeutigkeit umgehen?', min:1, max:5 },
+    { id:'q15', type:'rating', text:'Wie effektiv ist diese Person beim Lösen von Problemen?', min:1, max:5 },
+    { id:'q16', type:'rating', text:'Wie gut reflektiert diese Person ihr eigenes Verhalten?', min:1, max:5 },
+    { id:'q17', type:'rating', text:'Wie motiviert wirkt diese Person bei herausfordernden Aufgaben?', min:1, max:5 },
+    { id:'q18', type:'text', text:'Was würdest du dieser Person für ein Assessment raten? (Optional)', placeholder:'Deine Antwort…' },
+  ];
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SELF SURVEY
+// ─────────────────────────────────────────────────────────────────────────────
+async function startSelfSurvey() {
+  surveyQuestions = getSurveyQuestions();
+  surveyAnswers   = {};
+  surveyQIndex    = 0;
+  surveyMode      = 'self';
+  document.getElementById('survey-nav-title').textContent = 'Selbstbild';
+  showScreen('screen-survey');
+  renderSurveyQuestion();
+}
+
+function renderSurveyQuestion() {
+  const q   = surveyQuestions[surveyQIndex];
+  const tot = surveyQuestions.length;
+  const pct = Math.round(surveyQIndex/tot*100);
+
+  document.getElementById('q-counter').textContent = `Frage ${surveyQIndex+1} von ${tot}`;
+  document.getElementById('q-pct').textContent      = pct + '%';
+  document.getElementById('survey-prog').style.width = pct + '%';
+  document.getElementById('btn-prev').style.display  = surveyQIndex > 0 ? '' : 'none';
+  document.getElementById('btn-next').textContent    = surveyQIndex === tot-1 ? 'Abschicken' : 'Weiter';
+
+  let body = `<div class="q-text">${q.text}</div>`;
+
+  if (q.type === 'multiple') {
+    const sel = surveyAnswers[q.id] || [];
+    body += q.options.map(o => `
+      <button class="option-btn ${sel.includes(o)?'selected':''}" onclick="toggleMulti('${q.id}','${o}')">
+        <div class="option-check"></div>
+        <span>${o}</span>
+      </button>`).join('');
+  } else if (q.type === 'single') {
+    const sel = surveyAnswers[q.id] || '';
+    body += q.options.map(o => `
+      <button class="option-btn ${sel===o?'selected':''}" onclick="selectSingle('${q.id}','${o}')">
+        <div class="option-check"></div>
+        <span>${o}</span>
+      </button>`).join('');
+  } else if (q.type === 'rating') {
+    const sel = surveyAnswers[q.id] || null;
+    body += `<div class="rating-row">${[1,2,3,4,5].map(n=>`
+      <button class="rating-btn ${sel==n?'selected':''}" onclick="selectRating('${q.id}',${n})">${n}</button>`).join('')}</div>
+      <div class="rating-labels"><span>Schwach</span><span>Stark</span></div>`;
+  } else if (q.type === 'text') {
+    const val = surveyAnswers[q.id] || '';
+    body += `<textarea class="text-input" id="ta-${q.id}" placeholder="${q.placeholder||'Deine Antwort…'}" rows="5" oninput="surveyAnswers['${q.id}']=this.value">${val}</textarea>`;
+  }
+
+  document.getElementById('q-body').innerHTML = body;
+}
+
+function toggleMulti(qid, opt) {
+  const arr = surveyAnswers[qid] ? [...surveyAnswers[qid]] : [];
+  const i = arr.indexOf(opt);
+  if (i >= 0) arr.splice(i,1); else arr.push(opt);
+  surveyAnswers[qid] = arr;
+  renderSurveyQuestion();
+}
+function selectSingle(qid, opt) { surveyAnswers[qid] = opt; renderSurveyQuestion(); }
+function selectRating(qid, val) { surveyAnswers[qid] = val; renderSurveyQuestion(); }
+
+function surveyPrev() {
+  if (surveyQIndex > 0) { surveyQIndex--; renderSurveyQuestion(); }
+}
+
+async function surveyNext() {
+  if (surveyQIndex < surveyQuestions.length-1) {
+    surveyQIndex++;
+    renderSurveyQuestion();
+  } else {
+    await submitSurvey();
   }
 }
 
-// Enter key on auth forms
-document.addEventListener('keydown', e => {
-  if (e.key !== 'Enter') return;
-  const active = document.querySelector('.screen.active')?.id;
-  if (active === 's-auth') {
-    const isLogin = $('form-login').style.display !== 'none';
-    if (isLogin) doLogin(); else doRegister();
-  }
-});
+async function submitSurvey() {
+  try {
+    let session = assessSessions[0];
+    if (!session) {
+      const s = await supaInsert('assessment_sessions', { user_id: currentUser.id });
+      session = s[0]; assessSessions = [session];
+    }
 
-init();
+    const answers = Object.entries(surveyAnswers).map(([qid, val]) => {
+      const q = surveyQuestions.find(q=>q.id===qid);
+      let answerType = q?.type || 'text';
+      let answerValue = Array.isArray(val) ? JSON.stringify(val) : String(val||'');
+      return { question_id: qid, answer_type: answerType, answer_value: answerValue };
+    });
+
+    // Delete existing self responses for this session
+    await supaDelete('self_responses', `session_id=eq.${session.id}`);
+
+    // Insert new
+    await supaInsert('self_responses', answers.map(a => ({ ...a, session_id: session.id, user_id: currentUser.id })));
+
+    // Mark session as self_completed
+    await supaUpdate('assessment_sessions', { self_completed: true }, `id=eq.${session.id}`);
+    assessSessions[0].self_completed = true;
+
+    // Create feedback link if not exists
+    if (feedbackLinks.length === 0) {
+      await createLink();
+    }
+
+    showScreen('screen-survey-done');
+    document.getElementById('survey-done-msg').textContent = 'Deine Antworten wurden gespeichert.';
+    renderDashboard();
+  } catch(e) { alert('Fehler beim Speichern: ' + e.message); }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// TIPS (Vorbereitungsguide — matches AssessmentAdviceView)
+// ─────────────────────────────────────────────────────────────────────────────
+function renderTips() {
+  const G = isGerman;
+  const analysis = analysisResult;
+  const parsed = analysis ? parseAnalysis(analysis.result_json || analysis.result || '') : null;
+
+  const sections = [
+    {
+      key: 'group', color: '#4A9EF8', bgColor: 'rgba(74,158,248,.15)',
+      titleDE: 'Gruppenübung', titleEN: 'Group Exercise',
+      aiKey: 'tipps_gruppe',
+      defaultDE: [
+        'Bringe deine Ideen klar und strukturiert ein, ohne andere zu dominieren.',
+        'Höre aktiv zu und baue auf den Beiträgen anderer auf.',
+        'Zeige Initiative, aber achte auf die Gruppendynamik.',
+        'Fasse Diskussionen zusammen und führe die Gruppe zu einem Ergebnis.',
+      ],
+      defaultEN: [
+        'Share your ideas clearly and structurally without dominating others.',
+        'Listen actively and build on others\' contributions.',
+        'Show initiative while being mindful of group dynamics.',
+        'Summarize discussions and guide the group towards a result.',
+      ]
+    },
+    {
+      key: 'interview', color: '#FF9F0A', bgColor: 'rgba(255,159,10,.15)',
+      titleDE: 'Interview', titleEN: 'Interview',
+      aiKey: 'tipps_interview',
+      defaultDE: [
+        'Bereite konkrete Beispiele aus deiner Vergangenheit vor (STAR-Methode).',
+        'Sei ehrlich über Schwächen, zeige aber Lernbereitschaft.',
+        'Informiere dich über das Unternehmen und die Position.',
+        'Stelle eigene, gut überlegte Fragen am Ende.',
+      ],
+      defaultEN: [
+        'Prepare specific examples from your past (STAR method).',
+        'Be honest about weaknesses but show willingness to learn.',
+        'Research the company and the position thoroughly.',
+        'Ask thoughtful questions at the end.',
+      ]
+    },
+    {
+      key: 'decision', color: '#34C759', bgColor: 'rgba(52,199,89,.15)',
+      titleDE: 'Entscheidungsverhalten', titleEN: 'Decision-Making',
+      aiKey: 'tipps_entscheidung',
+      defaultDE: [
+        'Triff Entscheidungen auch bei unvollständiger Information.',
+        'Erkläre deinen Denkprozess laut und nachvollziehbar.',
+        'Bleibe ruhig unter Zeitdruck und priorisiere klar.',
+        'Stehe zu deinen Entscheidungen, sei aber offen für neue Informationen.',
+      ],
+      defaultEN: [
+        'Make decisions even with incomplete information.',
+        'Explain your thought process clearly and transparently.',
+        'Stay calm under time pressure and prioritize clearly.',
+        'Stand by your decisions but remain open to new information.',
+      ]
+    },
+    {
+      key: 'self', color: '#6B5EE4', bgColor: 'rgba(107,94,228,.15)',
+      titleDE: 'Selbstwahrnehmung', titleEN: 'Self-Awareness',
+      aiKey: 'tipps_selbst',
+      defaultDE: [
+        'Reflektiere deine Stärken und Schwächen realistisch.',
+        'Zeige Selbstkritik ohne dich zu entwerten.',
+        'Beschreibe, wie du aus Fehlern gelernt hast.',
+        'Sei authentisch und versuche nicht, eine Rolle zu spielen.',
+      ],
+      defaultEN: [
+        'Reflect on your strengths and weaknesses realistically.',
+        'Show self-criticism without devaluing yourself.',
+        'Describe how you have learned from mistakes.',
+        'Be authentic and avoid playing a role.',
+      ]
+    },
+  ];
+
+  const hasAI = parsed && sections.some(s => parsed[s.aiKey]?.length > 0);
+
+  let html = `<h1 style="font-size:22px;font-weight:700;margin-bottom:4px;">${G?'Vorbereitungsguide':'Preparation Guide'}</h1>`;
+  if (hasAI) {
+    html += `<div style="margin-bottom:16px;"><span class="badge">✨ ${G?'Personalisiert':'Personalized'}</span></div>`;
+  } else {
+    html += `<p style="margin-bottom:20px;">${G?'Allgemeine Tipps für dein Assessment.':'General tips for your assessment.'}</p>`;
+  }
+
+  sections.forEach((sec, si) => {
+    const title = G ? sec.titleDE : sec.titleEN;
+    const aiTips = parsed?.[sec.aiKey] || [];
+    const tips   = aiTips.length > 0 ? aiTips : (G ? sec.defaultDE : sec.defaultEN);
+
+    html += `<div class="tip-section">
+      <div class="tip-section-header">
+        <div class="tip-dot" style="background:${sec.color};"></div>
+        <div class="tip-section-title">${title}</div>
+      </div>
+      ${tips.map((tip, i) => `
+        <div class="tip-item">
+          <div class="tip-num" style="background:${sec.bgColor};color:${sec.color};">${i+1}</div>
+          <div class="tip-text">${tip}</div>
+        </div>`).join('')}
+    </div>`;
+  });
+
+  document.getElementById('tips-body').innerHTML = html;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SCREEN NAV
+// ─────────────────────────────────────────────────────────────────────────────
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById(id);
+  if (el) el.classList.add('active');
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// TOAST
+// ─────────────────────────────────────────────────────────────────────────────
+function showToast(msg) {
+  let t = document.getElementById('toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'toast';
+    Object.assign(t.style, {
+      position:'fixed', bottom:'90px', left:'50%', transform:'translateX(-50%)',
+      background:'rgba(30,50,80,.95)', border:'1px solid rgba(74,158,248,.4)',
+      color:'#fff', padding:'10px 20px', borderRadius:'12px', fontSize:'14px',
+      fontWeight:'500', zIndex:'999', transition:'opacity .3s', pointerEvents:'none',
+      maxWidth:'90vw', textAlign:'center', backdropFilter:'blur(12px)',
+    });
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.opacity = '1';
+  clearTimeout(t._to);
+  t._to = setTimeout(() => { t.style.opacity = '0'; }, 2500);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// BOOT
+// ─────────────────────────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  showScreen('screen-loading');
+  init();
+});
 </script>
 </body>
 </html>
