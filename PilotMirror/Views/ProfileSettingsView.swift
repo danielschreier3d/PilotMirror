@@ -1,0 +1,299 @@
+import SwiftUI
+
+struct ProfileSettingsView: View {
+    @Environment(\.dismiss)    private var dismiss
+    @EnvironmentObject var auth: AuthService
+    @EnvironmentObject var lang: LanguageService
+
+    // Password change
+    @State private var newPassword        = ""
+    @State private var confirmPassword    = ""
+    @State private var isUpdatingPassword = false
+    @State private var passwordMessage:   String?
+    @State private var passwordSuccess    = false
+
+    // Destructive actions
+    @State private var showResetConfirm  = false
+    @State private var showDeleteConfirm = false
+    @State private var isResetting       = false
+    @State private var isDeleting        = false
+    @State private var actionError:      String?
+
+    private let bg     = Color(hex: "0A1628")
+    private let card   = Color.white.opacity(0.07)
+    private let accent = Color(hex: "4A9EF8")
+
+    var body: some View {
+        ZStack {
+            bg.ignoresSafeArea()
+            ScrollView {
+                VStack(spacing: 24) {
+                    header
+                    userCard
+                    passwordSection
+                    dangerZone
+                    signOutButton
+                }
+                .padding(.horizontal, 20)
+                .padding(.bottom, 40)
+            }
+        }
+        .confirmationDialog(
+            lang.isGerman ? "Alle Umfragedaten löschen?" : "Delete all survey data?",
+            isPresented: $showResetConfirm,
+            titleVisibility: .visible
+        ) {
+            Button(lang.isGerman ? "Zurücksetzen" : "Reset", role: .destructive) {
+                Task {
+                    isResetting = true
+                    await auth.resetSurveyData()
+                    isResetting = false
+                }
+            }
+            Button(lang.isGerman ? "Abbrechen" : "Cancel", role: .cancel) {}
+        } message: {
+            Text(lang.isGerman
+                 ? "Selbsteinschätzung, Feedback-Link und KI-Analyse werden unwiderruflich gelöscht."
+                 : "Self-assessment, feedback link and AI analysis will be permanently deleted.")
+        }
+        .confirmationDialog(
+            lang.isGerman ? "Account unwiderruflich löschen?" : "Permanently delete account?",
+            isPresented: $showDeleteConfirm,
+            titleVisibility: .visible
+        ) {
+            Button(lang.isGerman ? "Account löschen" : "Delete Account", role: .destructive) {
+                Task {
+                    isDeleting = true
+                    await auth.deleteAccount()
+                    isDeleting = false
+                    dismiss()
+                }
+            }
+            Button(lang.isGerman ? "Abbrechen" : "Cancel", role: .cancel) {}
+        } message: {
+            Text(lang.isGerman
+                 ? "Dein Account und alle gespeicherten Daten werden dauerhaft entfernt."
+                 : "Your account and all stored data will be permanently removed.")
+        }
+    }
+
+    // MARK: – Header
+
+    private var header: some View {
+        HStack {
+            Text(lang.isGerman ? "Profil & Einstellungen" : "Profile & Settings")
+                .font(.title2.weight(.bold))
+                .foregroundStyle(.white)
+            Spacer()
+            Button { dismiss() } label: {
+                Image(systemName: "xmark.circle.fill")
+                    .font(.title3)
+                    .foregroundStyle(.white.opacity(0.4))
+            }
+        }
+        .padding(.top, 24)
+    }
+
+    // MARK: – User info card
+
+    private var userCard: some View {
+        HStack(spacing: 14) {
+            Image(systemName: "person.circle.fill")
+                .font(.system(size: 44))
+                .foregroundStyle(accent)
+            VStack(alignment: .leading, spacing: 4) {
+                Text(auth.currentUser?.name ?? "—")
+                    .font(.headline)
+                    .foregroundStyle(.white)
+                Text(auth.currentUser?.email ?? "—")
+                    .font(.caption)
+                    .foregroundStyle(.white.opacity(0.5))
+                if let at = auth.currentUser?.assessmentType {
+                    Text(at.rawValue)
+                        .font(.caption2.weight(.medium))
+                        .foregroundStyle(accent)
+                        .padding(.horizontal, 8).padding(.vertical, 3)
+                        .background(accent.opacity(0.15))
+                        .clipShape(Capsule())
+                }
+            }
+            Spacer()
+        }
+        .padding(18)
+        .background(card)
+        .clipShape(RoundedRectangle(cornerRadius: 18))
+        .overlay(RoundedRectangle(cornerRadius: 18).stroke(Color.white.opacity(0.12), lineWidth: 1))
+    }
+
+    // MARK: – Password section
+
+    private var passwordSection: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            sectionLabel(lang.isGerman ? "Passwort ändern" : "Change Password")
+
+            SecureField(lang.isGerman ? "Neues Passwort" : "New Password", text: $newPassword)
+                .textContentType(.newPassword)
+                .foregroundStyle(.white)
+                .padding(14)
+                .background(Color.white.opacity(0.05))
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.white.opacity(0.12), lineWidth: 1))
+
+            SecureField(lang.isGerman ? "Bestätigen" : "Confirm", text: $confirmPassword)
+                .textContentType(.newPassword)
+                .foregroundStyle(.white)
+                .padding(14)
+                .background(Color.white.opacity(0.05))
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.white.opacity(0.12), lineWidth: 1))
+
+            if let msg = passwordMessage {
+                Text(msg)
+                    .font(.caption)
+                    .foregroundStyle(passwordSuccess ? Color(hex: "34C759") : Color(hex: "FF3B30"))
+            }
+
+            Button {
+                Task { await updatePassword() }
+            } label: {
+                HStack {
+                    if isUpdatingPassword {
+                        ProgressView().tint(.white).scaleEffect(0.8)
+                    }
+                    Text(lang.isGerman ? "Passwort aktualisieren" : "Update Password")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(.white)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(14)
+                .background(accent)
+                .clipShape(RoundedRectangle(cornerRadius: 14))
+            }
+            .disabled(newPassword.isEmpty || isUpdatingPassword)
+        }
+        .padding(18)
+        .background(card)
+        .clipShape(RoundedRectangle(cornerRadius: 18))
+        .overlay(RoundedRectangle(cornerRadius: 18).stroke(Color.white.opacity(0.12), lineWidth: 1))
+    }
+
+    // MARK: – Danger zone
+
+    private var dangerZone: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            sectionLabel(lang.isGerman ? "Gefahrenbereich" : "Danger Zone")
+
+            if let err = actionError {
+                Text(err)
+                    .font(.caption)
+                    .foregroundStyle(Color(hex: "FF3B30"))
+            }
+
+            // Reset survey data
+            Button { showResetConfirm = true } label: {
+                HStack {
+                    if isResetting { ProgressView().tint(Color(hex: "FF9500")).scaleEffect(0.8) }
+                    Image(systemName: "arrow.counterclockwise")
+                        .foregroundStyle(Color(hex: "FF9500"))
+                    Text(lang.isGerman ? "Umfragedaten zurücksetzen" : "Reset Survey Data")
+                        .font(.subheadline.weight(.medium))
+                        .foregroundStyle(Color(hex: "FF9500"))
+                    Spacer()
+                }
+                .padding(14)
+                .background(Color(hex: "FF9500").opacity(0.08))
+                .clipShape(RoundedRectangle(cornerRadius: 14))
+                .overlay(RoundedRectangle(cornerRadius: 14)
+                    .stroke(Color(hex: "FF9500").opacity(0.3), lineWidth: 1))
+            }
+            .disabled(isResetting || isDeleting)
+
+            // Delete account
+            Button { showDeleteConfirm = true } label: {
+                HStack {
+                    if isDeleting { ProgressView().tint(Color(hex: "FF3B30")).scaleEffect(0.8) }
+                    Image(systemName: "trash")
+                        .foregroundStyle(Color(hex: "FF3B30"))
+                    Text(lang.isGerman ? "Account löschen" : "Delete Account")
+                        .font(.subheadline.weight(.medium))
+                        .foregroundStyle(Color(hex: "FF3B30"))
+                    Spacer()
+                }
+                .padding(14)
+                .background(Color(hex: "FF3B30").opacity(0.08))
+                .clipShape(RoundedRectangle(cornerRadius: 14))
+                .overlay(RoundedRectangle(cornerRadius: 14)
+                    .stroke(Color(hex: "FF3B30").opacity(0.3), lineWidth: 1))
+            }
+            .disabled(isResetting || isDeleting)
+        }
+        .padding(18)
+        .background(card)
+        .clipShape(RoundedRectangle(cornerRadius: 18))
+        .overlay(RoundedRectangle(cornerRadius: 18).stroke(Color.white.opacity(0.12), lineWidth: 1))
+    }
+
+    // MARK: – Sign out
+
+    private var signOutButton: some View {
+        Button {
+            auth.signOut()
+            dismiss()
+        } label: {
+            HStack {
+                Image(systemName: "rectangle.portrait.and.arrow.right")
+                Text(lang.isGerman ? "Abmelden" : "Sign Out")
+                    .font(.subheadline.weight(.semibold))
+            }
+            .foregroundStyle(.white.opacity(0.7))
+            .frame(maxWidth: .infinity)
+            .padding(14)
+            .background(Color.white.opacity(0.05))
+            .clipShape(RoundedRectangle(cornerRadius: 14))
+            .overlay(RoundedRectangle(cornerRadius: 14)
+                .stroke(Color.white.opacity(0.12), lineWidth: 1))
+        }
+    }
+
+    // MARK: – Helpers
+
+    private func sectionLabel(_ text: String) -> some View {
+        Text(text)
+            .font(.caption.weight(.semibold))
+            .foregroundStyle(.white.opacity(0.4))
+            .textCase(.uppercase)
+            .kerning(0.8)
+    }
+
+    private func updatePassword() async {
+        passwordMessage = nil
+        guard newPassword == confirmPassword else {
+            passwordSuccess = false
+            passwordMessage = lang.isGerman
+                ? "Passwörter stimmen nicht überein."
+                : "Passwords do not match."
+            return
+        }
+        guard newPassword.count >= 8 else {
+            passwordSuccess = false
+            passwordMessage = lang.isGerman
+                ? "Mindestens 8 Zeichen erforderlich."
+                : "At least 8 characters required."
+            return
+        }
+        isUpdatingPassword = true
+        defer { isUpdatingPassword = false }
+        do {
+            try await auth.changePassword(newPassword: newPassword)
+            newPassword     = ""
+            confirmPassword = ""
+            passwordSuccess = true
+            passwordMessage = lang.isGerman
+                ? "Passwort erfolgreich geändert."
+                : "Password updated successfully."
+        } catch {
+            passwordSuccess = false
+            passwordMessage = error.localizedDescription
+        }
+    }
+}

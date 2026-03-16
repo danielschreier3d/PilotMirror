@@ -7,8 +7,9 @@ import AuthenticationServices
 private struct UserRecord: Codable {
     let id:             String
     let email:          String
-    let fullName:       String   // encodes to full_name via convertToSnakeCase
-    let assessmentType: String?  // encodes to assessment_type ✓
+    let fullName:       String    // encodes to full_name
+    let assessmentType: String?   // encodes to assessment_type
+    let flightLicenses: [String]? // encodes to flight_licenses
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -115,12 +116,65 @@ final class AuthService: NSObject, ObservableObject {
 
     func updateAssessmentType(_ type: User.AssessmentType) {
         guard let user = currentUser else { return }
-        currentUser = User(id: user.id, name: user.name, email: user.email, assessmentType: type)
+        currentUser = User(id: user.id, name: user.name, email: user.email,
+                           assessmentType: type, flightLicenses: user.flightLicenses)
         Task {
             try? await sb.update(
                 table: "users",
                 filters: ["id": "eq.\(user.id)"],
                 body: ["assessment_type": type.rawValue]
+            )
+        }
+    }
+
+    // MARK: – Password change
+
+    func changePassword(newPassword: String) async throws {
+        isLoading = true; defer { isLoading = false }
+        try await sb.updatePassword(newPassword)
+    }
+
+    // MARK: – Reset survey data
+
+    func resetSurveyData() async {
+        guard let uid = sb.userId else { return }
+        let sessionId = UserDefaults.standard.string(forKey: "pm_session_id")
+        if let sid = sessionId {
+            try? await sb.delete(from: "self_responses",
+                                 filters: ["session_id": "eq.\(sid)"])
+            try? await sb.delete(from: "feedback_links",
+                                 filters: ["session_id": "eq.\(sid)"])
+            try? await sb.delete(from: "assessment_sessions",
+                                 filters: ["candidate_id": "eq.\(uid)"])
+        }
+        let keys = ["pm_session_id", "pm_feedback_link", "pm_self_responses",
+                    "pm_analysis_result_v1", "pm_interview_questions_v1"]
+        keys.forEach { UserDefaults.standard.removeObject(forKey: $0) }
+        SurveyService.shared.clearLocalCache()
+        FeedbackService.shared.feedbackLink = nil
+        FeedbackService.shared.respondents  = []
+        AIAnalysisService.shared.result     = nil
+        AIAnalysisService.shared.cachedInterviewQuestions = []
+    }
+
+    // MARK: – Delete account
+
+    func deleteAccount() async {
+        guard let uid = sb.userId else { return }
+        await resetSurveyData()
+        try? await sb.delete(from: "users", filters: ["id": "eq.\(uid)"])
+        signOut()
+    }
+
+    func updateFlightLicenses(_ licenses: [User.FlightLicense]) {
+        guard let user = currentUser else { return }
+        currentUser = User(id: user.id, name: user.name, email: user.email,
+                           assessmentType: user.assessmentType, flightLicenses: licenses)
+        Task {
+            try? await sb.update(
+                table: "users",
+                filters: ["id": "eq.\(user.id)"],
+                body: ["flight_licenses": licenses.map(\.rawValue)]
             )
         }
     }
@@ -142,13 +196,15 @@ final class AuthService: NSObject, ObservableObject {
         }
         let record = UserRecord(id: id, email: email,
                                 fullName: name.isEmpty ? "Pilot" : name,
-                                assessmentType: nil)
+                                assessmentType: nil, flightLicenses: nil)
         try? await sb.insert(into: "users", value: record)
         currentUser = map(record); isAuthenticated = true
     }
 
     private func map(_ r: UserRecord) -> User {
-        User(id: r.id, name: r.fullName, email: r.email,
-             assessmentType: r.assessmentType.flatMap { User.AssessmentType(rawValue: $0) })
+        let licenses = r.flightLicenses?.compactMap { User.FlightLicense(rawValue: $0) }
+        return User(id: r.id, name: r.fullName, email: r.email,
+                    assessmentType: r.assessmentType.flatMap { User.AssessmentType(rawValue: $0) },
+                    flightLicenses: licenses)
     }
 }

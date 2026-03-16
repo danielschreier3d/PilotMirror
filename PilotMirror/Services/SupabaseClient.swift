@@ -8,9 +8,8 @@ enum SupabaseConfig {
     static let projectURL = "https://outsherttkwwuvihpkzn.supabase.co"
     /// https://app.supabase.com → Project Settings → API → anon / public key
     static let anonKey    = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im91dHNoZXJ0dGt3d3V2aWhwa3puIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMyODE4NzgsImV4cCI6MjA4ODg1Nzg3OH0.KRFm5YghZPysybdTKtQRUX2Mr6pOKgyWgJ1gOnc-9as"
-    /// OpenAI platform.openai.com → API Keys
-    /// For production: move this call to a Supabase Edge Function instead
-    static let openAIKey  = "sk-YOUR_OPENAI_API_KEY"
+    /// Supabase Edge Function URL for AI analysis (Groq key stored server-side)
+    static let analyzeFunctionURL = "\(projectURL)/functions/v1/analyze"
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -187,6 +186,30 @@ final class SupabaseClient: ObservableObject {
         try validate(res, data)
     }
 
+    // MARK: – REST: DELETE
+
+    func delete(from table: String, filters: [String: String]) async throws {
+        var comps = URLComponents(string: "\(base)/rest/v1/\(table)")!
+        comps.queryItems = filters.map { URLQueryItem(name: $0.key, value: $0.value) }
+        let req = makeRequest(url: comps.url!, method: "DELETE")
+        let (data, res) = try await URLSession.shared.data(for: req)
+        try validate(res, data)
+    }
+
+    // MARK: – Auth: Update password
+
+    func updatePassword(_ newPassword: String) async throws {
+        guard let token = accessToken else { throw SupabaseError.unauthenticated }
+        var req = URLRequest(url: URL(string: "\(base)/auth/v1/user")!)
+        req.httpMethod = "PUT"
+        req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        req.setValue(anon, forHTTPHeaderField: "apikey")
+        req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        req.httpBody = try JSONSerialization.data(withJSONObject: ["password": newPassword])
+        let (data, res) = try await URLSession.shared.data(for: req)
+        try validate(res, data)
+    }
+
     // MARK: – RPC (returns value)
 
     func rpc<R: Decodable>(
@@ -221,6 +244,7 @@ final class SupabaseClient: ObservableObject {
     private func makeRequest(url: URL, method: String, anonOnly: Bool = false) -> URLRequest {
         var r = URLRequest(url: url)
         r.httpMethod = method
+        r.cachePolicy = .reloadIgnoringLocalCacheData
         r.setValue("application/json", forHTTPHeaderField: "Content-Type")
         r.setValue(anon, forHTTPHeaderField: "apikey")
         let token = (!anonOnly && accessToken != nil) ? accessToken! : anon

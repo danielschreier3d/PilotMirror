@@ -75,6 +75,29 @@ struct InterviewSimulationView: View {
                     .foregroundStyle(.white.opacity(0.6))
                     .multilineTextAlignment(.center)
 
+                HStack(alignment: .top, spacing: 10) {
+                    Image(systemName: "person.wave.2.fill")
+                        .foregroundStyle(Color(hex: "4A9EF8"))
+                        .font(.subheadline)
+                        .padding(.top, 1)
+                    Text(lang.t(
+                        "Such dir jemanden, der dich in einer simulierten Interviewsituation mit den Fragen unseres Simulators interviewt — so nah an der Realität wie möglich.",
+                        "Find someone to interview you in a simulated interview situation using our simulator's questions — as close to the real thing as possible."
+                    ))
+                    .font(.subheadline)
+                    .foregroundStyle(.white.opacity(0.75))
+                    .multilineTextAlignment(.leading)
+                    .fixedSize(horizontal: false, vertical: true)
+                }
+                .padding(14)
+                .background(
+                    RoundedRectangle(cornerRadius: 14)
+                        .fill(Color(hex: "4A9EF8").opacity(0.1))
+                        .overlay(RoundedRectangle(cornerRadius: 14)
+                            .strokeBorder(Color(hex: "4A9EF8").opacity(0.25), lineWidth: 1))
+                )
+                .padding(.top, 4)
+
                 if let type = assessmentType {
                     HStack(spacing: 6) {
                         Image(systemName: type.icon)
@@ -279,6 +302,7 @@ struct InterviewSimulationView: View {
                                 .foregroundStyle(Color(hex: "4A9EF8"))
                                 .padding(.horizontal, 16).padding(.vertical, 14)
                             }
+                            .buttonStyle(.plain)
 
                             if showFollowUps {
                                 VStack(alignment: .leading, spacing: 12) {
@@ -307,7 +331,6 @@ struct InterviewSimulationView: View {
                                     .strokeBorder(Color(hex: "4A9EF8").opacity(0.22), lineWidth: 1))
                         )
                         .padding(.horizontal, 24)
-                        .clipped()
                     }
                 }
                 .padding(.bottom, 20)

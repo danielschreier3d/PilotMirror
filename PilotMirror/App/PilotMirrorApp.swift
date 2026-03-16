@@ -72,7 +72,8 @@ struct RootView: View {
 struct MainTabView: View {
     @EnvironmentObject var auth: AuthService
     @EnvironmentObject var lang: LanguageService
-    @State private var selectedTab = 0
+    @State private var selectedTab        = 0
+    @State private var showProfileSettings = false
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -95,15 +96,20 @@ struct MainTabView: View {
                                         .background(Color(hex: "4A9EF8").opacity(0.25))
                                         .clipShape(Capsule())
                                 }
-                                // Sign out
+                                // Profile & Settings
                                 Button {
-                                    auth.signOut()
+                                    showProfileSettings = true
                                 } label: {
-                                    Image(systemName: "rectangle.portrait.and.arrow.right")
+                                    Image(systemName: "person.circle.fill")
                                         .foregroundStyle(Color(hex: "4A9EF8"))
                                 }
                             }
                         }
+                    }
+                    .sheet(isPresented: $showProfileSettings) {
+                        ProfileSettingsView()
+                            .environmentObject(auth)
+                            .environmentObject(lang)
                     }
             }
             .tabItem { Label("Dashboard", systemImage: "chart.bar.fill") }

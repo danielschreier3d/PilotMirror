@@ -37,6 +37,7 @@
 		CC000028000000000000000A /* FlightLicenseSelectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000028000000000000000A /* FlightLicenseSelectView.swift */; };
 		CC000029000000000000000A /* InterviewQuestion.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000029000000000000000A /* InterviewQuestion.swift */; };
 		CC000030000000000000000A /* InterviewSimulationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000030000000000000000A /* InterviewSimulationView.swift */; };
+		CC000031000000000000000A /* ProfileSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000031000000000000000A /* ProfileSettingsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -71,6 +72,7 @@
 		BB000028000000000000000A /* FlightLicenseSelectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlightLicenseSelectView.swift; sourceTree = "<group>"; };
 		BB000029000000000000000A /* InterviewQuestion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterviewQuestion.swift; sourceTree = "<group>"; };
 		BB000030000000000000000A /* InterviewSimulationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterviewSimulationView.swift; sourceTree = "<group>"; };
+		BB000031000000000000000A /* ProfileSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSettingsView.swift; sourceTree = "<group>"; };
 		EE000001000000000000000A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -157,6 +159,7 @@
 				BB000027000000000000000A /* PrivacyConsentView.swift */,
 				BB000028000000000000000A /* FlightLicenseSelectView.swift */,
 				BB000030000000000000000A /* InterviewSimulationView.swift */,
+				BB000031000000000000000A /* ProfileSettingsView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -274,6 +277,7 @@
 				CC000028000000000000000A /* FlightLicenseSelectView.swift in Sources */,
 				CC000029000000000000000A /* InterviewQuestion.swift in Sources */,
 				CC000030000000000000000A /* InterviewSimulationView.swift in Sources */,
+				CC000031000000000000000A /* ProfileSettingsView.swift in Sources */,
 				CC000019000000000000000A /* QuestionCard.swift in Sources */,
 				CC000020000000000000000A /* ProgressBar.swift in Sources */,
 				CC000021000000000000000A /* TraitRadarChart.swift in Sources */,
