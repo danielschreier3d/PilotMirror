@@ -2,10 +2,15 @@ import SwiftUI
 
 struct OnboardingView: View {
     @EnvironmentObject var auth: AuthService
-    @State private var isSignUp  = true
-    @State private var name      = ""
-    @State private var email     = ""
-    @State private var password  = ""
+    @State private var isSignUp           = true
+    @State private var name               = ""
+    @State private var email              = ""
+    @State private var password           = ""
+    @State private var showForgotPassword = false
+    @State private var resetEmail         = ""
+    @State private var isResetting        = false
+    @State private var resetMessage:      String?
+    @State private var resetSuccess       = false
 
     var body: some View {
         ZStack {
@@ -96,6 +101,16 @@ struct OnboardingView: View {
                     .disabled(auth.isLoading || email.isEmpty || password.isEmpty ||
                               (isSignUp && name.isEmpty))
 
+                    // Forgot password (Sign In only)
+                    if !isSignUp {
+                        Button { showForgotPassword = true } label: {
+                            Text("Forgot password?")
+                                .font(.footnote)
+                                .foregroundStyle(Color(hex: "4A9EF8").opacity(0.8))
+                        }
+                        .padding(.top, 4)
+                    }
+
                     Text("By continuing you agree to our Terms & Privacy Policy.")
                         .font(.caption2)
                         .foregroundStyle(.white.opacity(0.35))
@@ -107,7 +122,85 @@ struct OnboardingView: View {
                 }
             }
         }
-        .onChange(of: isSignUp) { _, _ in auth.error = nil }
+        .onChange(of: isSignUp) { _, _ in auth.error = nil; resetMessage = nil }
+        .sheet(isPresented: $showForgotPassword, onDismiss: { resetEmail = ""; resetMessage = nil; resetSuccess = false }) {
+            forgotPasswordSheet
+        }
+    }
+
+    private var forgotPasswordSheet: some View {
+        ZStack {
+            Color(hex: "0A1628").ignoresSafeArea()
+            VStack(spacing: 24) {
+                // Handle
+                Capsule()
+                    .fill(Color.white.opacity(0.2))
+                    .frame(width: 36, height: 4)
+                    .padding(.top, 12)
+
+                VStack(spacing: 6) {
+                    Image(systemName: "key.fill")
+                        .font(.system(size: 36))
+                        .foregroundStyle(Color(hex: "4A9EF8"))
+                    Text("Reset Password")
+                        .font(.title3.weight(.bold))
+                        .foregroundStyle(.white)
+                    Text("Enter your email and we'll send you a link to reset your password.")
+                        .font(.footnote)
+                        .foregroundStyle(.white.opacity(0.55))
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 16)
+                }
+
+                authField("Email", text: $resetEmail, icon: "envelope.fill",
+                          keyboard: .emailAddress, capitalize: .never)
+                    .padding(.horizontal, 24)
+
+                if let msg = resetMessage {
+                    Text(msg)
+                        .font(.caption)
+                        .foregroundStyle(resetSuccess ? Color(hex: "34C759") : Color(hex: "FF6B6B"))
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 24)
+                }
+
+                Button {
+                    Task { await sendReset() }
+                } label: {
+                    Group {
+                        if isResetting {
+                            ProgressView().tint(.white)
+                        } else {
+                            Text("Send Reset Link")
+                                .fontWeight(.semibold)
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 52)
+                    .background(Color(hex: "4A9EF8"))
+                    .foregroundStyle(.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 14))
+                }
+                .padding(.horizontal, 24)
+                .disabled(resetEmail.isEmpty || isResetting || resetSuccess)
+
+                Spacer()
+            }
+        }
+        .presentationDetents([.medium])
+        .presentationDragIndicator(.hidden)
+    }
+
+    private func sendReset() async {
+        isResetting = true; defer { isResetting = false }
+        do {
+            try await auth.sendPasswordReset(email: resetEmail)
+            resetSuccess = true
+            resetMessage = "Check your inbox — we've sent a reset link to \(resetEmail)."
+        } catch {
+            resetSuccess = false
+            resetMessage = error.localizedDescription
+        }
     }
 
     private func authField(

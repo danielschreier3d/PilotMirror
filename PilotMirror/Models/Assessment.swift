@@ -73,4 +73,12 @@ struct AnalysisResult: Codable {
     let interviewTips:      [String]
     let decisionMakingTips: [String]
     let selfAwarenessTips:  [String]
+
+    // Motivation data (NOT AI-analysed — from respondents' confidence + wishes)
+    var motivationConfidenceAvg:   Double?   // average of 1–5 confidence ratings
+    var motivationConfidenceCount: Int       // number of people who rated
+    var motivationWishes:          [String]  // all non-empty wish texts
+
+    // Snapshot of how many respondents were included when the AI ran
+    var respondentCount: Int
 }

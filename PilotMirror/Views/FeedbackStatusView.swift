@@ -21,9 +21,21 @@ struct FeedbackStatusView: View {
     var linkDone: Bool { responseCount >= minimumResponses }
     var canAnalyze: Bool { selfDone && linkDone }
 
+    // True when a saved report exists but new responses have come in since it was generated
+    var hasNewResponses: Bool {
+        guard let r = aiService.result, r.respondentCount > 0 else { return false }
+        return responseCount > r.respondentCount
+    }
+    // True when report is up to date (no new responses)
+    var reportIsUpToDate: Bool {
+        guard let r = aiService.result, !r.personalitySummary.isEmpty else { return false }
+        return responseCount == r.respondentCount
+    }
+
     var body: some View {
         ZStack {
             Color(hex: "0A1628").ignoresSafeArea()
+
 
             ScrollView {
                 VStack(spacing: 20) {
@@ -37,6 +49,14 @@ struct FeedbackStatusView: View {
             }
             .refreshable { await feedbackService.refreshStatus() }
         }
+        .alert("Analyse Fehler", isPresented: Binding(
+            get: { aiService.error != nil },
+            set: { if !$0 { aiService.error = nil } }
+        )) {
+            Button("OK") { aiService.error = nil }
+        } message: {
+            Text(aiService.error ?? "")
+        }
         .sheet(isPresented: $showSelfAssessment) {
             FeedbackSurveyView(mode: .selfAssessment).environmentObject(auth).environmentObject(lang)
         }
@@ -48,6 +68,31 @@ struct FeedbackStatusView: View {
         .navigationDestination(isPresented: $showResults) {
             ResultsView().environmentObject(auth)
         }
+        .task {
+            // Load from Supabase if UserDefaults cache is empty (first install / cleared cache)
+            if aiService.result == nil {
+                await aiService.loadExistingResult()
+            }
+            // Try silent refresh if feedbackLink is already available
+            await silentRefreshIfPossible()
+        }
+        // feedbackLink loads async after login — trigger refresh when it arrives
+        .onChange(of: feedbackService.feedbackLink?.id) { _ in
+            Task { await silentRefreshIfPossible() }
+        }
+    }
+
+    private func silentRefreshIfPossible() async {
+        guard aiService.result != nil, canAnalyze else { return }
+        let assessment = auth.currentUser?.assessmentType?.rawValue ?? "General"
+        let userId     = auth.currentUser?.id ?? ""
+        let licenses   = auth.currentUser?.flightLicenses ?? []
+        await aiService.analyzeFromBackend(
+            assessmentType: assessment,
+            userId: userId,
+            flightLicenses: licenses,
+            silent: true
+        )
     }
 
     // MARK: - Header
@@ -218,17 +263,32 @@ struct FeedbackStatusView: View {
         stepCard(
             number: 3,
             title: lang.t("KI-Analyse starten", "Start AI Analysis"),
-            subtitle: canAnalyze
-                ? lang.t("Alle Voraussetzungen erfüllt — Report kann erstellt werden",
-                          "All requirements met — report can be generated")
-                : lang.t("Verfügbar sobald Self-Assessment und 5 Rückmeldungen vorliegen",
-                          "Available once self-assessment and 5 responses are complete"),
-            done: aiService.result != nil,
+            subtitle: {
+                if reportIsUpToDate {
+                    return lang.t("Report ist aktuell — keine neuen Antworten seit der letzten Analyse",
+                                  "Report is up to date — no new responses since last analysis")
+                } else if hasNewResponses {
+                    let diff = responseCount - (aiService.result?.respondentCount ?? 0)
+                    return lang.t("\(diff) neue Antwort\(diff == 1 ? "" : "en") seit dem letzten Report — Aktualisierung empfohlen",
+                                  "\(diff) new response\(diff == 1 ? "" : "s") since last report — update recommended")
+                } else if canAnalyze {
+                    return lang.t("Alle Voraussetzungen erfüllt — Report kann erstellt werden",
+                                  "All requirements met — report can be generated")
+                } else {
+                    return lang.t("Verfügbar sobald Self-Assessment und 5 Rückmeldungen vorliegen",
+                                  "Available once self-assessment and 5 responses are complete")
+                }
+            }(),
+            done: reportIsUpToDate,
             locked: !canAnalyze
         ) {
-            if canAnalyze {
+            if canAnalyze && !reportIsUpToDate {
                 actionButton(
-                    aiService.isAnalyzing ? lang.t("Analysiere…", "Analyzing…") : lang.t("Report erstellen", "Generate report"),
+                    aiService.isAnalyzing
+                        ? lang.t("Analysiere…", "Analyzing…")
+                        : hasNewResponses
+                            ? lang.t("Report aktualisieren", "Update report")
+                            : lang.t("Report erstellen", "Generate report"),
                     icon: "sparkles",
                     color: "6B5EE4",
                     gradient: true
@@ -236,11 +296,17 @@ struct FeedbackStatusView: View {
                     Task {
                         let assessment = auth.currentUser?.assessmentType?.rawValue ?? "General"
                         let userId     = auth.currentUser?.id ?? ""
+                        let licenses   = auth.currentUser?.flightLicenses ?? []
                         await aiService.analyzeFromBackend(
                             assessmentType: assessment,
-                            userId: userId
+                            userId: userId,
+                            flightLicenses: licenses
                         )
-                        if aiService.result != nil { showResults = true }
+                        if aiService.result != nil {
+                            showResults = true
+                        } else if let err = aiService.error {
+                            print("❌ Analysis error: \(err)")
+                        }
                     }
                 }
                 .disabled(aiService.isAnalyzing)

@@ -75,16 +75,16 @@
     /* ── progress ── */
     .progress-bar  { height:5px; background:rgba(255,255,255,.1); border-radius:99px; overflow:hidden; margin-top:6px; }
     .progress-fill { height:100%; background:var(--accent); border-radius:99px; transition:width .35s ease; }
-    .progress-meta { display:flex; justify-content:space-between; }
+    .progress-meta { display:flex; justify-content:space-between; padding-right:52px; }
 
     /* ── question ── */
     .q-section-label { font-size:11px; font-weight:700; letter-spacing:.8px; text-transform:uppercase; color:var(--accent); margin-bottom:6px; }
     .q-text { font-size:18px; font-weight:600; line-height:1.4; margin-bottom:20px; }
 
     /* trait selection */
-    .trait-grid { display:grid; grid-template-columns:1fr 1fr; gap:9px; }
-    .trait-btn { padding:11px 12px; border-radius:10px; border:1.5px solid var(--border); background:rgba(255,255,255,.05); color:var(--dim); font-size:14px; font-weight:500; cursor:pointer; text-align:center; font-family:inherit; transition:all .12s; }
-    .trait-btn.active { border-color:var(--accent); background:rgba(74,158,248,.15); color:var(--accent); font-weight:600; }
+    .trait-grid { display:grid; grid-template-columns:1fr 1fr; grid-auto-rows:56px; gap:9px; }
+    .trait-btn { padding:8px 10px; height:100%; display:flex; align-items:center; justify-content:center; border-radius:10px; border:1.5px solid var(--border); background:rgba(255,255,255,.05); color:var(--dim); font-size:13px; font-weight:600; cursor:pointer; text-align:center; font-family:inherit; transition:background .12s, border-color .12s, color .12s; line-height:1.25; }
+    .trait-btn.active { border-color:var(--accent); background:rgba(74,158,248,.15); color:var(--accent); }
 
     /* forced choice */
     .choice-list { display:flex; flex-direction:column; gap:10px; }
@@ -218,6 +218,37 @@
     <div style="height:8px"></div>
   </div>
 
+  <!-- MOTIVATION (optional, after last question) -->
+  <div class="screen" id="screen-motivation" style="overflow-y:auto;">
+    <div style="flex:1; display:flex; flex-direction:column; gap:16px; padding-bottom:12px;">
+      <div style="text-align:center; padding-top:16px;">
+        <div style="font-size:52px; margin-bottom:10px;">❤️</div>
+        <h1 id="txt-mot-title" class="mb12">Fast geschafft!</h1>
+        <p id="txt-mot-desc"></p>
+      </div>
+
+      <!-- Confidence rating -->
+      <div class="card">
+        <h2 id="txt-conf-label" style="font-size:15px; margin-bottom:14px;"></h2>
+        <div class="rating-row" id="conf-rating-row"></div>
+        <div class="rating-labels mt8">
+          <span id="txt-conf-low">Kaum</span>
+          <span id="txt-conf-high">Sicher!</span>
+        </div>
+      </div>
+
+      <!-- Wish text -->
+      <div class="card">
+        <h2 id="txt-wish-label" style="font-size:15px; margin-bottom:10px;"></h2>
+        <textarea id="inp-wish" class="open-ta" rows="4"></textarea>
+      </div>
+
+      <button class="btn btn-primary" id="btn-submit-mot" onclick="submitWithMotivation()">
+        <span id="txt-btn-submit">Absenden ✓</span>
+      </button>
+    </div>
+  </div>
+
   <!-- COMPLETE -->
   <div class="screen" id="screen-complete">
     <div class="center-fill">
@@ -236,12 +267,20 @@ const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsIn
 
 // ── Questions ──────────────────────────────────────────────────────────────
 const Qs = [
+  // Section 1 — Persönlichkeit
   { id:'q1', type:'trait', sDE:'Persönlichkeit', sEN:'Personality',
     de:'Welche Eigenschaften beschreiben diese Person? Alle zutreffenden auswählen.',
     en:'Which words describe this person? Select all that apply.',
-    optDE:['ruhig','analytisch','selbstsicher','teamorientiert','verantwortungsbewusst','strukturiert','bedachtsam','spontan','dominant','zurückhaltend','empathisch','entschlossen'],
-    optEN:['calm','analytical','confident','team-oriented','responsible','structured','careful','spontaneous','dominant','reserved','empathetic','decisive'] },
+    optDE:['ruhig','analytisch','strukturiert','selbstsicher','teamorientiert',
+           'kommunikativ','verantwortungsbewusst','belastbar','empathisch',
+           'führungsstark','introvertiert','dominant','impulsiv',
+           'konfliktscheu','ungeduldig','unorganisiert'],
+    optEN:['calm','analytical','structured','confident','team-oriented',
+           'communicative','responsible','resilient','empathetic',
+           'strong leader','introverted','dominant','impulsive',
+           'conflict-avoidant','impatient','disorganised'] },
 
+  // Section 2 — Entscheidungsstil
   { id:'q2', type:'choice', sDE:'Entscheidungsstil', sEN:'Decision Style',
     de:'Diese Person entscheidet eher:', en:'This person tends to decide:',
     optDE:['Schnell und intuitiv','Nach sorgfältiger Analyse'],
@@ -249,64 +288,100 @@ const Qs = [
 
   { id:'q3', type:'choice', sDE:'Entscheidungsstil', sEN:'Decision Style',
     de:'In Gruppen tendiert diese Person dazu:', en:'In groups, this person tends to:',
-    optDE:['Die Diskussion zu führen','Ideen einzubringen','Erst zu beobachten'],
-    optEN:['Lead the discussion','Contribute ideas','Observe first'] },
+    optDE:['häufig die Führung zu übernehmen','aktiv Ideen einzubringen','zunächst zu beobachten und später zu sprechen'],
+    optEN:['take the lead frequently','actively contribute ideas','observe first and speak later'] },
 
   { id:'q4', type:'choice', sDE:'Entscheidungsstil', sEN:'Decision Style',
     de:'Wenn etwas schiefläuft, reagiert diese Person:', en:'When something goes wrong, this person reacts:',
     optDE:['Ruhig & lösungsorientiert','Gestresst aber funktional','Emotional/frustriert'],
     optEN:['Calm and solution-focused','Stressed but functional','Emotionally/frustrated'] },
 
-  { id:'q5', type:'rating', sDE:'Bewertungen', sEN:'Ratings', de:'Teamfähigkeit',             en:'Teamwork' },
-  { id:'q6', type:'rating', sDE:'Bewertungen', sEN:'Ratings', de:'Stressresistenz',           en:'Stress Resistance' },
-  { id:'q7', type:'rating', sDE:'Bewertungen', sEN:'Ratings', de:'Verantwortungsbewusstsein', en:'Responsibility' },
-  { id:'q8', type:'rating', sDE:'Bewertungen', sEN:'Ratings', de:'Kommunikation',             en:'Communication' },
-  { id:'q9', type:'rating', sDE:'Bewertungen', sEN:'Ratings', de:'Zuverlässigkeit',           en:'Reliability' },
+  { id:'q4b', type:'choice', sDE:'Entscheidungsstil', sEN:'Decision Style',
+    de:'Wenn Meinungsverschiedenheiten entstehen, reagiert diese Person eher:',
+    en:'When disagreements arise, this person tends to:',
+    optDE:['Konflikte vermeiden','Zwischen den Positionen vermitteln','Die eigene Position aktiv vertreten'],
+    optEN:['Avoid conflict','Mediate between positions','Actively defend their own position'] },
 
+  // Section 3 — Bewertungen
+  { id:'q5',      type:'rating', sDE:'Bewertungen', sEN:'Ratings', de:'Teamfähigkeit',             en:'Teamwork' },
+  { id:'q6',      type:'rating', sDE:'Bewertungen', sEN:'Ratings', de:'Stressresistenz',           en:'Stress Resistance' },
+  { id:'q7',      type:'rating', sDE:'Bewertungen', sEN:'Ratings', de:'Verantwortungsbewusstsein', en:'Responsibility' },
+  { id:'q8',      type:'rating', sDE:'Bewertungen', sEN:'Ratings', de:'Kommunikation',             en:'Communication' },
+  { id:'q9',      type:'rating', sDE:'Bewertungen', sEN:'Ratings', de:'Zuverlässigkeit',           en:'Reliability' },
+  { id:'q10_org', type:'rating', sDE:'Bewertungen', sEN:'Ratings',
+    de:'Wie strukturiert arbeitet diese Person?', en:'How organised is this person in their work?' },
+
+  // Section 4 — Stärken
   { id:'q10', type:'text', sDE:'Stärken', sEN:'Strengths',
-    de:'Stärke 1: Was kann diese Person besonders gut?',
-    en:'Strength 1: What is this person particularly good at?',
-    phDE:'z.B. hört gut zu, bleibt in Konflikten sachlich…', phEN:'e.g. listens well, stays calm in conflicts…' },
+    de:'Was ist eine der größten Stärken dieser Person?',
+    en:"What is one of this person's greatest strengths?",
+    phDE:'z.B. bleibt in stressigen Situationen ruhig und strukturiert…',
+    phEN:'e.g. stays calm and structured in stressful situations…' },
   { id:'q11', type:'text', sDE:'Stärken', sEN:'Strengths',
-    de:'Stärke 2: Wofür wird diese Person von anderen geschätzt?',
-    en:'Strength 2: What is this person appreciated for by others?',
-    phDE:'z.B. ist immer gut vorbereitet, motiviert andere…', phEN:'e.g. always well-prepared, motivates others…' },
+    de:'Wofür wird diese Person von anderen besonders geschätzt?',
+    en:'What is this person particularly appreciated for by others?',
+    phDE:'z.B. ist immer gut vorbereitet, motiviert andere…',
+    phEN:'e.g. always well-prepared, motivates others…' },
   { id:'q12', type:'text', sDE:'Stärken', sEN:'Strengths',
-    de:'Stärke 3: In welchen Situationen zeigt diese Person ihr Bestes?',
-    en:'Strength 3: When does this person perform at their best?',
-    phDE:'z.B. unter Druck, bei komplexen Problemen…', phEN:'e.g. under pressure, with complex problems…' },
+    de:'In welchen Situationen hilft diese Person einer Gruppe besonders?',
+    en:'In which situations does this person help a group most?',
+    phDE:'z.B. in Konfliktsituationen, bei der Planung, unter Druck…',
+    phEN:'e.g. in conflict situations, during planning, under pressure…' },
+
+  // Section 5 — Schwächen
   { id:'q13', type:'text', sDE:'Schwächen', sEN:'Weaknesses',
-    de:'Schwäche 1: Wo hat diese Person im Alltag Nachholbedarf?',
-    en:'Weakness 1: Where does this person have room to grow?',
-    phDE:'z.B. wird ungeduldig, wenn Dinge nicht nach Plan laufen…', phEN:'e.g. gets impatient when things don\'t go as planned…' },
+    de:'Wo hat diese Person im Alltag Entwicklungspotenzial?',
+    en:'Where does this person have room to develop in everyday life?',
+    phDE:'z.B. könnte strukturierter planen, mehr auf andere eingehen…',
+    phEN:'e.g. could plan more systematically, be more attentive to others…' },
   { id:'q14', type:'text', sDE:'Schwächen', sEN:'Weaknesses',
-    de:'Schwäche 2: Was kostet diese Person manchmal Sympathien?',
-    en:'Weakness 2: What sometimes costs this person goodwill?',
-    phDE:'z.B. redet manchmal zu viel ohne zuzuhören…', phEN:'e.g. sometimes talks too much without listening…' },
+    de:'Gibt es Verhaltensweisen dieser Person, die manchmal schwierig sein können?',
+    en:'Are there behaviours of this person that can sometimes be difficult?',
+    phDE:'z.B. reagiert manchmal ungeduldig, wenn Dinge nicht nach Plan laufen…',
+    phEN:'e.g. sometimes reacts impatiently when things don\'t go as planned…' },
   { id:'q15', type:'text', sDE:'Schwächen', sEN:'Weaknesses',
-    de:'Schwäche 3: Welches Verhalten dieser Person nervt dich manchmal?',
-    en:'Weakness 3: What behavior of this person occasionally bothers you?',
-    phDE:'z.B. gibt ungern Fehler zu, zieht Entscheidungen in die Länge…', phEN:'e.g. reluctant to admit mistakes, delays decisions…' },
+    de:'Welches Verhalten dieser Person kann in Gruppen gelegentlich problematisch sein?',
+    en:"Which of this person's behaviours can occasionally be problematic in groups?",
+    phDE:'z.B. übernimmt zu schnell das Wort, hört nicht aktiv zu…',
+    phEN:"e.g. takes the floor too quickly, doesn't listen actively…" },
+
+  // Section 6 — Verhalten & Außenwirkung
   { id:'q16', type:'text', sDE:'Verhalten & Außenwirkung', sEN:'Behaviour & Perception',
     de:'Gibt es negative Verhaltensweisen im Alltag, die dieser Person wahrscheinlich nicht bewusst sind?',
     en:'Are there negative everyday behaviors this person is probably unaware of?',
-    phDE:'z.B. unterbricht andere im Gespräch, reagiert defensiv auf Kritik…', phEN:'e.g. interrupts others, reacts defensively to criticism…' },
+    phDE:'z.B. unterbricht andere im Gespräch, reagiert defensiv auf Kritik…',
+    phEN:'e.g. interrupts others, reacts defensively to criticism…' },
   { id:'q17', type:'text', sDE:'Verhalten & Außenwirkung', sEN:'Behaviour & Perception',
     de:'Wie reagiert diese Person, wenn sie kritisiert wird oder Fehler macht?',
     en:'How does this person react when criticised or when they make a mistake?',
-    phDE:'z.B. nimmt Feedback gut an / wird defensiv / zieht sich zurück…', phEN:'e.g. takes feedback well / becomes defensive / withdraws…' },
+    phDE:'z.B. nimmt Feedback gut an / wird defensiv / zieht sich zurück…',
+    phEN:'e.g. takes feedback well / becomes defensive / withdraws…' },
   { id:'q18', type:'text', sDE:'Verhalten & Außenwirkung', sEN:'Behaviour & Perception',
-    de:'Was sollte der Kandidat über seine Wirkung auf andere wissen — etwas, das ihm im Assessment nützen oder schaden könnte?',
-    en:'What should the candidate know about how they come across — something that could help or hurt them in an assessment?',
-    phDE:'z.B. wirkt in unbekannten Gruppen zunächst distanziert, obwohl er ein starker Teamplayer ist…',
-    phEN:'e.g. initially appears distant in new groups, though they are a strong team player…' },
+    de:'Wenn diese Person an einem anspruchsvollen Auswahlverfahren teilnimmt – welches Verhalten könnte ihr besonders helfen oder besonders im Weg stehen?',
+    en:'If this person were to take part in a demanding selection process – which of their behaviours could help or hinder them the most?',
+    phDE:'z.B. wirkt in unbekannten Gruppen zunächst distanziert, obwohl ein starker Teamplayer…',
+    phEN:'e.g. initially appears distant in new groups, though a strong team player…' },
 ];
+
+// ── Gender detection ───────────────────────────────────────────────────────
+function detectGender(firstName) {
+  const n = firstName.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  const F = new Set(['anna','maria','laura','julia','lisa','sarah','emma','hannah','lea','lena','sophie','marie','mia','luisa','johanna','katharina','sandra','nina','jana','sabrina','claudia','christina','nicole','stefanie','monika','elisabeth','petra','ursula','angelika','brigitte','ingrid','helga','erika','renate','gabriele','gabi','karin','ines','melanie','bianca','tanja','jessica','alexandra','vanessa','verena','franziska','miriam','katrin','eva','silvia','martina','annika','nora','alina','lara','jasmin','leonie','emilia','charlotte','amelie','zoe','elisa','paula','maja','chiara','pia','melissa','jennifer','kathrin','simone','susanne','bettina','carolin','denise','michelle','sonja','anne','diana','nadine','isabel','isabell','isabella','irene','heike','dagmar','hannelore','hildegard','irmgard','margot','waltraud','marianne','christa','leyla','layla','fatima','naomi','stella','luna','aurora','elena','valentina','sofia','sara','chloe','victoria','camille','alice','claire','emily','amy','ashley','olivia','grace','ava','lily','eve','hanna','katja','nadja','anja','svenja','lina','jule','frieda','ida','antonia','juliane','romina','selina','vivienne','yvonne','yvette','manuela','carmen','rosa','rita','ruth','vera','wanda','wilma','gisela','gerda','doris','dorothea','dora','maike','wiebke','ilka','ulrike','kerstin','kirsten','kristin','bettina','birte','birgit','britta','edith','elfriede','elke','elsa','frauke','friederike','gerti','hannelore','hedwig','heidi','henriette','hilde','inge','jutta','karola','karolin','klara','kornelia','lieselotte','lore','lotte','luise','madeleine','marga','margarete','margit','marija','marlene','marta','meike','mirja','nathalie','nikola','amelia','alma','mila','leila','yasmin','marie-christine','anna-lena','lisa-marie','sarah-jane','emmy','erna','gertrude','hildegunde','irma','lilo','gundula','kordula','mechthild','walburga','wendeline','xenia','yasmine','zahra','zara','zoe','zofia','zuzanna','kathleen','patricia','angela','andrea','andrea']);
+  const M = new Set(['max','leon','lukas','lucas','jonas','felix','noah','elias','luca','tim','paul','jan','marco','tobias','daniel','michael','stefan','thomas','andreas','markus','klaus','hans','peter','wolfgang','rainer','bernd','dieter','helmut','gerhard','werner','frank','christian','sebastian','florian','fabian','dominik','patrick','philipp','benjamin','alexander','maximilian','simon','david','julian','kevin','dennis','nico','matthias','oliver','christoph','martin','eric','finn','ben','moritz','jakob','niklas','henrik','oskar','louis','anton','emil','kilian','valentin','robin','raphael','cornelius','benedikt','hannes','mathias','rolf','karl','heinz','fritz','wilhelm','ernst','otto','rudolf','herbert','horst','willi','erich','kurt','walter','friedrich','adam','aaron','adrian','albert','alfred','alwin','angelo','armin','axel','boris','burkhard','carlo','christof','christopher','claus','colin','dario','dietmar','egon','elmar','erik','erwin','eugen','ferdinand','georg','gregor','gerd','gottfried','gunnar','hanno','hartmut','heiko','heinrich','henning','henry','hugo','ibrahim','jasper','jochen','joel','johannes','john','jonathan','jorg','julius','justus','kai','kaspar','lars','lasse','leo','leopold','linus','lorenz','lutz','manuel','mario','matteo','mika','mike','nils','norbert','noel','olaf','ole','oscar','pierre','ralf','ralph','reiner','robert','roman','ruben','ryan','sascha','sven','theo','thorsten','torsten','uwe','victor','vinzenz','volker','waldemar','william','yannick','clemens','richard','konrad','igor','nicolas','pablo','pedro','rafael','samuel','santiago','timo','torben','udo','viktor','bastian','cedric','damian','eike','falko','giacomo','ingo','ivan','jerome','juri','klaas','kjell','laurenz','lenz','levi','petrus','reinhard','roland','horst','kai-uwe','hans-peter','hans-jurgen','karl-heinz','kurt','manfred','norbert','roland','rudi','sigmund','siegfried','ulrich','uli','volker','willi','winfried','wolfram','simon','aaron','ben','finn','noah','leo','luca','mika','nico','tim','tom','jan','kai','ole','sven','felix','max','paul','leon','elias','jonas','jakob','moritz','niklas','henrik','oskar','robin','raphael','valentin','kilian','benjamin','dominik','florian','fabian','philipp','patrick','julian','kevin','dennis','bastian','yannick','cedric','noel','ruben','samuel','rafael','pablo','matteo','mario','linus','lorenz']);
+  if (F.has(n)) return 'f';
+  if (M.has(n)) return 'm';
+  // Heuristic: ends in -a/-ie/-ine/-ette often female, exclude known male exceptions
+  const maleExceptions = ['luca','mika','noah','elia','nicola','gabriel','daniel','rafael','manuel','pascal','pascal','lionel','miguel','joel','israel','ezra','ezekiel'];
+  if (!maleExceptions.includes(n) && /(?:a|ie|ine|ette|elle|ika|issa|anda)$/.test(n)) return 'f';
+  return null;
+}
 
 // ── State ──────────────────────────────────────────────────────────────────
 const S = {
-  lang: 'de', token: '', linkId: '', candidateName: '',
+  lang: 'de', token: '', linkId: '', candidateName: '', gender: null,
   respondentName: '', relationship: 'Friend',
   responses: {}, idx: 0,
+  confidenceRating: null, wishText: '',
 };
 
 // ── Helpers ────────────────────────────────────────────────────────────────
@@ -344,7 +419,8 @@ async function init() {
     const rows = await res.json();
     if (!rows?.length) { showError(); return; }
     S.linkId        = rows[0].link_id;
-    S.candidateName = rows[0].candidate_name || 'dem Kandidaten';
+    S.candidateName = rows[0].candidate_name || '';
+    S.gender        = detectGender(S.candidateName.split(' ')[0]);
     renderIntro();
     show('screen-intro');
   } catch(e) { console.error(e); showError(); }
@@ -364,7 +440,7 @@ function renderIntro() {
   const first = S.candidateName.split(' ')[0];
 
   $('txt-intro-body').innerHTML = t(
-    `Vielen Dank, dass du <strong>${first}</strong> bei der Vorbereitung auf sein Piloten-Assessment unterstützt! 🚀<br><br>Dein ehrliches Feedback ist ein echtes Geschenk — es hilft ${first}, blinde Flecken zu erkennen und sich bestmöglich vorzubereiten. Bitte beantworte alle Fragen so ehrlich und aufrichtig wie möglich. Es dauert weniger als 3 Minuten.`,
+    `Vielen Dank, dass du <strong>${first}</strong> bei der Vorbereitung auf ${S.gender==='f'?'ihr':S.gender==='m'?'sein':'das'} Piloten-Assessment unterstützt! 🚀<br><br>Dein ehrliches Feedback ist ein echtes Geschenk — es hilft ${first}, blinde Flecken zu erkennen und sich bestmöglich vorzubereiten. Bitte beantworte alle Fragen so ehrlich und aufrichtig wie möglich. Es dauert weniger als 3 Minuten.`,
     `Thank you so much for helping <strong>${first}</strong> prepare for their pilot assessment! 🚀<br><br>Your honest feedback is a real gift — it helps ${first} identify blind spots and prepare in the best way possible. Please answer as honestly as you can. It takes less than 3 minutes.`
   );
 
@@ -432,7 +508,7 @@ function renderQ() {
   $('txt-q-section').textContent = S.lang === 'de' ? q.sDE : q.sEN;
   $('progress-fill').style.width = `${(S.idx / total) * 100}%`;
   $('btn-back').style.display    = S.idx > 0 ? 'flex' : 'none';
-  $('txt-btn-next').textContent  = S.idx === total-1 ? t('Absenden ✓', 'Submit ✓') : t('Weiter', 'Next');
+  $('txt-btn-next').textContent  = t('Weiter', 'Next'); // motivation screen follows last question
 
   const c = $('q-container');
   c.innerHTML = '';
@@ -441,7 +517,22 @@ function renderQ() {
   sl.textContent = S.lang === 'de' ? q.sDE : q.sEN; c.appendChild(sl);
 
   const qt = document.createElement('div'); qt.className = 'q-text';
-  qt.textContent = S.lang === 'de' ? q.de : q.en; c.appendChild(qt);
+  const first = S.candidateName ? S.candidateName.split(' ')[0] : '';
+  let qText = S.lang === 'de' ? q.de : q.en;
+  if (first) {
+    if (S.lang === 'de') {
+      qText = qText.replace(/die [Dd]ieser Person/g, `die ${first}`)
+                   .replace(/[Dd]ieser Person/g, `von ${first}`)
+                   .replace(/[Dd]iese Person/g, first);
+      if (S.gender === 'm') {
+        qText = qText.replace(/wenn sie kritisiert wird/gi, 'wenn er kritisiert wird')
+                     .replace(/könnte ihr besonders/gi, 'könnte ihm besonders');
+      }
+    } else {
+      qText = qText.replace(/[Tt]his person's/g, `${first}'s`).replace(/[Tt]his person/g, first);
+    }
+  }
+  qt.textContent = qText; c.appendChild(qt);
 
   if      (q.type === 'trait')  renderTrait(c, q);
   else if (q.type === 'choice') renderChoice(c, q);
@@ -499,12 +590,13 @@ function renderRating(c, q) {
   const row  = document.createElement('div'); row.className = 'rating-row';
   for (let i = 1; i <= 5; i++) {
     const btn = document.createElement('button');
-    btn.className = 'rating-btn' + (cur === i ? ' active' : '');
+    btn.className = 'rating-btn' + (cur !== undefined && i <= cur ? ' active' : '');
     btn.textContent = i;
     btn.onclick = () => {
       S.responses[q.id] = { type: 'rating', value: i };
-      row.querySelectorAll('.rating-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+      row.querySelectorAll('.rating-btn').forEach((b, idx) => {
+        b.classList.toggle('active', idx < i);
+      });
       updateNext();
     };
     row.appendChild(btn);
@@ -534,23 +626,74 @@ function updateNext() {
 function prevQ() { if (S.idx > 0) { S.idx--; renderQ(); } }
 function nextOrSubmit() {
   if (S.idx < Qs.length - 1) { S.idx++; renderQ(); }
-  else { submitSurvey(); }
+  else { showMotivation(); }
+}
+
+function showMotivation() {
+  const first = S.candidateName.split(' ')[0];
+  $('txt-mot-title').textContent = t('Fast geschafft!', 'Almost done!');
+  $('txt-mot-desc').textContent  = t(
+    `Zwei optionale Fragen — deine Antworten sieht nur ${first} selbst als Motivation.`,
+    `Two optional questions — only ${first} will see your answers as motivation.`
+  );
+  $('txt-conf-label').textContent = t(
+    `Wie sicher bist du, dass ${first} das Assessment schafft?`,
+    `How confident are you that ${first} will pass the assessment?`
+  );
+  $('txt-conf-low').textContent  = t('Kaum', 'Unlikely');
+  $('txt-conf-high').textContent = t('Sicher!', 'Sure!');
+  $('txt-wish-label').textContent = t(
+    `Schreib ${first} einen persönlichen Wunsch! (optional)`,
+    `Write ${first} a personal message! (optional)`
+  );
+  $('inp-wish').placeholder = t(
+    'z.B. Ich wünsche dir viel Erfolg, du packst das!',
+    "e.g. I wish you all the best, you've got this!"
+  );
+  $('txt-btn-submit').textContent = t('Absenden ✓', 'Submit ✓');
+
+  // Render confidence rating buttons (toggle on re-click)
+  const row = $('conf-rating-row');
+  row.innerHTML = '';
+  for (let i = 1; i <= 5; i++) {
+    const btn = document.createElement('button');
+    btn.className = 'rating-btn' + (S.confidenceRating !== null && i <= S.confidenceRating ? ' active' : '');
+    btn.textContent = i;
+    btn.onclick = () => {
+      S.confidenceRating = S.confidenceRating === i ? null : i;
+      row.querySelectorAll('.rating-btn').forEach((b, idx) => {
+        b.classList.toggle('active', S.confidenceRating !== null && idx < S.confidenceRating);
+      });
+    };
+    row.appendChild(btn);
+  }
+
+  $('inp-wish').value   = S.wishText;
+  $('inp-wish').oninput = () => { S.wishText = $('inp-wish').value; };
+
+  show('screen-motivation');
+}
+
+function submitWithMotivation() {
+  $('btn-submit-mot').disabled = true;
+  $('txt-btn-submit').textContent = t('Wird gesendet…', 'Sending…');
+  submitSurvey();
 }
 
 // ── Submit ─────────────────────────────────────────────────────────────────
 async function submitSurvey() {
-  const btn = $('btn-next');
-  btn.disabled = true;
-  $('txt-btn-next').textContent = t('Wird gesendet…', 'Sending…');
-
   try {
     // 1. Create respondent
     const rid = crypto.randomUUID();
-    const r1 = await sbPost('/rest/v1/respondents', null); // override below
     const rRes = await fetch(SB_URL + '/rest/v1/respondents', {
       method: 'POST',
       headers: { 'Content-Type':'application/json', 'Prefer':'return=minimal', 'apikey':SB_ANON, 'Authorization':'Bearer '+SB_ANON },
-      body: JSON.stringify({ id:rid, feedback_link_id:S.linkId, name:S.respondentName, relationship:S.relationship }),
+      body: JSON.stringify({
+        id: rid, feedback_link_id: S.linkId,
+        name: S.respondentName, relationship: S.relationship,
+        confidence_rating: S.confidenceRating,
+        wish_text: S.wishText.trim() || null,
+      }),
     });
     if (!rRes.ok) throw new Error('respondent: ' + rRes.status + ' ' + await rRes.text());
 
@@ -583,8 +726,8 @@ async function submitSurvey() {
 
   } catch(e) {
     console.error(e);
-    btn.disabled = false;
-    $('txt-btn-next').textContent = t('Erneut versuchen', 'Try again');
+    $('btn-submit-mot').disabled = false;
+    $('txt-btn-submit').textContent = t('Erneut versuchen', 'Try again');
     alert(t('Fehler beim Senden. Bitte erneut versuchen.', 'Error sending. Please try again.'));
   }
 }

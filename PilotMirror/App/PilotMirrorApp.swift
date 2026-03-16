@@ -84,25 +84,11 @@ struct MainTabView: View {
                     .toolbarColorScheme(.dark, for: .navigationBar)
                     .toolbar {
                         ToolbarItem(placement: .primaryAction) {
-                            HStack(spacing: 12) {
-                                // Language toggle
-                                Button {
-                                    withAnimation { lang.isGerman.toggle() }
-                                } label: {
-                                    Text(lang.isGerman ? "EN" : "DE")
-                                        .font(.caption.weight(.bold))
-                                        .foregroundStyle(.white)
-                                        .padding(.horizontal, 8).padding(.vertical, 4)
-                                        .background(Color(hex: "4A9EF8").opacity(0.25))
-                                        .clipShape(Capsule())
-                                }
-                                // Profile & Settings
-                                Button {
-                                    showProfileSettings = true
-                                } label: {
-                                    Image(systemName: "person.circle.fill")
-                                        .foregroundStyle(Color(hex: "4A9EF8"))
-                                }
+                            Button {
+                                showProfileSettings = true
+                            } label: {
+                                Image(systemName: "person.circle.fill")
+                                    .foregroundStyle(Color(hex: "4A9EF8"))
                             }
                         }
                     }
@@ -125,20 +111,6 @@ struct MainTabView: View {
                 InterviewSimulationView()
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbarColorScheme(.dark, for: .navigationBar)
-                    .toolbar {
-                        ToolbarItem(placement: .primaryAction) {
-                            Button {
-                                withAnimation { lang.isGerman.toggle() }
-                            } label: {
-                                Text(lang.isGerman ? "EN" : "DE")
-                                    .font(.caption.weight(.bold))
-                                    .foregroundStyle(.white)
-                                    .padding(.horizontal, 8).padding(.vertical, 4)
-                                    .background(Color(hex: "4A9EF8").opacity(0.25))
-                                    .clipShape(Capsule())
-                            }
-                        }
-                    }
             }
             .tabItem { Label("Interview", systemImage: "person.2.fill") }
             .tag(2)

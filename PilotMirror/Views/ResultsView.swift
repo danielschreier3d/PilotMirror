@@ -5,6 +5,7 @@ struct ResultsView: View {
     @EnvironmentObject var auth: AuthService
     @EnvironmentObject var lang: LanguageService
     @State private var selectedTab = 0
+    @State private var relationshipFilter: Respondent.RelationshipType? = nil
 
     var result: AnalysisResult? { aiService.result }
 
@@ -23,6 +24,11 @@ struct ResultsView: View {
                     .pickerStyle(.segmented)
                     .padding(.horizontal)
                     .padding(.vertical, 12)
+
+                    // Relationship filter bar (shown for Vergleich + Rohdaten)
+                    if selectedTab == 1 || selectedTab == 2 {
+                        relationshipFilterBar
+                    }
 
                     // Single ScrollView — no nesting
                     ScrollView {
@@ -43,6 +49,14 @@ struct ResultsView: View {
                         .foregroundStyle(.white.opacity(0.6))
                 }
             }
+        }
+        .alert("KI-Fehler", isPresented: Binding(
+            get: { aiService.error != nil },
+            set: { if !$0 { aiService.error = nil } }
+        )) {
+            Button("OK") { aiService.error = nil }
+        } message: {
+            Text(aiService.error ?? "")
         }
         .navigationTitle(lang.t("Dein Report", "Your Report"))
         .navigationBarTitleDisplayMode(.inline)
@@ -65,6 +79,49 @@ struct ResultsView: View {
                 Task { await aiService.loadExistingResult() }
             }
         }
+    }
+
+    // MARK: - Relationship filter bar
+
+    private var relationshipFilterBar: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                filterChip(label: lang.t("Alle", "All"), isActive: relationshipFilter == nil) {
+                    withAnimation(.easeInOut(duration: 0.2)) { relationshipFilter = nil }
+                }
+                ForEach(Respondent.RelationshipType.allCases, id: \.self) { rel in
+                    let count = aiService.respondentsWithRelationship.filter { $0.relationship == rel }.count
+                    if count > 0 {
+                        filterChip(
+                            label: lang.isGerman ? rel.labelDE : rel.labelEN,
+                            isActive: relationshipFilter == rel
+                        ) {
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                relationshipFilter = relationshipFilter == rel ? nil : rel
+                            }
+                        }
+                    }
+                }
+            }
+            .padding(.horizontal)
+            .padding(.bottom, 10)
+        }
+    }
+
+    private func filterChip(label: String, isActive: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Text(label)
+                .font(.caption.weight(.semibold))
+                .padding(.horizontal, 14).padding(.vertical, 7)
+                .background(isActive ? Color(hex: "4A9EF8") : .white.opacity(0.08))
+                .foregroundStyle(isActive ? .white : .white.opacity(0.6))
+                .clipShape(Capsule())
+                .overlay(
+                    Capsule()
+                        .strokeBorder(isActive ? Color.clear : .white.opacity(0.12), lineWidth: 1)
+                )
+        }
+        .buttonStyle(.plain)
     }
 
     private func exportText(_ r: AnalysisResult) -> String {
@@ -90,104 +147,263 @@ struct ResultsView: View {
 
     @ViewBuilder
     private func profilContent(_ r: AnalysisResult) -> some View {
-                // "Das macht dich aus" — top traits with %
-                sectionCard(icon: "person.fill", color: "4A9EF8", title: lang.t("Das macht dich aus", "Your Defining Traits")) {
-                    VStack(alignment: .leading, spacing: 14) {
-                        let topTraits = r.traitStats
-                            .filter { $0.othersPercent >= 0.50 }
-                            .sorted { $0.othersPercent > $1.othersPercent }
+        // Trait chips — always shown
+        sectionCard(icon: "person.fill", color: "4A9EF8", title: lang.t("Das macht dich aus", "Your Defining Traits")) {
+            VStack(alignment: .leading, spacing: 14) {
+                let topTraits = r.traitStats
+                    .filter { $0.othersPercent >= 0.50 }
+                    .sorted { $0.othersPercent > $1.othersPercent }
 
-                        FlowLayout(spacing: 8) {
-                            ForEach(topTraits) { t in
-                                HStack(spacing: 4) {
-                                    Text(t.name)
-                                        .font(.subheadline.weight(.semibold))
-                                    Text("\(Int(t.othersPercent * 100))%")
-                                        .font(.caption.weight(.bold))
-                                        .foregroundStyle(.white.opacity(0.6))
-                                }
-                                .padding(.horizontal, 12).padding(.vertical, 7)
-                                .background(Color(hex: "4A9EF8").opacity(0.2))
-                                .foregroundStyle(.white)
-                                .clipShape(Capsule())
-                            }
+                FlowLayout(spacing: 8) {
+                    ForEach(topTraits) { t in
+                        HStack(spacing: 4) {
+                            Text(t.name)
+                                .font(.subheadline.weight(.semibold))
+                            Text("\(Int(t.othersPercent * 100))%")
+                                .font(.caption.weight(.bold))
+                                .foregroundStyle(.white.opacity(0.6))
                         }
-
-                        Divider().background(.white.opacity(0.1))
-
-                        Text(r.personalitySummary)
-                            .font(.subheadline)
-                            .foregroundStyle(.white.opacity(0.85))
-                            .lineSpacing(5)
+                        .padding(.horizontal, 12).padding(.vertical, 7)
+                        .background(Color(hex: "4A9EF8").opacity(0.2))
+                        .foregroundStyle(.white)
+                        .clipShape(Capsule())
                     }
                 }
 
-                // Stärken
-                sectionCard(icon: "star.fill", color: "34C759", title: lang.t("Stärken", "Strengths")) {
-                    VStack(alignment: .leading, spacing: 12) {
-                        ForEach(Array(r.perceivedStrengths.enumerated()), id: \.offset) { _, s in
-                            HStack(alignment: .top, spacing: 12) {
-                                Image(systemName: "checkmark.circle.fill")
-                                    .foregroundStyle(Color(hex: "34C759"))
-                                    .font(.system(size: 18))
-                                Text(s)
-                                    .font(.subheadline)
-                                    .foregroundStyle(.white.opacity(0.9))
-                                    .fixedSize(horizontal: false, vertical: true)
-                            }
-                        }
-                    }
-                }
-
-                // Schwächen
-                sectionCard(icon: "exclamationmark.triangle.fill", color: "FF9F0A", title: lang.t("Schwächen", "Weaknesses")) {
-                    VStack(alignment: .leading, spacing: 12) {
-                        ForEach(Array(r.possibleWeaknesses.enumerated()), id: \.offset) { _, w in
-                            HStack(alignment: .top, spacing: 12) {
-                                Image(systemName: "arrow.triangle.2.circlepath")
-                                    .foregroundStyle(Color(hex: "FF9F0A"))
-                                    .font(.system(size: 18))
-                                Text(w)
-                                    .font(.subheadline)
-                                    .foregroundStyle(.white.opacity(0.9))
-                                    .fixedSize(horizontal: false, vertical: true)
-                            }
-                        }
-                    }
-                }
-
-                // Advice
-                sectionCard(icon: "sparkles", color: "6B5EE4", title: lang.t("Empfehlung für dein Assessment", "Assessment Recommendations")) {
-                    Text(r.assessmentAdvice)
+                if !r.personalitySummary.isEmpty {
+                    Divider().background(.white.opacity(0.1))
+                    Text(r.personalitySummary)
                         .font(.subheadline)
                         .foregroundStyle(.white.opacity(0.85))
                         .lineSpacing(5)
                 }
+            }
+        }
+
+        if r.personalitySummary.isEmpty {
+            // KI computing or unavailable
+            HStack(spacing: 12) {
+                if aiService.isComputingAI {
+                    ProgressView().tint(Color(hex: "6B5EE4")).scaleEffect(0.9)
+                } else {
+                    Image(systemName: "sparkles")
+                        .font(.system(size: 22))
+                        .foregroundStyle(Color(hex: "6B5EE4"))
+                }
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(aiService.isComputingAI
+                         ? lang.t("KI-Analyse läuft…", "AI Analysis Running…")
+                         : lang.t("KI-Analyse noch nicht verfügbar", "AI Analysis Not Yet Available"))
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(.white)
+                    Text(lang.t("Stärken, Schwächen und Empfehlungen werden per KI generiert. Statistiken und Rohdaten stehen bereits zur Verfügung.",
+                                "Strengths, weaknesses and tips are AI-generated. Statistics and raw data are already available."))
+                        .font(.caption)
+                        .foregroundStyle(.white.opacity(0.5))
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+            .padding(16)
+            .background(Color(hex: "6B5EE4").opacity(0.12))
+            .clipShape(RoundedRectangle(cornerRadius: 14))
+            .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(Color(hex: "6B5EE4").opacity(0.3), lineWidth: 1))
+            .padding(.horizontal)
+        } else {
+            // Stärken
+            sectionCard(icon: "star.fill", color: "34C759", title: lang.t("Deine Stärken", "Your Strengths")) {
+                VStack(alignment: .leading, spacing: 12) {
+                    ForEach(Array(r.perceivedStrengths.enumerated()), id: \.offset) { _, s in
+                        HStack(alignment: .top, spacing: 12) {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundStyle(Color(hex: "34C759"))
+                                .font(.system(size: 18))
+                            Text(s)
+                                .font(.subheadline)
+                                .foregroundStyle(.white.opacity(0.9))
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                    }
+                }
+            }
+
+            // Schwächen
+            sectionCard(icon: "exclamationmark.triangle.fill", color: "FF9F0A", title: lang.t("Deine Schwächen", "Your Weaknesses")) {
+                VStack(alignment: .leading, spacing: 12) {
+                    ForEach(Array(r.possibleWeaknesses.enumerated()), id: \.offset) { _, w in
+                        HStack(alignment: .top, spacing: 12) {
+                            Image(systemName: "arrow.triangle.2.circlepath")
+                                .foregroundStyle(Color(hex: "FF9F0A"))
+                                .font(.system(size: 18))
+                            Text(w)
+                                .font(.subheadline)
+                                .foregroundStyle(.white.opacity(0.9))
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                    }
+                }
+            }
+
+            // Advice
+            sectionCard(icon: "sparkles", color: "6B5EE4", title: lang.t("Empfehlung für dein Assessment", "Assessment Recommendations")) {
+                VStack(alignment: .leading, spacing: 14) {
+                    Text(r.assessmentAdvice)
+                        .font(.subheadline)
+                        .foregroundStyle(.white.opacity(0.85))
+                        .lineSpacing(5)
+
+                    // Fixed hint — always shown
+                    Divider().background(.white.opacity(0.1))
+                    HStack(alignment: .top, spacing: 8) {
+                        Image(systemName: "lightbulb.fill")
+                            .font(.caption)
+                            .foregroundStyle(Color(hex: "FFD60A"))
+                        Text(lang.t(
+                            "Bereite für jede deiner Stärken und Schwächen ein konkretes Beispiel vor — Assessoren fragen gezielt danach, um deine Selbsteinschätzung zu überprüfen.",
+                            "Prepare a concrete example for each of your strengths and weaknesses — assessors will ask for them specifically to verify your self-assessment."))
+                            .font(.caption)
+                            .foregroundStyle(.white.opacity(0.75))
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+
+                    let licenseHints = licenseSpecificHints(for: auth.currentUser?.flightLicenses ?? [])
+                    if !licenseHints.isEmpty {
+                        Divider().background(.white.opacity(0.1))
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text(lang.t("Mögliche Fragen zu deiner Lizenz", "Possible License-Related Questions"))
+                                .font(.caption.weight(.semibold))
+                                .foregroundStyle(Color(hex: "6B5EE4"))
+                                .textCase(.uppercase)
+                                .tracking(0.4)
+                            ForEach(licenseHints, id: \.self) { hint in
+                                HStack(alignment: .top, spacing: 8) {
+                                    Image(systemName: "questionmark.circle.fill")
+                                        .font(.caption)
+                                        .foregroundStyle(Color(hex: "6B5EE4").opacity(0.7))
+                                    Text(hint)
+                                        .font(.caption)
+                                        .foregroundStyle(.white.opacity(0.7))
+                                        .fixedSize(horizontal: false, vertical: true)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Motivation card — shown when at least one person left a confidence rating or wish
+            if r.motivationConfidenceCount > 0 || !r.motivationWishes.isEmpty {
+                motivationCard(r)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func motivationCard(_ r: AnalysisResult) -> some View {
+        sectionCard(icon: "heart.circle.fill", color: "FF6B6B",
+                    title: lang.t("Deine Unterstützer", "Your Supporters")) {
+            VStack(alignment: .leading, spacing: 16) {
+
+                // Confidence bar
+                if r.motivationConfidenceCount > 0, let avg = r.motivationConfidenceAvg {
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack {
+                            Text(lang.t(
+                                "\(r.motivationConfidenceCount) Person\(r.motivationConfidenceCount == 1 ? "" : "en") glauben an dich",
+                                "\(r.motivationConfidenceCount) person\(r.motivationConfidenceCount == 1 ? "" : "s") believe in you"))
+                                .font(.subheadline.weight(.semibold))
+                                .foregroundStyle(.white)
+                            Spacer()
+                            Text(String(format: "%.1f / 5", avg))
+                                .font(.subheadline.bold().monospacedDigit())
+                                .foregroundStyle(Color(hex: "FF6B6B"))
+                        }
+
+                        GeometryReader { geo in
+                            ZStack(alignment: .leading) {
+                                Capsule().fill(.white.opacity(0.08)).frame(height: 10)
+                                Capsule().fill(Color(hex: "FF6B6B"))
+                                    .frame(width: geo.size.width * (avg / 5.0), height: 10)
+                            }
+                        }
+                        .frame(height: 10)
+
+                        Text(lang.t(
+                            "Durchschnittliche Zuversicht deiner Unterstützer",
+                            "Average confidence of your supporters"))
+                            .font(.caption)
+                            .foregroundStyle(.white.opacity(0.45))
+                    }
+                }
+
+                // Wishes
+                if !r.motivationWishes.isEmpty {
+                    if r.motivationConfidenceCount > 0 {
+                        Divider().background(.white.opacity(0.1))
+                    }
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(lang.t("Persönliche Wünsche", "Personal Messages"))
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(.white.opacity(0.4))
+                            .textCase(.uppercase)
+                            .tracking(0.5)
+
+                        ForEach(Array(r.motivationWishes.enumerated()), id: \.offset) { _, wish in
+                            HStack(alignment: .top, spacing: 10) {
+                                Text(wish)
+                                    .font(.subheadline)
+                                    .foregroundStyle(.white.opacity(0.85))
+                                    .fixedSize(horizontal: false, vertical: true)
+                                    .italic()
+                            }
+                            .padding(12)
+                            .background(Color(hex: "FF6B6B").opacity(0.08))
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                        }
+                    }
+                }
+            }
+        }
     }
 
     // MARK: - Tab 2: Vergleich
 
     @ViewBuilder
     private func vergleichContent(_ r: AnalysisResult) -> some View {
+        let areas = aiService.respondentsWithRelationship.isEmpty
+            ? r.comparisonAreas
+            : aiService.filteredComparisonAreas(for: relationshipFilter)
+
+        let surpriseTraits: [TraitStat] = {
+            if aiService.respondentsWithRelationship.isEmpty { return r.traitStats.filter(\.surprise) }
+            return aiService.filteredTraitStats(for: relationshipFilter).filter(\.surprise)
+        }()
+
         // Rating areas — Du vs. Andere
         sectionCard(icon: "chart.bar.fill", color: "4A9EF8", title: lang.t("Bereiche — Du vs. Andere (1–5)", "Areas — You vs. Others (1–5)")) {
-            VStack(spacing: 22) {
-                ForEach(r.comparisonAreas) { area in
-                    areaComparisonRow(area)
+            if areas.isEmpty {
+                Text(lang.t("Keine Daten für diese Gruppe.", "No data for this group."))
+                    .font(.subheadline)
+                    .foregroundStyle(.white.opacity(0.45))
+            } else {
+                VStack(spacing: 22) {
+                    ForEach(areas) { area in
+                        areaComparisonRow(area)
+                    }
                 }
             }
         }
 
-        // Self vs Others summary
-        sectionCard(icon: "arrow.left.arrow.right", color: "FF9F0A", title: lang.t("Wo täuschst du dich?", "Where Are You Off?")) {
-            Text(r.selfVsOthers)
-                .font(.subheadline)
-                .foregroundStyle(.white.opacity(0.85))
-                .lineSpacing(5)
+        // Self vs Others summary — only with AI
+        if !r.selfVsOthers.isEmpty {
+            sectionCard(icon: "arrow.left.arrow.right", color: "FF9F0A", title: lang.t("So realistisch schätzt du dich ein", "How Realistic Is Your Self-Image")) {
+                Text(r.selfVsOthers)
+                    .font(.subheadline)
+                    .foregroundStyle(.white.opacity(0.85))
+                    .lineSpacing(5)
+            }
         }
 
         // Surprise traits
-        let surpriseTraits = r.traitStats.filter(\.surprise)
         if !surpriseTraits.isEmpty {
             sectionCard(icon: "exclamationmark.bubble.fill", color: "FF6B6B", title: lang.t("Überraschende Unterschiede", "Surprising Differences")) {
                 VStack(alignment: .leading, spacing: 10) {
@@ -295,48 +511,100 @@ struct ResultsView: View {
 
     @ViewBuilder
     private func rohdatenContent(_ r: AnalysisResult) -> some View {
+        let traits: [TraitStat] = aiService.respondentsWithRelationship.isEmpty
+            ? r.traitStats
+            : aiService.filteredTraitStats(for: relationshipFilter)
+
+        let fcStats: [ForcedChoiceStat] = aiService.respondentsWithRelationship.isEmpty
+            ? r.forcedChoiceStats
+            : aiService.filteredForcedChoiceStats(for: relationshipFilter)
+
+        let openByQ: [String: [String]] = aiService.respondentsWithRelationship.isEmpty
+            ? aiService.openTextByQuestion
+            : aiService.filteredOpenText(for: relationshipFilter)
+
         // Trait stats
-        sectionCard(icon: "tag.fill", color: "4A9EF8", title: lang.t("Eigenschaften — wie oft genannt?", "Traits — How Often Mentioned?")) {
+        sectionCard(icon: "tag.fill", color: "4A9EF8",
+                    title: lang.t("Deine Eigenschaften — wie oft genannt?", "Your Traits — How Often Mentioned?")) {
             VStack(spacing: 10) {
                 HStack(spacing: 4) {
                     Image(systemName: "person.fill").font(.caption2)
                         .foregroundStyle(Color(hex: "4A9EF8"))
-                    Text(lang.t("Du hast dich so gesehen", "How you saw yourself"))
+                    Text(lang.t("Du hast dich so beschrieben", "How you described yourself"))
                         .font(.caption2).foregroundStyle(.white.opacity(0.4))
                     Spacer()
                 }
-                ForEach(r.traitStats.sorted { $0.othersPercent > $1.othersPercent }) { t in
+                ForEach(traits.sorted { $0.othersPercent > $1.othersPercent }) { t in
                     traitStatRow(t)
                 }
             }
         }
 
         // Forced choice
-        sectionCard(icon: "arrow.triangle.branch", color: "FF9F0A", title: lang.t("Entscheidungsstil — Antworten der anderen", "Decision Style — Others' Answers")) {
-            VStack(spacing: 20) {
-                ForEach(r.forcedChoiceStats) { stat in
-                    forcedChoiceRow(stat)
+        sectionCard(icon: "arrow.triangle.branch", color: "FF9F0A",
+                    title: lang.t("Dein Entscheidungsstil — Antworten der anderen", "Your Decision Style — Others' Answers")) {
+            if fcStats.isEmpty {
+                Text(lang.t("Keine Daten für diese Gruppe.", "No data for this group."))
+                    .font(.subheadline)
+                    .foregroundStyle(.white.opacity(0.45))
+            } else {
+                VStack(spacing: 20) {
+                    ForEach(fcStats) { stat in
+                        forcedChoiceRow(stat)
+                    }
                 }
             }
         }
 
-        // Open text
-        if !r.openTextResponses.isEmpty {
-            sectionCard(icon: "text.bubble.fill", color: "6B5EE4", title: lang.t("Freitextantworten (\(r.openTextResponses.count))", "Open Responses (\(r.openTextResponses.count))")) {
-                VStack(alignment: .leading, spacing: 10) {
-                    ForEach(Array(r.openTextResponses.enumerated()), id: \.offset) { _, text in
-                        HStack(alignment: .top, spacing: 10) {
-                            Text("„")
-                                .font(.title2.bold())
-                                .foregroundStyle(Color(hex: "6B5EE4"))
-                            Text(text)
-                                .font(.subheadline)
-                                .foregroundStyle(.white.opacity(0.85))
-                                .fixedSize(horizontal: false, vertical: true)
+        // Open text — grouped by question
+        let openIds = ["q10","q11","q12","q13","q14","q15","q16","q17","q18"]
+        let groups: [(String, [String])] = openIds.compactMap { id in
+            guard let answers = openByQ[id], !answers.isEmpty else { return nil }
+            let title = Question.surveyQuestions.first(where: { $0.id == id })?.text ?? id
+            return (title, answers)
+        }
+
+        if !groups.isEmpty {
+            sectionCard(icon: "text.bubble.fill", color: "6B5EE4",
+                        title: lang.t("So sehen andere dich", "How Others See You")) {
+                VStack(alignment: .leading, spacing: 0) {
+                    ForEach(Array(groups.enumerated()), id: \.offset) { idx, group in
+                        VStack(alignment: .leading, spacing: 10) {
+                            // Question header — prominent
+                            HStack(spacing: 8) {
+                                RoundedRectangle(cornerRadius: 2)
+                                    .fill(Color(hex: "6B5EE4"))
+                                    .frame(width: 3, height: 16)
+                                Text(group.0)
+                                    .font(.subheadline.weight(.semibold))
+                                    .foregroundStyle(.white)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
+
+                            // Answers
+                            VStack(alignment: .leading, spacing: 8) {
+                                ForEach(Array(group.1.enumerated()), id: \.offset) { _, text in
+                                    ExpandableAnswerView(text: text)
+                                }
+                            }
                         }
-                        .padding(12)
-                        .background(.white.opacity(0.05))
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .padding(.vertical, 16)
+
+                        // Divider between groups (not after last)
+                        if idx < groups.count - 1 {
+                            Divider()
+                                .background(.white.opacity(0.12))
+                        }
+                    }
+                }
+            }
+        } else if !r.openTextResponses.isEmpty {
+            // Fallback for results loaded from Supabase (no grouped data)
+            sectionCard(icon: "text.bubble.fill", color: "6B5EE4",
+                        title: lang.t("So sehen andere dich", "How Others See You")) {
+                VStack(alignment: .leading, spacing: 8) {
+                    ForEach(Array(r.openTextResponses.enumerated()), id: \.offset) { _, text in
+                        ExpandableAnswerView(text: text)
                     }
                 }
             }
@@ -418,6 +686,66 @@ struct ResultsView: View {
         }
     }
 
+    // MARK: - License-specific hints
+
+    private func licenseSpecificHints(for licenses: [User.FlightLicense]) -> [String] {
+        let relevant = licenses.filter { $0 != .none }
+        guard !relevant.isEmpty else { return [] }
+
+        let isMotorized = relevant.contains(.ppl) || relevant.contains(.lapl)
+            || relevant.contains(.tmg) || relevant.contains(.ultralight)
+        let isParamotor = relevant.contains(.paramotor)
+        let isOther     = relevant.contains(.other)
+
+        var hints: [String] = []
+
+        if isMotorized {
+            hints += lang.isGerman ? [
+                "Welche Luftraumklassen kennst du und was darf man wo fliegen?",
+                "Wie gehst du eine Flugplanung an? (Wetter, NOTAM, Route, Ausweichplätze)",
+                "Was tust du bei einem unerwarteten Wetterumschwung in der Luft?",
+                "Wie bereitest du dich auf einen Flug in kontrollierten Luftraum vor?",
+                "Was versteht man unter CRM und warum ist es im Cockpit wichtig?"
+            ] : [
+                "Which airspace classes do you know and what is permitted where?",
+                "How do you approach flight planning? (weather, NOTAM, route, alternates)",
+                "What do you do in case of an unexpected weather change in flight?",
+                "How do you prepare for a flight into controlled airspace?",
+                "What is CRM and why does it matter in the cockpit?"
+            ]
+        }
+
+        if isParamotor {
+            hints += lang.isGerman ? [
+                "Woran erkennst du gefährliche oder fluguntaugliche Thermik?",
+                "Wie schätzt du deinen Gleitwinkel und deine Reichweite ein?",
+                "Welche Wetterphänomene sind für Paramotor-/Gleitschirmpiloten besonders relevant?",
+                "Wie gehst du mit einem plötzlichen Winddreher oder einer Böe um?",
+                "Was prüfst du beim Preflight-Check an deinem Gerät?"
+            ] : [
+                "How do you recognize dangerous or unflyable thermals?",
+                "How do you estimate your glide ratio and range?",
+                "Which weather phenomena are especially relevant for paramotor/paraglider pilots?",
+                "How do you handle a sudden wind shift or gust?",
+                "What do you check during your preflight inspection?"
+            ]
+        }
+
+        if isOther {
+            hints += lang.isGerman ? [
+                "Welche Lufträume und Regularien sind für deine Art des Fliegens relevant?",
+                "Wie planst du einen Flug und welche Sicherheitsaspekte berücksichtigst du?",
+                "Beschreibe eine Situation, in der du eine schnelle Entscheidung in der Luft treffen musstest."
+            ] : [
+                "Which airspace and regulations are relevant for your type of flying?",
+                "How do you plan a flight and what safety aspects do you consider?",
+                "Describe a situation where you had to make a quick decision in the air."
+            ]
+        }
+
+        return hints
+    }
+
     // MARK: - Shared card builder
 
     private func sectionCard<Content: View>(
@@ -443,6 +771,66 @@ struct ResultsView: View {
         .background(.white.opacity(0.07))
         .clipShape(RoundedRectangle(cornerRadius: 18))
         .padding(.horizontal)
+    }
+}
+
+// MARK: - Expandable answer bubble
+
+private struct ExpandableAnswerView: View {
+    let text: String
+    @State private var isExpanded = false
+    @State private var isTruncated = false
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(alignment: .top, spacing: 10) {
+                Text("„")
+                    .font(.title2.bold())
+                    .foregroundStyle(Color(hex: "6B5EE4"))
+                Text(text)
+                    .font(.subheadline)
+                    .foregroundStyle(.white.opacity(0.88))
+                    .lineLimit(isExpanded ? nil : 2)
+                    .background(
+                        // Detect if text would be truncated at 2 lines
+                        GeometryReader { displayed in
+                            Text(text)
+                                .font(.subheadline)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .hidden()
+                                .background(GeometryReader { full in
+                                    Color.clear.onAppear {
+                                        isTruncated = full.size.height > displayed.size.height + 1
+                                    }
+                                })
+                        }
+                    )
+                    .animation(.easeInOut(duration: 0.2), value: isExpanded)
+            }
+
+            if isTruncated || isExpanded {
+                Button {
+                    withAnimation(.easeInOut(duration: 0.2)) { isExpanded.toggle() }
+                } label: {
+                    HStack(spacing: 4) {
+                        Text(isExpanded ? "Weniger anzeigen" : "Mehr anzeigen")
+                            .font(.caption.weight(.semibold))
+                        Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
+                            .font(.caption2)
+                    }
+                    .foregroundStyle(Color(hex: "6B5EE4"))
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(12)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(.white.opacity(0.06))
+        .clipShape(RoundedRectangle(cornerRadius: 10))
+        .overlay(
+            RoundedRectangle(cornerRadius: 10)
+                .strokeBorder(.white.opacity(0.08), lineWidth: 1)
+        )
     }
 }
 

@@ -5,6 +5,8 @@ struct Respondent: Identifiable, Codable {
     let feedbackLinkId: String
     var name: String
     var relationship: RelationshipType
+    var confidenceRating: Int?   // 1–5, optional
+    var wishText: String?        // optional free-text wish
 
     enum RelationshipType: String, Codable, CaseIterable {
         case friend          = "Friend"
@@ -20,6 +22,24 @@ struct Respondent: Identifiable, Codable {
             case .colleague:        return "briefcase.fill"
             case .flightInstructor: return "airplane"
             case .other:            return "person.fill"
+            }
+        }
+        var labelDE: String {
+            switch self {
+            case .friend:           return "Freund/in"
+            case .family:           return "Familie"
+            case .colleague:        return "Kollege/in"
+            case .flightInstructor: return "Fluglehrer/in"
+            case .other:            return "Sonstiges"
+            }
+        }
+        var labelEN: String {
+            switch self {
+            case .friend:           return "Friend"
+            case .family:           return "Family"
+            case .colleague:        return "Colleague"
+            case .flightInstructor: return "Flight Instructor"
+            case .other:            return "Other"
             }
         }
     }

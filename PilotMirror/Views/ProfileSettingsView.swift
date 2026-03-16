@@ -30,8 +30,9 @@ struct ProfileSettingsView: View {
                 VStack(spacing: 24) {
                     header
                     userCard
+                    languageSection
                     passwordSection
-                    dangerZone
+                    accountActions
                     signOutButton
                 }
                 .padding(.horizontal, 20)
@@ -97,27 +98,84 @@ struct ProfileSettingsView: View {
     // MARK: – User info card
 
     private var userCard: some View {
-        HStack(spacing: 14) {
+        HStack(alignment: .top, spacing: 14) {
             Image(systemName: "person.circle.fill")
                 .font(.system(size: 44))
                 .foregroundStyle(accent)
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 6) {
                 Text(auth.currentUser?.name ?? "—")
                     .font(.headline)
                     .foregroundStyle(.white)
                 Text(auth.currentUser?.email ?? "—")
                     .font(.caption)
                     .foregroundStyle(.white.opacity(0.5))
+                // Assessment type chip
                 if let at = auth.currentUser?.assessmentType {
-                    Text(at.rawValue)
-                        .font(.caption2.weight(.medium))
-                        .foregroundStyle(accent)
-                        .padding(.horizontal, 8).padding(.vertical, 3)
-                        .background(accent.opacity(0.15))
-                        .clipShape(Capsule())
+                    HStack(spacing: 4) {
+                        Image(systemName: at.icon)
+                            .font(.caption2)
+                        Text(at.rawValue)
+                            .font(.caption2.weight(.medium))
+                    }
+                    .foregroundStyle(accent)
+                    .padding(.horizontal, 8).padding(.vertical, 3)
+                    .background(accent.opacity(0.15))
+                    .clipShape(Capsule())
+                }
+                // Flight licenses (exclude .none)
+                let licenses = auth.currentUser?.flightLicenses?.filter { $0 != .none } ?? []
+                if !licenses.isEmpty {
+                    FlowLayout(spacing: 4) {
+                        ForEach(licenses, id: \.self) { lic in
+                            HStack(spacing: 3) {
+                                Image(systemName: lic.icon).font(.caption2)
+                                Text(lang.isGerman ? lic.rawValue : lic.rawValue)
+                                    .font(.caption2.weight(.medium))
+                            }
+                            .foregroundStyle(Color(hex: "34C759"))
+                            .padding(.horizontal, 7).padding(.vertical, 3)
+                            .background(Color(hex: "34C759").opacity(0.12))
+                            .clipShape(Capsule())
+                        }
+                    }
                 }
             }
             Spacer()
+        }
+        .padding(18)
+        .background(card)
+        .clipShape(RoundedRectangle(cornerRadius: 18))
+        .overlay(RoundedRectangle(cornerRadius: 18).stroke(Color.white.opacity(0.12), lineWidth: 1))
+    }
+
+    // MARK: – Language section
+
+    private var languageSection: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            sectionLabel(lang.isGerman ? "Sprache" : "Language")
+            HStack(spacing: 0) {
+                ForEach([(true, "Deutsch", "DE"), (false, "English", "EN")], id: \.0) { isDE, label, short in
+                    Button {
+                        withAnimation { lang.isGerman = isDE }
+                    } label: {
+                        VStack(spacing: 2) {
+                            Text(short)
+                                .font(.subheadline.weight(.bold))
+                            Text(label)
+                                .font(.caption2)
+                        }
+                        .foregroundStyle(lang.isGerman == isDE ? .white : .white.opacity(0.4))
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 12)
+                        .background(lang.isGerman == isDE ? accent : Color.clear)
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .padding(4)
+            .background(Color.white.opacity(0.05))
+            .clipShape(RoundedRectangle(cornerRadius: 13))
         }
         .padding(18)
         .background(card)
@@ -177,11 +235,11 @@ struct ProfileSettingsView: View {
         .overlay(RoundedRectangle(cornerRadius: 18).stroke(Color.white.opacity(0.12), lineWidth: 1))
     }
 
-    // MARK: – Danger zone
+    // MARK: – Account actions
 
-    private var dangerZone: some View {
+    private var accountActions: some View {
         VStack(alignment: .leading, spacing: 14) {
-            sectionLabel(lang.isGerman ? "Gefahrenbereich" : "Danger Zone")
+            sectionLabel(lang.isGerman ? "Kontoverwaltung" : "Account Management")
 
             if let err = actionError {
                 Text(err)

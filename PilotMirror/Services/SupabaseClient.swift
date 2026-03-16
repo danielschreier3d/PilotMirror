@@ -198,6 +198,17 @@ final class SupabaseClient: ObservableObject {
 
     // MARK: – Auth: Update password
 
+    func sendPasswordReset(email: String) async throws {
+        var req = URLRequest(url: URL(string: "\(base)/auth/v1/recover")!)
+        req.httpMethod = "POST"
+        req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        req.setValue(anon, forHTTPHeaderField: "apikey")
+        req.setValue("Bearer \(anon)", forHTTPHeaderField: "Authorization")
+        req.httpBody = try JSONSerialization.data(withJSONObject: ["email": email])
+        let (data, res) = try await URLSession.shared.data(for: req)
+        try validate(res, data)
+    }
+
     func updatePassword(_ newPassword: String) async throws {
         guard let token = accessToken else { throw SupabaseError.unauthenticated }
         var req = URLRequest(url: URL(string: "\(base)/auth/v1/user")!)

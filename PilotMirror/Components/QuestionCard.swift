@@ -3,12 +3,14 @@ import SwiftUI
 struct QuestionCard: View {
     let question: Question
     let answer: AnswerValue?
+    var mode: SurveyMode = .selfAssessment
+    var candidateName: String? = nil
     let onAnswer: (AnswerValue) -> Void
     @EnvironmentObject var lang: LanguageService
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
-            Text(question.displayText(isGerman: lang.isGerman))
+            Text(question.displayText(mode: mode, candidateName: candidateName, isGerman: lang.isGerman))
                 .font(.system(size: 18, weight: .semibold, design: .rounded))
                 .foregroundStyle(.white)
                 .fixedSize(horizontal: false, vertical: true)

@@ -30,11 +30,15 @@ private struct FeedbackLinkRead: Decodable {
 
 private struct RespondentInsert: Encodable {
     let id: String; let feedbackLinkId: String; let name: String; let relationship: String
+    let confidenceRating: Int?; let wishText: String?
 }
 
 private struct RespondentRead: Decodable {
     let id: String
     let feedbackLinkId: String
+    let relationship: String?
+    let confidenceRating: Int?
+    let wishText: String?
 }
 
 private struct SurveyResponseInsert: Encodable {
@@ -145,7 +149,9 @@ final class FeedbackService: ObservableObject {
         token: String,
         name: String,
         relationship: Respondent.RelationshipType,
-        responses: [String: AnswerValue]
+        responses: [String: AnswerValue],
+        confidenceRating: Int? = nil,
+        wishText: String? = nil
     ) async throws {
         isLoading = true; defer { isLoading = false }
 
@@ -158,13 +164,14 @@ final class FeedbackService: ObservableObject {
             throw SupabaseError.noData
         }
 
-        // 2. Create respondent record
+        // 2. Create respondent record (with motivation data)
         let respondentId = UUID().uuidString
         try await sb.insert(
             into: "respondents",
             value: RespondentInsert(
                 id: respondentId, feedbackLinkId: linkInfo.linkId,
-                name: name, relationship: relationship.rawValue),
+                name: name, relationship: relationship.rawValue,
+                confidenceRating: confidenceRating, wishText: wishText),
             anonOnly: true)
 
         // 3. Submit all survey responses
@@ -182,6 +189,19 @@ final class FeedbackService: ObservableObject {
             function: "increment_response_count",
             params: ["p_link_id": linkInfo.linkId],
             anonOnly: true)
+    }
+
+    // MARK: – Load respondents with relationship info (for filter feature)
+
+    func loadRespondentsWithRelationship() async throws -> [Respondent] {
+        guard let link = feedbackLink else { return [] }
+        struct Row: Decodable { let id: String; let feedbackLinkId: String; let relationship: String?; let confidenceRating: Int?; let wishText: String? }
+        let rows: [Row] = (try? await sb.select(from: "respondents", filters: ["feedback_link_id": "eq.\(link.id)"])) ?? []
+        return rows.map { r in
+            let rel = Respondent.RelationshipType(rawValue: r.relationship ?? "") ?? .other
+            return Respondent(id: r.id, feedbackLinkId: r.feedbackLinkId, name: "",
+                              relationship: rel, confidenceRating: r.confidenceRating, wishText: r.wishText)
+        }
     }
 
     // MARK: – Load respondent survey responses for AI analysis
@@ -221,6 +241,37 @@ final class FeedbackService: ObservableObject {
         }
 
         return byRespondent.values.filter { !$0.isEmpty }.map { $0 }
+    }
+
+    // Load responses keyed by respondentId (for relationship-based filtering)
+    func loadRespondentResponsesWithId() async throws -> [String: [String: AnswerValue]] {
+        guard let link = feedbackLink else { return [:] }
+
+        struct Row: Decodable {
+            let respondentId: String; let questionId: String
+            let answerType: String; let answerValue: String
+        }
+        let rows: [Row] = try await sb.rpc(
+            function: "get_all_respondent_data",
+            params: ["p_link_id": link.id])
+
+        var byRespondent: [String: [String: AnswerValue]] = [:]
+        for row in rows {
+            let ans: AnswerValue?
+            switch row.answerType {
+            case "single":   ans = .singleChoice(row.answerValue)
+            case "multiple":
+                if let data = row.answerValue.data(using: .utf8),
+                   let arr = try? JSONDecoder().decode([String].self, from: data) {
+                    ans = .multipleChoice(arr)
+                } else { ans = .multipleChoice([row.answerValue]) }
+            case "rating":   ans = Int(row.answerValue).map { .rating($0) }
+            case "text":     ans = .text(row.answerValue)
+            default:         ans = nil
+            }
+            if let ans { byRespondent[row.respondentId, default: [:]][row.questionId] = ans }
+        }
+        return byRespondent
     }
 
     // MARK: – Private helpers

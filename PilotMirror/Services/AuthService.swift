@@ -127,6 +127,12 @@ final class AuthService: NSObject, ObservableObject {
         }
     }
 
+    // MARK: – Password reset (unauthenticated)
+
+    func sendPasswordReset(email: String) async throws {
+        try await sb.sendPasswordReset(email: email)
+    }
+
     // MARK: – Password change
 
     func changePassword(newPassword: String) async throws {
