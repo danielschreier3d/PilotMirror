@@ -26,12 +26,18 @@ def ensure_repo():
         run(["git", "clone", PAGES_REMOTE, str(PAGES_REPO)])
 
 def sync_files():
-    files = sorted([f for f in WEB_DIR.rglob("*") if f.is_file() and not f.name.startswith(".")])
-    for f in files:
-        dest = PAGES_REPO / f.relative_to(WEB_DIR)
+    web_files = {f.relative_to(WEB_DIR) for f in WEB_DIR.rglob("*") if f.is_file() and not f.name.startswith(".")}
+    repo_files = {f.relative_to(PAGES_REPO) for f in PAGES_REPO.rglob("*") if f.is_file() and not f.name.startswith(".") and ".git" not in f.parts}
+
+    for rel in sorted(web_files):
+        dest = PAGES_REPO / rel
         dest.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(f, dest)
-        print(f"  + {f.relative_to(WEB_DIR)}")
+        shutil.copy2(WEB_DIR / rel, dest)
+        print(f"  + {rel}")
+
+    for rel in sorted(repo_files - web_files):
+        (PAGES_REPO / rel).unlink()
+        print(f"  - {rel}")
 
 def deploy():
     ensure_repo()
