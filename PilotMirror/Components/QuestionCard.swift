@@ -12,7 +12,7 @@ struct QuestionCard: View {
         VStack(alignment: .leading, spacing: 20) {
             Text(question.displayText(mode: mode, candidateName: candidateName, isGerman: lang.isGerman))
                 .font(.system(size: 18, weight: .semibold, design: .rounded))
-                .foregroundStyle(.white)
+                .foregroundStyle(Color.appPrimary)
                 .fixedSize(horizontal: false, vertical: true)
 
             switch question.type {
@@ -27,7 +27,7 @@ struct QuestionCard: View {
             }
         }
         .padding(20)
-        .background(.white.opacity(0.07))
+        .background(Color.appCard)
         .clipShape(RoundedRectangle(cornerRadius: 20))
     }
 
@@ -53,7 +53,7 @@ struct QuestionCard: View {
                     Text(displayLabel)
                         .font(.subheadline)
                         .padding(.horizontal, 14).padding(.vertical, 8)
-                        .background(isOn ? Color(hex: "4A9EF8") : .white.opacity(0.08))
+                        .background(isOn ? Color(hex: "4A9EF8") : Color.appInputBG)
                         .foregroundStyle(isOn ? .white : .white.opacity(0.7))
                         .clipShape(Capsule())
                         .animation(.easeInOut(duration: 0.15), value: isOn)
@@ -87,7 +87,7 @@ struct QuestionCard: View {
                             .foregroundStyle(isSelected ? Color(hex: "4A9EF8") : .white.opacity(0.3))
                     }
                     .padding(14)
-                    .background(isSelected ? Color(hex: "4A9EF8").opacity(0.18) : .white.opacity(0.06))
+                    .background(isSelected ? Color(hex: "4A9EF8").opacity(0.18) : Color.appCard)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                     .overlay(
                         RoundedRectangle(cornerRadius: 12)
@@ -137,7 +137,7 @@ struct QuestionCard: View {
                 Text(lang.t("Hoch", "High"))
             }
             .font(.caption2)
-            .foregroundStyle(.white.opacity(0.4))
+            .foregroundStyle(Color.appTertiary)
         }
     }
 
@@ -148,9 +148,9 @@ struct QuestionCard: View {
     private var openTextView: some View {
         TextField(question.displayPlaceholder(isGerman: lang.isGerman) ?? lang.t("Antwort eingeben…", "Enter your answer…"), text: $localText, axis: .vertical)
         .lineLimit(3...6)
-        .foregroundStyle(.white)
+        .foregroundStyle(Color.appPrimary)
         .padding(14)
-        .background(.white.opacity(0.06))
+        .background(Color.appCard)
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .overlay(
             RoundedRectangle(cornerRadius: 12)
@@ -211,7 +211,7 @@ struct FlowLayout: Layout {
 
 #Preview {
     ZStack {
-        Color(hex: "0A1628").ignoresSafeArea()
+        Color.appBG.ignoresSafeArea()
         QuestionCard(
             question: Question.surveyQuestions[0],
             answer: .multipleChoice(["calm", "analytical"]),

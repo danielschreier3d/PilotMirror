@@ -38,7 +38,7 @@ struct InterviewSimulationView: View {
 
     var body: some View {
         ZStack {
-            Color(hex: "0A1628").ignoresSafeArea()
+            Color.appBG.ignoresSafeArea()
             switch phase {
             case .setup:
                 setupView
@@ -66,13 +66,13 @@ struct InterviewSimulationView: View {
 
                 Text(lang.t("Interview Simulation", "Interview Simulation"))
                     .font(.system(size: 26, weight: .bold, design: .rounded))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(Color.appPrimary)
                     .multilineTextAlignment(.center)
 
                 Text(lang.t("Wähle den Umfang der Session aus.",
                             "Choose the session size."))
                     .font(.subheadline)
-                    .foregroundStyle(.white.opacity(0.6))
+                    .foregroundStyle(Color.appSecondary)
                     .multilineTextAlignment(.center)
 
                 HStack(alignment: .top, spacing: 10) {
@@ -163,7 +163,7 @@ struct InterviewSimulationView: View {
                     .frame(maxWidth: .infinity)
                     .frame(height: 54)
                     .background(Color(hex: "4A9EF8"))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(Color.appPrimary)
                     .clipShape(RoundedRectangle(cornerRadius: 16))
             }
             .padding(.horizontal, 20)
@@ -191,7 +191,7 @@ struct InterviewSimulationView: View {
                 HStack {
                     Text("\(index + 1) / \(total)")
                         .font(.caption.weight(.semibold))
-                        .foregroundStyle(.white.opacity(0.6))
+                        .foregroundStyle(Color.appSecondary)
                     Spacer()
                     Button(lang.t("Beenden", "End")) { showEndAlert = true }
                         .font(.caption.weight(.semibold))
@@ -201,7 +201,7 @@ struct InterviewSimulationView: View {
 
                 GeometryReader { geo in
                     ZStack(alignment: .leading) {
-                        RoundedRectangle(cornerRadius: 4).fill(.white.opacity(0.12)).frame(height: 6)
+                        RoundedRectangle(cornerRadius: 4).fill(Color.appBorder).frame(height: 6)
                         RoundedRectangle(cornerRadius: 4).fill(Color(hex: "4A9EF8"))
                             .frame(width: geo.size.width * progress, height: 6)
                             .animation(.easeInOut(duration: 0.3), value: progress)
@@ -247,7 +247,7 @@ struct InterviewSimulationView: View {
                     // Question text
                     Text(questionText)
                         .font(.title3.weight(.semibold))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(Color.appPrimary)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 24)
                         .fixedSize(horizontal: false, vertical: true)
@@ -264,7 +264,7 @@ struct InterviewSimulationView: View {
                                     .foregroundStyle(Color(hex: "34C759").opacity(0.8))
                                 Text(answer)
                                     .font(.body.weight(.semibold))
-                                    .foregroundStyle(.white)
+                                    .foregroundStyle(Color.appPrimary)
                             }
                             Spacer()
                         }
@@ -310,7 +310,7 @@ struct InterviewSimulationView: View {
                                         HStack(alignment: .top, spacing: 10) {
                                             Image(systemName: "arrow.turn.down.right")
                                                 .font(.caption)
-                                                .foregroundStyle(.white.opacity(0.35))
+                                                .foregroundStyle(Color.appTertiary)
                                                 .padding(.top, 2)
                                             Text(followUp)
                                                 .font(.subheadline)
@@ -353,7 +353,7 @@ struct InterviewSimulationView: View {
                     }
                     .font(.headline)
                     .frame(maxWidth: .infinity).frame(height: 54)
-                    .background(index > 0 ? Color.white.opacity(0.08) : Color.white.opacity(0.03))
+                    .background(index > 0 ? Color.appInputBG : Color.white.opacity(0.03))
                     .foregroundStyle(index > 0 ? .white : .white.opacity(0.25))
                     .clipShape(RoundedRectangle(cornerRadius: 16))
                     .overlay(RoundedRectangle(cornerRadius: 16)
@@ -380,7 +380,7 @@ struct InterviewSimulationView: View {
                     .font(.headline)
                     .frame(maxWidth: .infinity).frame(height: 54)
                     .background(Color(hex: "4A9EF8"))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(Color.appPrimary)
                     .clipShape(RoundedRectangle(cornerRadius: 16))
                 }
             }
@@ -417,11 +417,11 @@ struct InterviewSimulationView: View {
                 VStack(spacing: 8) {
                     Text(lang.t("Interview abgeschlossen!", "Interview complete!"))
                         .font(.system(size: 24, weight: .bold, design: .rounded))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(Color.appPrimary)
                         .multilineTextAlignment(.center)
                     Text(lang.t("\(total) Fragen gestellt", "\(total) questions asked"))
                         .font(.subheadline)
-                        .foregroundStyle(.white.opacity(0.6))
+                        .foregroundStyle(Color.appSecondary)
                 }
             }
             Spacer()
@@ -433,7 +433,7 @@ struct InterviewSimulationView: View {
                     .font(.headline)
                     .frame(maxWidth: .infinity).frame(height: 54)
                     .background(Color(hex: "4A9EF8"))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(Color.appPrimary)
                     .clipShape(RoundedRectangle(cornerRadius: 16))
             }
             .padding(.horizontal, 20)
@@ -462,11 +462,11 @@ private struct SizeCard: View {
 
                 Text(isGerman ? size.labelDE : size.labelEN)
                     .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(Color.appPrimary)
 
                 Text(isGerman ? size.descriptionDE : size.descriptionEN)
                     .font(.caption)
-                    .foregroundStyle(.white.opacity(0.55))
+                    .foregroundStyle(Color.appSecondary)
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
 
@@ -490,7 +490,7 @@ private struct SizeCard: View {
                     .fill(.white.opacity(isSelected ? 0.1 : 0.05))
                     .overlay(RoundedRectangle(cornerRadius: 18)
                         .strokeBorder(
-                            isSelected ? Color(hex: "4A9EF8").opacity(0.8) : Color.white.opacity(0.12),
+                            isSelected ? Color(hex: "4A9EF8").opacity(0.8) : Color.appBorder,
                             lineWidth: isSelected ? 1.5 : 1))
             )
         }

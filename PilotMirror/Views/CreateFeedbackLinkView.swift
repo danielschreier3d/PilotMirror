@@ -9,7 +9,7 @@ struct CreateFeedbackLinkView: View {
 
     var body: some View {
         ZStack {
-            Color(hex: "0A1628").ignoresSafeArea()
+            Color.appBG.ignoresSafeArea()
 
             ScrollView {
                 VStack(spacing: 28) {
@@ -21,11 +21,11 @@ struct CreateFeedbackLinkView: View {
 
                         Text("Get Your Feedback Link")
                             .font(.system(size: 24, weight: .bold, design: .rounded))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(Color.appPrimary)
 
                         Text("Share it with 5–12 people who know you well.\nTheir responses will be anonymous.")
                             .font(.subheadline)
-                            .foregroundStyle(.white.opacity(0.6))
+                            .foregroundStyle(Color.appSecondary)
                             .multilineTextAlignment(.center)
                     }
                     .padding(.top, 20)
@@ -34,7 +34,7 @@ struct CreateFeedbackLinkView: View {
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Recommended")
                             .font(.caption.weight(.semibold))
-                            .foregroundStyle(.white.opacity(0.5))
+                            .foregroundStyle(Color.appSecondary)
                             .textCase(.uppercase)
                             .tracking(1)
 
@@ -56,7 +56,7 @@ struct CreateFeedbackLinkView: View {
                         }
                     }
                     .padding(16)
-                    .background(.white.opacity(0.06))
+                    .background(Color.appCard)
                     .clipShape(RoundedRectangle(cornerRadius: 16))
                     .padding(.horizontal)
 
@@ -92,7 +92,7 @@ struct CreateFeedbackLinkView: View {
             .frame(maxWidth: .infinity)
             .frame(height: 54)
             .background(Color(hex: "4A9EF8"))
-            .foregroundStyle(.white)
+            .foregroundStyle(Color.appPrimary)
             .clipShape(RoundedRectangle(cornerRadius: 16))
         }
         .padding(.horizontal)
@@ -121,7 +121,7 @@ struct CreateFeedbackLinkView: View {
                 }
             }
             .padding(14)
-            .background(.white.opacity(0.08))
+            .background(Color.appInputBG)
             .clipShape(RoundedRectangle(cornerRadius: 12))
 
             // Share buttons
@@ -154,14 +154,14 @@ struct CreateFeedbackLinkView: View {
                     .frame(width: 24)
                 Text(title)
                     .font(.subheadline.weight(.medium))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(Color.appPrimary)
                 Spacer()
                 Image(systemName: "chevron.right")
                     .font(.caption)
                     .foregroundStyle(.white.opacity(0.3))
             }
             .padding(14)
-            .background(.white.opacity(0.07))
+            .background(Color.appCard)
             .clipShape(RoundedRectangle(cornerRadius: 12))
         }
     }

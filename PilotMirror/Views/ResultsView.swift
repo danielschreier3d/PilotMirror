@@ -11,7 +11,7 @@ struct ResultsView: View {
 
     var body: some View {
         ZStack {
-            Color(hex: "0A1628").ignoresSafeArea()
+            Color.appBG.ignoresSafeArea()
 
             if let result {
                 VStack(spacing: 0) {
@@ -46,7 +46,7 @@ struct ResultsView: View {
                 VStack(spacing: 16) {
                     ProgressView().tint(Color(hex: "4A9EF8"))
                     Text(lang.t("Analyse wird erstellt…", "Generating analysis…"))
-                        .foregroundStyle(.white.opacity(0.6))
+                        .foregroundStyle(Color.appSecondary)
                 }
             }
         }
@@ -113,12 +113,12 @@ struct ResultsView: View {
             Text(label)
                 .font(.caption.weight(.semibold))
                 .padding(.horizontal, 14).padding(.vertical, 7)
-                .background(isActive ? Color(hex: "4A9EF8") : .white.opacity(0.08))
+                .background(isActive ? Color(hex: "4A9EF8") : Color.appInputBG)
                 .foregroundStyle(isActive ? .white : .white.opacity(0.6))
                 .clipShape(Capsule())
                 .overlay(
                     Capsule()
-                        .strokeBorder(isActive ? Color.clear : .white.opacity(0.12), lineWidth: 1)
+                        .strokeBorder(isActive ? Color.clear : Color.appBorder, lineWidth: 1)
                 )
         }
         .buttonStyle(.plain)
@@ -161,11 +161,11 @@ struct ResultsView: View {
                                 .font(.subheadline.weight(.semibold))
                             Text("\(Int(t.othersPercent * 100))%")
                                 .font(.caption.weight(.bold))
-                                .foregroundStyle(.white.opacity(0.6))
+                                .foregroundStyle(Color.appSecondary)
                         }
                         .padding(.horizontal, 12).padding(.vertical, 7)
                         .background(Color(hex: "4A9EF8").opacity(0.2))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(Color.appPrimary)
                         .clipShape(Capsule())
                     }
                 }
@@ -195,11 +195,11 @@ struct ResultsView: View {
                          ? lang.t("KI-Analyse läuft…", "AI Analysis Running…")
                          : lang.t("KI-Analyse noch nicht verfügbar", "AI Analysis Not Yet Available"))
                         .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(Color.appPrimary)
                     Text(lang.t("Stärken, Schwächen und Empfehlungen werden per KI generiert. Statistiken und Rohdaten stehen bereits zur Verfügung.",
                                 "Strengths, weaknesses and tips are AI-generated. Statistics and raw data are already available."))
                         .font(.caption)
-                        .foregroundStyle(.white.opacity(0.5))
+                        .foregroundStyle(Color.appSecondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
             }
@@ -311,7 +311,7 @@ struct ResultsView: View {
                                 "\(r.motivationConfidenceCount) Person\(r.motivationConfidenceCount == 1 ? "" : "en") glauben an dich",
                                 "\(r.motivationConfidenceCount) person\(r.motivationConfidenceCount == 1 ? "" : "s") believe in you"))
                                 .font(.subheadline.weight(.semibold))
-                                .foregroundStyle(.white)
+                                .foregroundStyle(Color.appPrimary)
                             Spacer()
                             Text(String(format: "%.1f / 5", avg))
                                 .font(.subheadline.bold().monospacedDigit())
@@ -320,7 +320,7 @@ struct ResultsView: View {
 
                         GeometryReader { geo in
                             ZStack(alignment: .leading) {
-                                Capsule().fill(.white.opacity(0.08)).frame(height: 10)
+                                Capsule().fill(Color.appInputBG).frame(height: 10)
                                 Capsule().fill(Color(hex: "FF6B6B"))
                                     .frame(width: geo.size.width * (avg / 5.0), height: 10)
                             }
@@ -343,7 +343,7 @@ struct ResultsView: View {
                     VStack(alignment: .leading, spacing: 8) {
                         Text(lang.t("Persönliche Wünsche", "Personal Messages"))
                             .font(.caption.weight(.semibold))
-                            .foregroundStyle(.white.opacity(0.4))
+                            .foregroundStyle(Color.appTertiary)
                             .textCase(.uppercase)
                             .tracking(0.5)
 
@@ -420,7 +420,7 @@ struct ResultsView: View {
             HStack {
                 Text(area.name)
                     .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(Color.appPrimary)
                 Spacer()
                 Text(area.gapLabel)
                     .font(.caption)
@@ -431,11 +431,11 @@ struct ResultsView: View {
             HStack(spacing: 8) {
                 Text(lang.t("Du", "You"))
                     .font(.caption2)
-                    .foregroundStyle(.white.opacity(0.5))
+                    .foregroundStyle(Color.appSecondary)
                     .frame(width: 40, alignment: .trailing)
                 GeometryReader { geo in
                     ZStack(alignment: .leading) {
-                        Capsule().fill(.white.opacity(0.08)).frame(height: 10)
+                        Capsule().fill(Color.appInputBG).frame(height: 10)
                         Capsule().fill(Color(hex: "4A9EF8"))
                             .frame(width: geo.size.width * (area.selfRating / 5.0), height: 10)
                     }
@@ -451,11 +451,11 @@ struct ResultsView: View {
             HStack(spacing: 8) {
                 Text(lang.t("Andere", "Others"))
                     .font(.caption2)
-                    .foregroundStyle(.white.opacity(0.5))
+                    .foregroundStyle(Color.appSecondary)
                     .frame(width: 40, alignment: .trailing)
                 GeometryReader { geo in
                     ZStack(alignment: .leading) {
-                        Capsule().fill(.white.opacity(0.08)).frame(height: 10)
+                        Capsule().fill(Color.appInputBG).frame(height: 10)
                         Capsule().fill(Color(hex: "34C759"))
                             .frame(width: geo.size.width * (area.othersAverage / 5.0), height: 10)
                     }
@@ -486,7 +486,7 @@ struct ResultsView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(t.name)
                     .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(Color.appPrimary)
                 HStack(spacing: 6) {
                     Label(t.selfSelected ? lang.t("Du: Ja", "You: Yes") : lang.t("Du: Nein", "You: No"),
                           systemImage: t.selfSelected ? "checkmark.circle.fill" : "xmark.circle.fill")
@@ -531,7 +531,7 @@ struct ResultsView: View {
                     Image(systemName: "person.fill").font(.caption2)
                         .foregroundStyle(Color(hex: "4A9EF8"))
                     Text(lang.t("Du hast dich so beschrieben", "How you described yourself"))
-                        .font(.caption2).foregroundStyle(.white.opacity(0.4))
+                        .font(.caption2).foregroundStyle(Color.appTertiary)
                     Spacer()
                 }
                 ForEach(traits.sorted { $0.othersPercent > $1.othersPercent }) { t in
@@ -577,7 +577,7 @@ struct ResultsView: View {
                                     .frame(width: 3, height: 16)
                                 Text(group.0)
                                     .font(.subheadline.weight(.semibold))
-                                    .foregroundStyle(.white)
+                                    .foregroundStyle(Color.appPrimary)
                                     .fixedSize(horizontal: false, vertical: true)
                             }
 
@@ -593,7 +593,7 @@ struct ResultsView: View {
                         // Divider between groups (not after last)
                         if idx < groups.count - 1 {
                             Divider()
-                                .background(.white.opacity(0.12))
+                                .background(Color.appBorder)
                         }
                     }
                 }
@@ -625,7 +625,7 @@ struct ResultsView: View {
 
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
-                    Capsule().fill(.white.opacity(0.08)).frame(height: 8)
+                    Capsule().fill(Color.appInputBG).frame(height: 8)
                     Capsule().fill(barColor(for: t))
                         .frame(width: geo.size.width * t.othersPercent, height: 8)
                 }
@@ -649,7 +649,7 @@ struct ResultsView: View {
         VStack(alignment: .leading, spacing: 10) {
             Text(stat.question)
                 .font(.caption.weight(.semibold))
-                .foregroundStyle(.white.opacity(0.5))
+                .foregroundStyle(Color.appSecondary)
                 .textCase(.uppercase)
                 .tracking(0.5)
 
@@ -669,7 +669,7 @@ struct ResultsView: View {
 
                     GeometryReader { geo in
                         ZStack(alignment: .leading) {
-                            Capsule().fill(.white.opacity(0.08)).frame(height: 8)
+                            Capsule().fill(Color.appInputBG).frame(height: 8)
                             Capsule()
                                 .fill(isSelf ? Color(hex: "4A9EF8") : Color(hex: "34C759").opacity(0.7))
                                 .frame(width: max(0, geo.size.width * fraction), height: 8)
@@ -762,13 +762,13 @@ struct ResultsView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 9))
                 Text(title)
                     .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(Color.appPrimary)
             }
             content()
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(18)
-        .background(.white.opacity(0.07))
+        .background(Color.appCard)
         .clipShape(RoundedRectangle(cornerRadius: 18))
         .padding(.horizontal)
     }
@@ -825,11 +825,11 @@ private struct ExpandableAnswerView: View {
         }
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(.white.opacity(0.06))
+        .background(Color.appCard)
         .clipShape(RoundedRectangle(cornerRadius: 10))
         .overlay(
             RoundedRectangle(cornerRadius: 10)
-                .strokeBorder(.white.opacity(0.08), lineWidth: 1)
+                .strokeBorder(Color.appInputBG, lineWidth: 1)
         )
     }
 }

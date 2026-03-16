@@ -5,6 +5,15 @@ struct PilotMirrorApp: App {
     @StateObject private var auth     = AuthService.shared
     @StateObject private var lang     = LanguageService.shared
     @StateObject private var deepLink = DeepLinkHandler.shared
+    @AppStorage("pm_appearance") private var appearanceRaw = 2  // default: dark
+
+    private var preferredScheme: ColorScheme? {
+        switch appearanceRaw {
+        case 1:  return .light
+        case 2:  return .dark
+        default: return nil  // follow system
+        }
+    }
 
     var body: some Scene {
         WindowGroup {
@@ -12,7 +21,7 @@ struct PilotMirrorApp: App {
                 .environmentObject(auth)
                 .environmentObject(lang)
                 .environmentObject(deepLink)
-                .preferredColorScheme(.dark)
+                .preferredColorScheme(preferredScheme)
                 .onOpenURL { url in
                     DeepLinkHandler.shared.handle(url)
                 }

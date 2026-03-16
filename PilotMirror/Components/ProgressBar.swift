@@ -24,7 +24,7 @@ struct PilotProgressBar: View {
 
 #Preview {
     ZStack {
-        Color(hex: "0A1628").ignoresSafeArea()
+        Color.appBG.ignoresSafeArea()
         VStack(spacing: 20) {
             PilotProgressBar(value: 0.3)
             PilotProgressBar(value: 0.7, color: Color(hex: "34C759"))

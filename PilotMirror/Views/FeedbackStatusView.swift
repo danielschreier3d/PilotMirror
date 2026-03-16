@@ -34,7 +34,7 @@ struct FeedbackStatusView: View {
 
     var body: some View {
         ZStack {
-            Color(hex: "0A1628").ignoresSafeArea()
+            Color.appBG.ignoresSafeArea()
 
 
             ScrollView {
@@ -101,7 +101,7 @@ struct FeedbackStatusView: View {
         VStack(spacing: 6) {
             Text(lang.t("Dein Assessment-Plan", "Your Assessment Plan"))
                 .font(.system(size: 24, weight: .bold, design: .rounded))
-                .foregroundStyle(.white)
+                .foregroundStyle(Color.appPrimary)
             if let type = auth.currentUser?.assessmentType {
                 Text(type.rawValue)
                     .font(.caption)
@@ -176,7 +176,7 @@ struct FeedbackStatusView: View {
                         }
                     }
                     .padding(12)
-                    .background(.white.opacity(0.06))
+                    .background(Color.appCard)
                     .clipShape(RoundedRectangle(cornerRadius: 10))
 
                     // Share buttons
@@ -205,7 +205,7 @@ struct FeedbackStatusView: View {
                 if !selfDone {
                     Text(lang.t("Erst Self-Assessment abschließen", "Complete self-assessment first"))
                         .font(.caption2)
-                        .foregroundStyle(.white.opacity(0.35))
+                        .foregroundStyle(Color.appTertiary)
                         .frame(maxWidth: .infinity, alignment: .center)
                 }
             }
@@ -217,7 +217,7 @@ struct FeedbackStatusView: View {
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
                     // Track
-                    Capsule().fill(.white.opacity(0.08)).frame(height: 8)
+                    Capsule().fill(Color.appInputBG).frame(height: 8)
                     // Fill (0–12)
                     Capsule()
                         .fill(LinearGradient(
@@ -253,7 +253,7 @@ struct FeedbackStatusView: View {
                     .foregroundStyle(responseCount >= 12 ? Color(hex: "34C759") : .white.opacity(0.4))
             }
             .font(.caption2)
-            .foregroundStyle(.white.opacity(0.4))
+            .foregroundStyle(Color.appTertiary)
         }
     }
 
@@ -334,7 +334,7 @@ struct FeedbackStatusView: View {
                 // Step indicator
                 ZStack {
                     Circle()
-                        .fill(done ? Color(hex: "34C759") : locked ? .white.opacity(0.06) : Color(hex: "4A9EF8").opacity(0.2))
+                        .fill(done ? Color(hex: "34C759") : locked ? Color.appCard : Color(hex: "4A9EF8").opacity(0.2))
                         .frame(width: 38, height: 38)
                     if done {
                         Image(systemName: "checkmark")
@@ -364,7 +364,7 @@ struct FeedbackStatusView: View {
             }
         }
         .padding(18)
-        .background(done ? Color(hex: "34C759").opacity(0.07) : .white.opacity(0.06))
+        .background(done ? Color(hex: "34C759").opacity(0.07) : Color.appCard)
         .clipShape(RoundedRectangle(cornerRadius: 18))
         .overlay(
             RoundedRectangle(cornerRadius: 18)
@@ -388,7 +388,7 @@ struct FeedbackStatusView: View {
                                                         startPoint: .leading, endPoint: .trailing))
                         : AnyShapeStyle(Color(hex: color).opacity(0.85))
                 )
-                .foregroundStyle(.white)
+                .foregroundStyle(Color.appPrimary)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
         }
     }
@@ -404,7 +404,7 @@ struct FeedbackStatusView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                 Text(label)
                     .font(.caption2)
-                    .foregroundStyle(.white.opacity(0.5))
+                    .foregroundStyle(Color.appSecondary)
             }
         }
         .frame(maxWidth: .infinity)

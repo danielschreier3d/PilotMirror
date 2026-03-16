@@ -7,7 +7,7 @@ struct AssessmentAdviceView: View {
 
     var body: some View {
         ZStack {
-            Color(hex: "0A1628").ignoresSafeArea()
+            Color.appBG.ignoresSafeArea()
 
             ScrollView {
                 VStack(spacing: 20) {
@@ -15,7 +15,7 @@ struct AssessmentAdviceView: View {
                     VStack(spacing: 8) {
                         Text(lang.t("Vorbereitungsguide", "Preparation Guide"))
                             .font(.system(size: 22, weight: .bold, design: .rounded))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(Color.appPrimary)
                         if let type = auth.currentUser?.assessmentType {
                             Text(type.rawValue)
                                 .font(.caption.weight(.semibold))
@@ -127,7 +127,7 @@ struct AssessmentAdviceView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                 Text(title)
                     .font(.headline)
-                    .foregroundStyle(.white)
+                    .foregroundStyle(Color.appPrimary)
                 if isPersonalized {
                     Text(lang.t("Personalisiert", "Personalized"))
                         .font(.caption2.weight(.semibold))
@@ -157,7 +157,7 @@ struct AssessmentAdviceView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(18)
-        .background(.white.opacity(0.07))
+        .background(Color.appCard)
         .clipShape(RoundedRectangle(cornerRadius: 18))
         .padding(.horizontal)
     }

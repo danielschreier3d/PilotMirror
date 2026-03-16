@@ -6,7 +6,7 @@ struct PrivacyConsentView: View {
 
     var body: some View {
         ZStack {
-            Color(hex: "0A1628").ignoresSafeArea()
+            Color.appBG.ignoresSafeArea()
 
             VStack(spacing: 0) {
                 // Header
@@ -18,13 +18,13 @@ struct PrivacyConsentView: View {
 
                     Text(lang.t("Datenschutz & Nutzungsbedingungen", "Privacy & Terms of Use"))
                         .font(.system(size: 22, weight: .bold, design: .rounded))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(Color.appPrimary)
                         .multilineTextAlignment(.center)
 
                     Text(lang.t("Beta-Version — bitte lies die folgenden Hinweise sorgfältig.",
                                 "Beta version — please read the following information carefully."))
                         .font(.caption)
-                        .foregroundStyle(.white.opacity(0.5))
+                        .foregroundStyle(Color.appSecondary)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 32)
                 }
@@ -95,7 +95,7 @@ struct PrivacyConsentView: View {
                         .frame(maxWidth: .infinity)
                         .frame(height: 52)
                         .background(Color(hex: "4A9EF8"))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(Color.appPrimary)
                         .clipShape(RoundedRectangle(cornerRadius: 14))
                 }
                 .padding(.horizontal, 20)
@@ -115,16 +115,16 @@ struct PrivacyConsentView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 8))
                 Text(title)
                     .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(Color.appPrimary)
             }
             Text(text)
                 .font(.caption)
-                .foregroundStyle(.white.opacity(0.6))
+                .foregroundStyle(Color.appSecondary)
                 .lineSpacing(4)
                 .fixedSize(horizontal: false, vertical: true)
         }
         .padding(16)
-        .background(.white.opacity(0.05))
+        .background(Color.appInputBG)
         .clipShape(RoundedRectangle(cornerRadius: 14))
     }
 }

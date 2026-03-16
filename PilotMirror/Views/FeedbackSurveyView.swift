@@ -40,7 +40,7 @@ struct FeedbackSurveyView: View {
 
     var body: some View {
         ZStack {
-            Color(hex: "0A1628").ignoresSafeArea()
+            Color.appBG.ignoresSafeArea()
 
             if isComplete {
                 completionScreen
@@ -98,7 +98,7 @@ struct FeedbackSurveyView: View {
                      ? lang.t("Dein Feedback ist anonym", "Your feedback is anonymous")
                      : lang.t("Sei ehrlich zu dir selbst", "Rate yourself honestly"))
                     .font(.system(size: 22, weight: .bold, design: .rounded))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(Color.appPrimary)
                     .multilineTextAlignment(.center)
 
                 Text(mode.isRespondent
@@ -125,11 +125,11 @@ struct FeedbackSurveyView: View {
                         Image(systemName: "person.fill")
                             .foregroundStyle(Color(hex: "4A9EF8"))
                         TextField(lang.t("Dein Vorname", "Your first name"), text: $respondentName)
-                            .foregroundStyle(.white)
+                            .foregroundStyle(Color.appPrimary)
                             .autocorrectionDisabled()
                     }
                     .padding()
-                    .background(.white.opacity(0.08))
+                    .background(Color.appInputBG)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
 
                     Picker("Relationship", selection: $respondentRelationship) {
@@ -140,7 +140,7 @@ struct FeedbackSurveyView: View {
                     .pickerStyle(.menu)
                     .tint(Color(hex: "4A9EF8"))
                     .padding()
-                    .background(.white.opacity(0.08))
+                    .background(Color.appInputBG)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                 }
                 .padding(.horizontal)
@@ -154,7 +154,7 @@ struct FeedbackSurveyView: View {
                     .frame(maxWidth: .infinity)
                     .frame(height: 54)
                     .background(Color(hex: "4A9EF8"))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(Color.appPrimary)
                     .clipShape(RoundedRectangle(cornerRadius: 16))
             }
             .padding(.horizontal)
@@ -174,7 +174,7 @@ struct FeedbackSurveyView: View {
                     Text(lang.t("Frage \(currentIndex + 1) von \(allQuestions.count)",
                                 "Question \(currentIndex + 1) of \(allQuestions.count)"))
                         .font(.caption)
-                        .foregroundStyle(.white.opacity(0.5))
+                        .foregroundStyle(Color.appSecondary)
                     Spacer()
                     Text(currentQuestion.displaySectionTitle(isGerman: lang.isGerman))
                         .font(.caption.weight(.semibold))
@@ -209,9 +209,9 @@ struct FeedbackSurveyView: View {
                     } label: {
                         Image(systemName: "chevron.left")
                             .frame(width: 52, height: 52)
-                            .background(.white.opacity(0.08))
+                            .background(Color.appInputBG)
                             .clipShape(RoundedRectangle(cornerRadius: 14))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(Color.appPrimary)
                     }
                 }
 
@@ -233,8 +233,8 @@ struct FeedbackSurveyView: View {
                     }
                     .frame(maxWidth: .infinity)
                     .frame(height: 52)
-                    .background(canAdvance ? Color(hex: "4A9EF8") : .white.opacity(0.12))
-                    .foregroundStyle(.white)
+                    .background(canAdvance ? Color(hex: "4A9EF8") : Color.appBorder)
+                    .foregroundStyle(Color.appPrimary)
                     .clipShape(RoundedRectangle(cornerRadius: 14))
                     .animation(.easeInOut(duration: 0.2), value: canAdvance)
                 }
@@ -276,7 +276,7 @@ struct FeedbackSurveyView: View {
 
                     Text(lang.t("Fast geschafft!", "Almost done!"))
                         .font(.system(size: 22, weight: .bold, design: .rounded))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(Color.appPrimary)
 
                     let name = candidateName ?? lang.t("der Kandidat", "the candidate")
                     Text(lang.t(
@@ -295,7 +295,7 @@ struct FeedbackSurveyView: View {
                         "Wie sicher bist du, dass \(confName) das Assessment schafft?",
                         "How confident are you that \(confName) will pass the assessment?"))
                         .font(.headline)
-                        .foregroundStyle(.white)
+                        .foregroundStyle(Color.appPrimary)
 
                     HStack(spacing: 10) {
                         ForEach(1...5, id: \.self) { n in
@@ -315,7 +315,7 @@ struct FeedbackSurveyView: View {
                                 .frame(height: 56)
                                 .background(confidenceRating == n
                                             ? Color(hex: "4A9EF8")
-                                            : Color.white.opacity(0.08))
+                                            : Color.appInputBG)
                                 .foregroundStyle(confidenceRating == n ? .white : .white.opacity(0.7))
                                 .clipShape(RoundedRectangle(cornerRadius: 12))
                                 .overlay(
@@ -323,7 +323,7 @@ struct FeedbackSurveyView: View {
                                         .strokeBorder(
                                             confidenceRating == n
                                             ? Color(hex: "4A9EF8").opacity(0)
-                                            : Color.white.opacity(0.12),
+                                            : Color.appBorder,
                                             lineWidth: 1)
                                 )
                             }
@@ -332,7 +332,7 @@ struct FeedbackSurveyView: View {
                     }
                 }
                 .padding(18)
-                .background(.white.opacity(0.06))
+                .background(Color.appCard)
                 .clipShape(RoundedRectangle(cornerRadius: 16))
                 .padding(.horizontal)
 
@@ -343,14 +343,14 @@ struct FeedbackSurveyView: View {
                         "Schreib \(wishName) einen persönlichen Wunsch! (optional)",
                         "Write \(wishName) a personal message! (optional)"))
                         .font(.headline)
-                        .foregroundStyle(.white)
+                        .foregroundStyle(Color.appPrimary)
 
                     TextEditor(text: $wishText)
                         .frame(minHeight: 100)
                         .padding(12)
-                        .background(.white.opacity(0.08))
+                        .background(Color.appInputBG)
                         .clipShape(RoundedRectangle(cornerRadius: 12))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(Color.appPrimary)
                         .scrollContentBackground(.hidden)
                         .overlay(alignment: .topLeading) {
                             if wishText.isEmpty {
@@ -366,7 +366,7 @@ struct FeedbackSurveyView: View {
                         }
                 }
                 .padding(18)
-                .background(.white.opacity(0.06))
+                .background(Color.appCard)
                 .clipShape(RoundedRectangle(cornerRadius: 16))
                 .padding(.horizontal)
 
@@ -385,7 +385,7 @@ struct FeedbackSurveyView: View {
                     .frame(maxWidth: .infinity)
                     .frame(height: 52)
                     .background(Color(hex: "4A9EF8"))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(Color.appPrimary)
                     .clipShape(RoundedRectangle(cornerRadius: 14))
                 }
                 .padding(.horizontal)
@@ -438,7 +438,7 @@ struct FeedbackSurveyView: View {
             VStack(spacing: 8) {
                 Text(lang.t("Vielen Dank!", "Thank you!"))
                     .font(.system(size: 28, weight: .bold, design: .rounded))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(Color.appPrimary)
                 Text(mode.isRespondent
                      ? lang.t("Dein anonymes Feedback wurde übermittelt.", "Your anonymous feedback has been submitted.")
                      : lang.t("Self-Assessment abgeschlossen. Gehe zurück, um deinen Report-Status zu prüfen.",
@@ -455,7 +455,7 @@ struct FeedbackSurveyView: View {
                     .frame(maxWidth: .infinity)
                     .frame(height: 54)
                     .background(Color(hex: "4A9EF8"))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(Color.appPrimary)
                     .clipShape(RoundedRectangle(cornerRadius: 16))
             }
             .padding(.horizontal)

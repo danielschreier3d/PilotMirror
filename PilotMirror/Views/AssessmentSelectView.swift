@@ -7,7 +7,7 @@ struct AssessmentSelectView: View {
 
     var body: some View {
         ZStack {
-            Color(hex: "0A1628").ignoresSafeArea()
+            Color.appBG.ignoresSafeArea()
 
             VStack(spacing: 0) {
                 // Header
@@ -15,13 +15,13 @@ struct AssessmentSelectView: View {
                     Text(lang.t("Für welches Assessment bereitest du dich vor?",
                                 "Which assessment are you preparing for?"))
                         .font(.system(size: 26, weight: .bold, design: .rounded))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(Color.appPrimary)
                         .multilineTextAlignment(.center)
 
                     Text(lang.t("Hilft dabei, deinen KI-Report zu personalisieren.",
                                 "This helps tailor your AI feedback report."))
                         .font(.subheadline)
-                        .foregroundStyle(.white.opacity(0.6))
+                        .foregroundStyle(Color.appSecondary)
                 }
                 .padding(.top, 40)
                 .padding(.bottom, 32)
@@ -53,7 +53,7 @@ struct AssessmentSelectView: View {
                         .frame(maxWidth: .infinity)
                         .frame(height: 54)
                         .background(selectedAssessment != nil ? Color(hex: "4A9EF8") : Color.white.opacity(0.15))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(Color.appPrimary)
                         .clipShape(RoundedRectangle(cornerRadius: 16))
                         .animation(.easeInOut(duration: 0.2), value: selectedAssessment)
                 }
@@ -78,16 +78,16 @@ struct AssessmentCard: View {
                     .font(.system(size: 28))
                     .foregroundStyle(isSelected ? Color(hex: "4A9EF8") : .white.opacity(0.6))
                     .frame(width: 52, height: 52)
-                    .background(isSelected ? Color(hex: "4A9EF8").opacity(0.15) : .white.opacity(0.06))
+                    .background(isSelected ? Color(hex: "4A9EF8").opacity(0.15) : Color.appCard)
                     .clipShape(RoundedRectangle(cornerRadius: 14))
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(type.rawValue)
                         .font(.headline)
-                        .foregroundStyle(.white)
+                        .foregroundStyle(Color.appPrimary)
                     Text(lang.isGerman ? type.descriptionDE : type.descriptionEN)
                         .font(.caption)
-                        .foregroundStyle(.white.opacity(0.55))
+                        .foregroundStyle(Color.appSecondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
 

@@ -86,7 +86,7 @@ struct TraitRadarChart: View {
 
 #Preview {
     ZStack {
-        Color(hex: "0A1628").ignoresSafeArea()
+        Color.appBG.ignoresSafeArea()
         TraitRadarChart(traits: [
             ("Teamwork", 0.8),
             ("Stress", 0.6),

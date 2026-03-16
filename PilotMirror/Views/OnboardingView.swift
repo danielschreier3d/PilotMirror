@@ -14,10 +14,7 @@ struct OnboardingView: View {
 
     var body: some View {
         ZStack {
-            LinearGradient(
-                colors: [Color(hex: "0A1628"), Color(hex: "0D2B55")],
-                startPoint: .top, endPoint: .bottom
-            )
+            Color.appBG
             .ignoresSafeArea()
 
             ScrollView {
@@ -31,11 +28,11 @@ struct OnboardingView: View {
 
                         Text("PilotMirror")
                             .font(.system(size: 32, weight: .bold, design: .rounded))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(Color.appPrimary)
 
                         Text("Understand how others perceive you\nbefore your pilot assessment.")
                             .font(.subheadline)
-                            .foregroundStyle(.white.opacity(0.6))
+                            .foregroundStyle(Color.appSecondary)
                             .multilineTextAlignment(.center)
                     }
                     .padding(.top, 60)
@@ -93,7 +90,7 @@ struct OnboardingView: View {
                         .frame(maxWidth: .infinity)
                         .frame(height: 52)
                         .background(Color(hex: "4A9EF8"))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(Color.appPrimary)
                         .clipShape(RoundedRectangle(cornerRadius: 14))
                     }
                     .padding(.horizontal, 24)
@@ -113,7 +110,7 @@ struct OnboardingView: View {
 
                     Text("By continuing you agree to our Terms & Privacy Policy.")
                         .font(.caption2)
-                        .foregroundStyle(.white.opacity(0.35))
+                        .foregroundStyle(Color.appTertiary)
                         .multilineTextAlignment(.center)
                         .padding(.top, 16)
                         .padding(.horizontal, 24)
@@ -130,7 +127,7 @@ struct OnboardingView: View {
 
     private var forgotPasswordSheet: some View {
         ZStack {
-            Color(hex: "0A1628").ignoresSafeArea()
+            Color.appBG.ignoresSafeArea()
             VStack(spacing: 24) {
                 // Handle
                 Capsule()
@@ -144,10 +141,10 @@ struct OnboardingView: View {
                         .foregroundStyle(Color(hex: "4A9EF8"))
                     Text("Reset Password")
                         .font(.title3.weight(.bold))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(Color.appPrimary)
                     Text("Enter your email and we'll send you a link to reset your password.")
                         .font(.footnote)
-                        .foregroundStyle(.white.opacity(0.55))
+                        .foregroundStyle(Color.appSecondary)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 16)
                 }
@@ -178,7 +175,7 @@ struct OnboardingView: View {
                     .frame(maxWidth: .infinity)
                     .frame(height: 52)
                     .background(Color(hex: "4A9EF8"))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(Color.appPrimary)
                     .clipShape(RoundedRectangle(cornerRadius: 14))
                 }
                 .padding(.horizontal, 24)
@@ -217,17 +214,17 @@ struct OnboardingView: View {
                 .frame(width: 20)
             if isSecure {
                 SecureField(placeholder, text: text)
-                    .foregroundStyle(.white)
+                    .foregroundStyle(Color.appPrimary)
             } else {
                 TextField(placeholder, text: text)
                     .keyboardType(keyboard)
                     .autocorrectionDisabled()
                     .textInputAutocapitalization(capitalize)
-                    .foregroundStyle(.white)
+                    .foregroundStyle(Color.appPrimary)
             }
         }
         .padding()
-        .background(.white.opacity(0.08))
+        .background(Color.appInputBG)
         .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 }

@@ -4,6 +4,7 @@ struct ProfileSettingsView: View {
     @Environment(\.dismiss)    private var dismiss
     @EnvironmentObject var auth: AuthService
     @EnvironmentObject var lang: LanguageService
+    @AppStorage("pm_appearance") private var appearanceRaw = 2
 
     // Password change
     @State private var newPassword        = ""
@@ -19,8 +20,8 @@ struct ProfileSettingsView: View {
     @State private var isDeleting        = false
     @State private var actionError:      String?
 
-    private let bg     = Color(hex: "0A1628")
-    private let card   = Color.white.opacity(0.07)
+    private let bg     = Color.appBG
+    private let card   = Color.appCard
     private let accent = Color(hex: "4A9EF8")
 
     var body: some View {
@@ -31,6 +32,7 @@ struct ProfileSettingsView: View {
                     header
                     userCard
                     languageSection
+                    appearanceSection
                     passwordSection
                     accountActions
                     signOutButton
@@ -84,12 +86,12 @@ struct ProfileSettingsView: View {
         HStack {
             Text(lang.isGerman ? "Profil & Einstellungen" : "Profile & Settings")
                 .font(.title2.weight(.bold))
-                .foregroundStyle(.white)
+                .foregroundStyle(Color.appPrimary)
             Spacer()
             Button { dismiss() } label: {
                 Image(systemName: "xmark.circle.fill")
                     .font(.title3)
-                    .foregroundStyle(.white.opacity(0.4))
+                    .foregroundStyle(Color.appTertiary)
             }
         }
         .padding(.top, 24)
@@ -105,10 +107,10 @@ struct ProfileSettingsView: View {
             VStack(alignment: .leading, spacing: 6) {
                 Text(auth.currentUser?.name ?? "—")
                     .font(.headline)
-                    .foregroundStyle(.white)
+                    .foregroundStyle(Color.appPrimary)
                 Text(auth.currentUser?.email ?? "—")
                     .font(.caption)
-                    .foregroundStyle(.white.opacity(0.5))
+                    .foregroundStyle(Color.appSecondary)
                 // Assessment type chip
                 if let at = auth.currentUser?.assessmentType {
                     HStack(spacing: 4) {
@@ -145,7 +147,7 @@ struct ProfileSettingsView: View {
         .padding(18)
         .background(card)
         .clipShape(RoundedRectangle(cornerRadius: 18))
-        .overlay(RoundedRectangle(cornerRadius: 18).stroke(Color.white.opacity(0.12), lineWidth: 1))
+        .overlay(RoundedRectangle(cornerRadius: 18).stroke(Color.appBorder, lineWidth: 1))
     }
 
     // MARK: – Language section
@@ -174,13 +176,48 @@ struct ProfileSettingsView: View {
                 }
             }
             .padding(4)
-            .background(Color.white.opacity(0.05))
+            .background(Color.appInputBG)
             .clipShape(RoundedRectangle(cornerRadius: 13))
         }
         .padding(18)
         .background(card)
         .clipShape(RoundedRectangle(cornerRadius: 18))
-        .overlay(RoundedRectangle(cornerRadius: 18).stroke(Color.white.opacity(0.12), lineWidth: 1))
+        .overlay(RoundedRectangle(cornerRadius: 18).stroke(Color.appBorder, lineWidth: 1))
+    }
+
+    // MARK: – Appearance section
+
+    private var appearanceSection: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            sectionLabel(lang.isGerman ? "Darstellung" : "Appearance")
+            HStack(spacing: 0) {
+                ForEach([
+                    (1, "sun.max.fill",   lang.isGerman ? "Hell"       : "Light"),
+                    (2, "moon.stars.fill", lang.isGerman ? "Dunkel"     : "Dark"),
+                    (0, "circle.lefthalf.filled", lang.isGerman ? "System" : "System"),
+                ], id: \.0) { raw, icon, label in
+                    Button { withAnimation { appearanceRaw = raw } } label: {
+                        VStack(spacing: 4) {
+                            Image(systemName: icon).font(.system(size: 16))
+                            Text(label).font(.caption2)
+                        }
+                        .foregroundStyle(appearanceRaw == raw ? .white : Color.appTertiary)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 10)
+                        .background(appearanceRaw == raw ? accent : Color.clear)
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .padding(4)
+            .background(Color.appInputBG)
+            .clipShape(RoundedRectangle(cornerRadius: 13))
+        }
+        .padding(18)
+        .background(card)
+        .clipShape(RoundedRectangle(cornerRadius: 18))
+        .overlay(RoundedRectangle(cornerRadius: 18).stroke(Color.appBorder, lineWidth: 1))
     }
 
     // MARK: – Password section
@@ -191,19 +228,19 @@ struct ProfileSettingsView: View {
 
             SecureField(lang.isGerman ? "Neues Passwort" : "New Password", text: $newPassword)
                 .textContentType(.newPassword)
-                .foregroundStyle(.white)
+                .foregroundStyle(Color.appPrimary)
                 .padding(14)
-                .background(Color.white.opacity(0.05))
+                .background(Color.appInputBG)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
-                .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.white.opacity(0.12), lineWidth: 1))
+                .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.appBorder, lineWidth: 1))
 
             SecureField(lang.isGerman ? "Bestätigen" : "Confirm", text: $confirmPassword)
                 .textContentType(.newPassword)
-                .foregroundStyle(.white)
+                .foregroundStyle(Color.appPrimary)
                 .padding(14)
-                .background(Color.white.opacity(0.05))
+                .background(Color.appInputBG)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
-                .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.white.opacity(0.12), lineWidth: 1))
+                .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.appBorder, lineWidth: 1))
 
             if let msg = passwordMessage {
                 Text(msg)
@@ -220,7 +257,7 @@ struct ProfileSettingsView: View {
                     }
                     Text(lang.isGerman ? "Passwort aktualisieren" : "Update Password")
                         .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(Color.appPrimary)
                 }
                 .frame(maxWidth: .infinity)
                 .padding(14)
@@ -232,7 +269,7 @@ struct ProfileSettingsView: View {
         .padding(18)
         .background(card)
         .clipShape(RoundedRectangle(cornerRadius: 18))
-        .overlay(RoundedRectangle(cornerRadius: 18).stroke(Color.white.opacity(0.12), lineWidth: 1))
+        .overlay(RoundedRectangle(cornerRadius: 18).stroke(Color.appBorder, lineWidth: 1))
     }
 
     // MARK: – Account actions
@@ -288,7 +325,7 @@ struct ProfileSettingsView: View {
         .padding(18)
         .background(card)
         .clipShape(RoundedRectangle(cornerRadius: 18))
-        .overlay(RoundedRectangle(cornerRadius: 18).stroke(Color.white.opacity(0.12), lineWidth: 1))
+        .overlay(RoundedRectangle(cornerRadius: 18).stroke(Color.appBorder, lineWidth: 1))
     }
 
     // MARK: – Sign out
@@ -306,10 +343,10 @@ struct ProfileSettingsView: View {
             .foregroundStyle(.white.opacity(0.7))
             .frame(maxWidth: .infinity)
             .padding(14)
-            .background(Color.white.opacity(0.05))
+            .background(Color.appInputBG)
             .clipShape(RoundedRectangle(cornerRadius: 14))
             .overlay(RoundedRectangle(cornerRadius: 14)
-                .stroke(Color.white.opacity(0.12), lineWidth: 1))
+                .stroke(Color.appBorder, lineWidth: 1))
         }
     }
 
@@ -318,7 +355,7 @@ struct ProfileSettingsView: View {
     private func sectionLabel(_ text: String) -> some View {
         Text(text)
             .font(.caption.weight(.semibold))
-            .foregroundStyle(.white.opacity(0.4))
+            .foregroundStyle(Color.appTertiary)
             .textCase(.uppercase)
             .kerning(0.8)
     }
