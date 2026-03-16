@@ -2,6 +2,7 @@ import SwiftUI
 
 struct CreateFeedbackLinkView: View {
     @EnvironmentObject var auth: AuthService
+    @EnvironmentObject var lang: LanguageService
     @ObservedObject var feedbackService = FeedbackService.shared
     @State private var isCreating = false
     @State private var showShareSheet = false
@@ -166,23 +167,40 @@ struct CreateFeedbackLinkView: View {
         }
     }
 
+    // Encode text for use as a URL query parameter value.
+    // Must also encode ?, =, & and # so they aren't mis-parsed as URL structure.
+    private func encodeValue(_ text: String) -> String {
+        var cs = CharacterSet.urlQueryAllowed
+        cs.remove(charactersIn: "?=&#")
+        return text.addingPercentEncoding(withAllowedCharacters: cs) ?? text
+    }
+
     private func openWhatsApp(_ url: String) {
-        let encoded = url.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? url
-        let msg = "Hey! I'd appreciate your anonymous feedback for my pilot assessment:\n\(encoded)"
-        let wa = "whatsapp://send?text=\(msg.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")"
-        if let u = URL(string: wa) { UIApplication.shared.open(u) }
+        let msg = lang.isGerman
+            ? "Hey! Kannst du mir kurz helfen? Ich bereite mich auf mein Pilotenauswahlverfahren vor und wäre dir sehr dankbar, wenn du diesen kurzen, anonymen Fragebogen ausfüllst (dauert ca. 3 Min.):\n\n\(url)"
+            : "Hey! Could you help me out? I'm preparing for my pilot assessment and would love your honest, anonymous feedback – takes about 3 minutes:\n\n\(url)"
+        if let u = URL(string: "whatsapp://send?text=\(encodeValue(msg))") {
+            UIApplication.shared.open(u)
+        }
     }
 
     private func openMessages(_ url: String) {
-        let sms = "sms:&body=Hey! Please give me anonymous feedback for my pilot assessment: \(url)"
-        if let u = URL(string: sms.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? sms) {
+        let msg = lang.isGerman
+            ? "Hey! Kannst du mir kurz helfen? Ich bereite mich auf mein Pilotenauswahlverfahren vor – kurzer anonymer Fragebogen, ca. 3 Min.:\n\n\(url)"
+            : "Hey! Could you fill out this quick anonymous survey for my pilot assessment? Takes ~3 minutes:\n\n\(url)"
+        if let u = URL(string: "sms:?body=\(encodeValue(msg))") {
             UIApplication.shared.open(u)
         }
     }
 
     private func openMail(_ url: String) {
-        let body = "Hi,\n\nI'm preparing for my pilot assessment and would really value your feedback.\nIt's anonymous and takes less than 3 minutes:\n\(url)\n\nThank you!"
-        let mail = "mailto:?subject=Feedback%20Request%20–%20PilotMirror&body=\(body.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")"
+        let subject = lang.isGerman
+            ? "Kurze Bitte: Anonymes Feedback für mein Pilotenauswahlverfahren"
+            : "Quick Request: Anonymous Feedback for My Pilot Assessment"
+        let body = lang.isGerman
+            ? "Hallo,\n\nich bereite mich gerade auf mein Pilotenauswahlverfahren vor und wäre dir sehr dankbar, wenn du mir ein kurzes, anonymes Feedback gibst.\n\nEs dauert nur ca. 3 Minuten:\n\n\(url)\n\nVielen Dank!"
+            : "Hi,\n\nI'm preparing for my pilot assessment and would really appreciate your honest, anonymous feedback.\n\nIt takes less than 3 minutes:\n\n\(url)\n\nThank you!"
+        let mail = "mailto:?subject=\(encodeValue(subject))&body=\(encodeValue(body))"
         if let u = URL(string: mail) { UIApplication.shared.open(u) }
     }
 }
