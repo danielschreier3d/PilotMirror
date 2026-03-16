@@ -50,7 +50,7 @@ struct CreateFeedbackLinkView: View {
                                     .frame(width: 28)
                                 Text(item.0)
                                     .font(.subheadline)
-                                    .foregroundStyle(.white.opacity(0.85))
+                                    .foregroundStyle(Color.appPrimary)
                                 Spacer()
                             }
                         }
@@ -158,7 +158,7 @@ struct CreateFeedbackLinkView: View {
                 Spacer()
                 Image(systemName: "chevron.right")
                     .font(.caption)
-                    .foregroundStyle(.white.opacity(0.3))
+                    .foregroundStyle(Color.appTertiary)
             }
             .padding(14)
             .background(Color.appCard)

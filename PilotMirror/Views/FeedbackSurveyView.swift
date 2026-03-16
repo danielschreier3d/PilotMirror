@@ -109,7 +109,7 @@ struct FeedbackSurveyView: View {
                         "Beantworte die Fragen zu deiner eigenen Selbstwahrnehmung. Sei so ehrlich wie möglich — dieser Vergleich ist der Kern deines Reports.",
                         "Answer the questions about your own self-perception. Be as honest as possible — this comparison is the core of your report."))
                     .font(.subheadline)
-                    .foregroundStyle(.white.opacity(0.65))
+                    .foregroundStyle(Color.appSecondary)
                     .multilineTextAlignment(.center)
                     .lineSpacing(4)
                     .padding(.horizontal)
@@ -182,7 +182,7 @@ struct FeedbackSurveyView: View {
                 }
                 ProgressView(value: progress)
                     .tint(Color(hex: "4A9EF8"))
-                    .background(.white.opacity(0.1))
+                    .background(Color.appCard)
                     .clipShape(Capsule())
                     .animation(.spring(response: 0.4), value: progress)
             }
@@ -283,7 +283,7 @@ struct FeedbackSurveyView: View {
                         "Zwei optionale Fragen — deine Antworten sieht nur \(name) selbst als Motivation.",
                         "Two optional questions — only \(name) will see your answers as motivation."))
                         .font(.subheadline)
-                        .foregroundStyle(.white.opacity(0.65))
+                        .foregroundStyle(Color.appSecondary)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal)
                 }
@@ -358,7 +358,7 @@ struct FeedbackSurveyView: View {
                                     "z.B. Ich wünsche dir viel Erfolg, du packst das!",
                                     "e.g. I wish you all the best, you've got this!"))
                                     .font(.subheadline)
-                                    .foregroundStyle(.white.opacity(0.3))
+                                    .foregroundStyle(Color.appTertiary)
                                     .padding(.top, 20)
                                     .padding(.leading, 16)
                                     .allowsHitTesting(false)
@@ -444,7 +444,7 @@ struct FeedbackSurveyView: View {
                      : lang.t("Self-Assessment abgeschlossen. Gehe zurück, um deinen Report-Status zu prüfen.",
                               "Self-assessment complete. Return to check your report status."))
                     .font(.subheadline)
-                    .foregroundStyle(.white.opacity(0.65))
+                    .foregroundStyle(Color.appSecondary)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal)
             }

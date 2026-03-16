@@ -52,7 +52,7 @@ struct AssessmentSelectView: View {
                         .font(.headline)
                         .frame(maxWidth: .infinity)
                         .frame(height: 54)
-                        .background(selectedAssessment != nil ? Color(hex: "4A9EF8") : Color.white.opacity(0.15))
+                        .background(selectedAssessment != nil ? Color(hex: "4A9EF8") : Color.appBorder)
                         .foregroundStyle(Color.appPrimary)
                         .clipShape(RoundedRectangle(cornerRadius: 16))
                         .animation(.easeInOut(duration: 0.2), value: selectedAssessment)

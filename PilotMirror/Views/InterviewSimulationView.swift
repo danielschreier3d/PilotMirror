@@ -85,7 +85,7 @@ struct InterviewSimulationView: View {
                         "Find someone to interview you in a simulated interview situation using our simulator's questions — as close to the real thing as possible."
                     ))
                     .font(.subheadline)
-                    .foregroundStyle(.white.opacity(0.75))
+                    .foregroundStyle(Color.appPrimary)
                     .multilineTextAlignment(.leading)
                     .fixedSize(horizontal: false, vertical: true)
                 }
@@ -314,7 +314,7 @@ struct InterviewSimulationView: View {
                                                 .padding(.top, 2)
                                             Text(followUp)
                                                 .font(.subheadline)
-                                                .foregroundStyle(.white.opacity(0.85))
+                                                .foregroundStyle(Color.appPrimary)
                                                 .fixedSize(horizontal: false, vertical: true)
                                         }
                                     }
@@ -353,7 +353,7 @@ struct InterviewSimulationView: View {
                     }
                     .font(.headline)
                     .frame(maxWidth: .infinity).frame(height: 54)
-                    .background(index > 0 ? Color.appInputBG : Color.white.opacity(0.03))
+                    .background(index > 0 ? Color.appInputBG : Color.appBorder.opacity(0.3))
                     .foregroundStyle(index > 0 ? .white : .white.opacity(0.25))
                     .clipShape(RoundedRectangle(cornerRadius: 16))
                     .overlay(RoundedRectangle(cornerRadius: 16)

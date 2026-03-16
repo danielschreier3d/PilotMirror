@@ -131,7 +131,7 @@ struct OnboardingView: View {
             VStack(spacing: 24) {
                 // Handle
                 Capsule()
-                    .fill(Color.white.opacity(0.2))
+                    .fill(Color.appCard)
                     .frame(width: 36, height: 4)
                     .padding(.top, 12)
 

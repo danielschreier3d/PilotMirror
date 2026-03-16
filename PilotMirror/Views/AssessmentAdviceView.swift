@@ -149,7 +149,7 @@ struct AssessmentAdviceView: View {
                             .clipShape(Circle())
                         Text(tip)
                             .font(.subheadline)
-                            .foregroundStyle(.white.opacity(0.8))
+                            .foregroundStyle(Color.appPrimary)
                             .fixedSize(horizontal: false, vertical: true)
                     }
                 }

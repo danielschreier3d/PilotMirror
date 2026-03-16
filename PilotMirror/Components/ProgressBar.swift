@@ -9,7 +9,7 @@ struct PilotProgressBar: View {
         GeometryReader { geo in
             ZStack(alignment: .leading) {
                 RoundedRectangle(cornerRadius: height / 2)
-                    .fill(.white.opacity(0.1))
+                    .fill(Color.appBorder.opacity(0.4))
                     .frame(height: height)
 
                 RoundedRectangle(cornerRadius: height / 2)

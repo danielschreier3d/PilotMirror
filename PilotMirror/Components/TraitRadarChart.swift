@@ -16,7 +16,7 @@ struct TraitRadarChart: View {
                 // Grid circles
                 ForEach([0.25, 0.5, 0.75, 1.0], id: \.self) { fraction in
                     radarPolygon(sides: count, radius: radius * fraction, center: center, filled: false)
-                        .stroke(.white.opacity(0.1), lineWidth: 1)
+                        .stroke(Color.appBorder, lineWidth: 1)
                 }
 
                 // Filled area
@@ -50,7 +50,7 @@ struct TraitRadarChart: View {
                     )
                     Text(traits[i].label)
                         .font(.system(size: 10, weight: .medium))
-                        .foregroundStyle(.white.opacity(0.7))
+                        .foregroundStyle(Color.appSecondary)
                         .position(pt)
                 }
             }

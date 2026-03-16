@@ -171,10 +171,10 @@ struct ResultsView: View {
                 }
 
                 if !r.personalitySummary.isEmpty {
-                    Divider().background(.white.opacity(0.1))
+                    Divider().overlay(Color.appBorder)
                     Text(r.personalitySummary)
                         .font(.subheadline)
-                        .foregroundStyle(.white.opacity(0.85))
+                        .foregroundStyle(Color.appPrimary)
                         .lineSpacing(5)
                 }
             }
@@ -219,7 +219,7 @@ struct ResultsView: View {
                                 .font(.system(size: 18))
                             Text(s)
                                 .font(.subheadline)
-                                .foregroundStyle(.white.opacity(0.9))
+                                .foregroundStyle(Color.appPrimary)
                                 .fixedSize(horizontal: false, vertical: true)
                         }
                     }
@@ -236,7 +236,7 @@ struct ResultsView: View {
                                 .font(.system(size: 18))
                             Text(w)
                                 .font(.subheadline)
-                                .foregroundStyle(.white.opacity(0.9))
+                                .foregroundStyle(Color.appPrimary)
                                 .fixedSize(horizontal: false, vertical: true)
                         }
                     }
@@ -248,11 +248,11 @@ struct ResultsView: View {
                 VStack(alignment: .leading, spacing: 14) {
                     Text(r.assessmentAdvice)
                         .font(.subheadline)
-                        .foregroundStyle(.white.opacity(0.85))
+                        .foregroundStyle(Color.appPrimary)
                         .lineSpacing(5)
 
                     // Fixed hint — always shown
-                    Divider().background(.white.opacity(0.1))
+                    Divider().overlay(Color.appBorder)
                     HStack(alignment: .top, spacing: 8) {
                         Image(systemName: "lightbulb.fill")
                             .font(.caption)
@@ -261,13 +261,13 @@ struct ResultsView: View {
                             "Bereite für jede deiner Stärken und Schwächen ein konkretes Beispiel vor — Assessoren fragen gezielt danach, um deine Selbsteinschätzung zu überprüfen.",
                             "Prepare a concrete example for each of your strengths and weaknesses — assessors will ask for them specifically to verify your self-assessment."))
                             .font(.caption)
-                            .foregroundStyle(.white.opacity(0.75))
+                            .foregroundStyle(Color.appPrimary)
                             .fixedSize(horizontal: false, vertical: true)
                     }
 
                     let licenseHints = licenseSpecificHints(for: auth.currentUser?.flightLicenses ?? [])
                     if !licenseHints.isEmpty {
-                        Divider().background(.white.opacity(0.1))
+                        Divider().overlay(Color.appBorder)
                         VStack(alignment: .leading, spacing: 6) {
                             Text(lang.t("Mögliche Fragen zu deiner Lizenz", "Possible License-Related Questions"))
                                 .font(.caption.weight(.semibold))
@@ -281,7 +281,7 @@ struct ResultsView: View {
                                         .foregroundStyle(Color(hex: "6B5EE4").opacity(0.7))
                                     Text(hint)
                                         .font(.caption)
-                                        .foregroundStyle(.white.opacity(0.7))
+                                        .foregroundStyle(Color.appSecondary)
                                         .fixedSize(horizontal: false, vertical: true)
                                 }
                             }
@@ -331,14 +331,14 @@ struct ResultsView: View {
                             "Durchschnittliche Zuversicht deiner Unterstützer",
                             "Average confidence of your supporters"))
                             .font(.caption)
-                            .foregroundStyle(.white.opacity(0.45))
+                            .foregroundStyle(Color.appTertiary)
                     }
                 }
 
                 // Wishes
                 if !r.motivationWishes.isEmpty {
                     if r.motivationConfidenceCount > 0 {
-                        Divider().background(.white.opacity(0.1))
+                        Divider().overlay(Color.appBorder)
                     }
                     VStack(alignment: .leading, spacing: 8) {
                         Text(lang.t("Persönliche Wünsche", "Personal Messages"))
@@ -351,7 +351,7 @@ struct ResultsView: View {
                             HStack(alignment: .top, spacing: 10) {
                                 Text(wish)
                                     .font(.subheadline)
-                                    .foregroundStyle(.white.opacity(0.85))
+                                    .foregroundStyle(Color.appPrimary)
                                     .fixedSize(horizontal: false, vertical: true)
                                     .italic()
                             }
@@ -383,7 +383,7 @@ struct ResultsView: View {
             if areas.isEmpty {
                 Text(lang.t("Keine Daten für diese Gruppe.", "No data for this group."))
                     .font(.subheadline)
-                    .foregroundStyle(.white.opacity(0.45))
+                    .foregroundStyle(Color.appTertiary)
             } else {
                 VStack(spacing: 22) {
                     ForEach(areas) { area in
@@ -398,7 +398,7 @@ struct ResultsView: View {
             sectionCard(icon: "arrow.left.arrow.right", color: "FF9F0A", title: lang.t("So realistisch schätzt du dich ein", "How Realistic Is Your Self-Image")) {
                 Text(r.selfVsOthers)
                     .font(.subheadline)
-                    .foregroundStyle(.white.opacity(0.85))
+                    .foregroundStyle(Color.appPrimary)
                     .lineSpacing(5)
             }
         }
@@ -492,7 +492,7 @@ struct ResultsView: View {
                           systemImage: t.selfSelected ? "checkmark.circle.fill" : "xmark.circle.fill")
                         .font(.caption)
                         .foregroundStyle(t.selfSelected ? Color(hex: "34C759") : .white.opacity(0.4))
-                    Text("·").foregroundStyle(.white.opacity(0.3))
+                    Text("·").foregroundStyle(Color.appTertiary)
                     Text(lang.t("Andere: \(Int(t.othersPercent * 100))%", "Others: \(Int(t.othersPercent * 100))%"))
                         .font(.caption)
                         .foregroundStyle(Color(hex: "FF6B6B"))
@@ -546,7 +546,7 @@ struct ResultsView: View {
             if fcStats.isEmpty {
                 Text(lang.t("Keine Daten für diese Gruppe.", "No data for this group."))
                     .font(.subheadline)
-                    .foregroundStyle(.white.opacity(0.45))
+                    .foregroundStyle(Color.appTertiary)
             } else {
                 VStack(spacing: 20) {
                     ForEach(fcStats) { stat in
@@ -620,7 +620,7 @@ struct ResultsView: View {
 
             Text(t.name)
                 .font(.subheadline)
-                .foregroundStyle(.white.opacity(0.85))
+                .foregroundStyle(Color.appPrimary)
                 .frame(width: 120, alignment: .leading)
 
             GeometryReader { geo in
@@ -789,7 +789,7 @@ private struct ExpandableAnswerView: View {
                     .foregroundStyle(Color(hex: "6B5EE4"))
                 Text(text)
                     .font(.subheadline)
-                    .foregroundStyle(.white.opacity(0.88))
+                    .foregroundStyle(Color.appPrimary)
                     .lineLimit(isExpanded ? nil : 2)
                     .background(
                         // Detect if text would be truncated at 2 lines

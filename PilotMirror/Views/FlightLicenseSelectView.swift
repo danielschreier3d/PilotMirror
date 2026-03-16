@@ -56,7 +56,7 @@ struct FlightLicenseSelectView: View {
                         .font(.headline)
                         .frame(maxWidth: .infinity)
                         .frame(height: 54)
-                        .background(!selected.isEmpty ? Color(hex: "4A9EF8") : Color.white.opacity(0.15))
+                        .background(!selected.isEmpty ? Color(hex: "4A9EF8") : Color.appBorder)
                         .foregroundStyle(Color.appPrimary)
                         .clipShape(RoundedRectangle(cornerRadius: 16))
                         .animation(.easeInOut(duration: 0.2), value: selected.isEmpty)

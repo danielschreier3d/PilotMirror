@@ -230,7 +230,7 @@ struct FeedbackStatusView: View {
                     // Milestone marker at 5/12
                     let milestoneX = geo.size.width * Double(minimumResponses) / Double(targetResponses)
                     Rectangle()
-                        .fill(.white.opacity(0.5))
+                        .fill(Color.appCard)
                         .frame(width: 2, height: 14)
                         .offset(x: milestoneX - 1, y: -3)
                 }

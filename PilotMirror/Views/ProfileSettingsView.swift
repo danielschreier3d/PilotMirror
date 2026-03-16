@@ -340,7 +340,7 @@ struct ProfileSettingsView: View {
                 Text(lang.isGerman ? "Abmelden" : "Sign Out")
                     .font(.subheadline.weight(.semibold))
             }
-            .foregroundStyle(.white.opacity(0.7))
+            .foregroundStyle(Color.appSecondary)
             .frame(maxWidth: .infinity)
             .padding(14)
             .background(Color.appInputBG)
