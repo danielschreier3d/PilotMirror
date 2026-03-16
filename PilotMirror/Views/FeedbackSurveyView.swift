@@ -316,7 +316,7 @@ struct FeedbackSurveyView: View {
                                 .background(confidenceRating == n
                                             ? Color(hex: "4A9EF8")
                                             : Color.appInputBG)
-                                .foregroundStyle(confidenceRating == n ? .white : .white.opacity(0.7))
+                                .foregroundStyle(confidenceRating == n ? .white : Color.appSecondary)
                                 .clipShape(RoundedRectangle(cornerRadius: 12))
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 12)

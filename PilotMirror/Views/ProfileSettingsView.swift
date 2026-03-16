@@ -166,7 +166,7 @@ struct ProfileSettingsView: View {
                             Text(label)
                                 .font(.caption2)
                         }
-                        .foregroundStyle(lang.isGerman == isDE ? .white : .white.opacity(0.4))
+                        .foregroundStyle(lang.isGerman == isDE ? .white : Color.appTertiary)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
                         .background(lang.isGerman == isDE ? accent : Color.clear)

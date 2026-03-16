@@ -242,7 +242,7 @@ struct FeedbackStatusView: View {
                 Spacer()
                 VStack(spacing: 1) {
                     Text(lang.t("5 min", "5 min"))
-                        .foregroundStyle(responseCount >= 5 ? Color(hex: "34C759") : .white.opacity(0.5))
+                        .foregroundStyle(responseCount >= 5 ? Color(hex: "34C759") : Color.appSecondary)
                     if responseCount >= 5 && responseCount < 12 {
                         Text(lang.t("✓ freigeschaltet", "✓ unlocked"))
                             .foregroundStyle(Color(hex: "34C759"))
@@ -250,7 +250,7 @@ struct FeedbackStatusView: View {
                 }
                 Spacer()
                 Text(lang.t("12 ideal", "12 ideal"))
-                    .foregroundStyle(responseCount >= 12 ? Color(hex: "34C759") : .white.opacity(0.4))
+                    .foregroundStyle(responseCount >= 12 ? Color(hex: "34C759") : Color.appTertiary)
             }
             .font(.caption2)
             .foregroundStyle(Color.appTertiary)
@@ -343,17 +343,17 @@ struct FeedbackStatusView: View {
                     } else {
                         Text("\(number)")
                             .font(.system(size: 16, weight: .bold))
-                            .foregroundStyle(locked ? .white.opacity(0.25) : Color(hex: "4A9EF8"))
+                            .foregroundStyle(locked ? Color.appTertiary : Color(hex: "4A9EF8"))
                     }
                 }
 
                 VStack(alignment: .leading, spacing: 3) {
                     Text(title)
                         .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(locked ? .white.opacity(0.35) : .white)
+                        .foregroundStyle(locked ? Color.appTertiary : Color.appPrimary)
                     Text(subtitle)
                         .font(.caption)
-                        .foregroundStyle(done ? Color(hex: "34C759") : locked ? .white.opacity(0.25) : .white.opacity(0.55))
+                        .foregroundStyle(done ? Color(hex: "34C759") : locked ? Color.appTertiary : Color.appSecondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 Spacer()

@@ -354,10 +354,10 @@ struct InterviewSimulationView: View {
                     .font(.headline)
                     .frame(maxWidth: .infinity).frame(height: 54)
                     .background(index > 0 ? Color.appInputBG : Color.appBorder.opacity(0.3))
-                    .foregroundStyle(index > 0 ? .white : .white.opacity(0.25))
+                    .foregroundStyle(index > 0 ? Color.appPrimary : Color.appTertiary)
                     .clipShape(RoundedRectangle(cornerRadius: 16))
                     .overlay(RoundedRectangle(cornerRadius: 16)
-                        .strokeBorder(.white.opacity(index > 0 ? 0.15 : 0.05), lineWidth: 1))
+                        .strokeBorder(Color.appBorder, lineWidth: 1))
                 }
                 .disabled(index == 0)
 
@@ -458,7 +458,7 @@ private struct SizeCard: View {
             VStack(spacing: 10) {
                 Text(size.totalCount(hasAIQuestions: hasAIQuestions))
                     .font(.system(size: 26, weight: .bold, design: .rounded))
-                    .foregroundStyle(isSelected ? Color(hex: "4A9EF8") : .white)
+                    .foregroundStyle(isSelected ? Color(hex: "4A9EF8") : Color.appPrimary)
 
                 Text(isGerman ? size.labelDE : size.labelEN)
                     .font(.subheadline.weight(.semibold))
@@ -480,14 +480,14 @@ private struct SizeCard: View {
                 }
 
                 Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                    .foregroundStyle(isSelected ? Color(hex: "4A9EF8") : .white.opacity(0.25))
+                    .foregroundStyle(isSelected ? Color(hex: "4A9EF8") : Color.appTertiary)
                     .font(.body)
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 18).padding(.horizontal, 8)
             .background(
                 RoundedRectangle(cornerRadius: 18)
-                    .fill(.white.opacity(isSelected ? 0.1 : 0.05))
+                    .fill(isSelected ? Color.appCard : Color.clear)
                     .overlay(RoundedRectangle(cornerRadius: 18)
                         .strokeBorder(
                             isSelected ? Color(hex: "4A9EF8").opacity(0.8) : Color.appBorder,

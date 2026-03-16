@@ -76,7 +76,7 @@ struct AssessmentCard: View {
             HStack(spacing: 16) {
                 Image(systemName: type.icon)
                     .font(.system(size: 28))
-                    .foregroundStyle(isSelected ? Color(hex: "4A9EF8") : .white.opacity(0.6))
+                    .foregroundStyle(isSelected ? Color(hex: "4A9EF8") : Color.appSecondary)
                     .frame(width: 52, height: 52)
                     .background(isSelected ? Color(hex: "4A9EF8").opacity(0.15) : Color.appCard)
                     .clipShape(RoundedRectangle(cornerRadius: 14))
@@ -94,13 +94,13 @@ struct AssessmentCard: View {
                 Spacer()
 
                 Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                    .foregroundStyle(isSelected ? Color(hex: "4A9EF8") : .white.opacity(0.3))
+                    .foregroundStyle(isSelected ? Color(hex: "4A9EF8") : Color.appTertiary)
                     .font(.title3)
             }
             .padding(16)
             .background(
                 RoundedRectangle(cornerRadius: 18)
-                    .fill(.white.opacity(isSelected ? 0.1 : 0.05))
+                    .fill(isSelected ? Color.appCard : Color.clear)
                     .overlay(
                         RoundedRectangle(cornerRadius: 18)
                             .strokeBorder(isSelected ? Color(hex: "4A9EF8").opacity(0.8) : .clear, lineWidth: 1.5)

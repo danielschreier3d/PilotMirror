@@ -114,7 +114,7 @@ struct ResultsView: View {
                 .font(.caption.weight(.semibold))
                 .padding(.horizontal, 14).padding(.vertical, 7)
                 .background(isActive ? Color(hex: "4A9EF8") : Color.appInputBG)
-                .foregroundStyle(isActive ? .white : .white.opacity(0.6))
+                .foregroundStyle(isActive ? .white : Color.appSecondary)
                 .clipShape(Capsule())
                 .overlay(
                     Capsule()
@@ -491,7 +491,7 @@ struct ResultsView: View {
                     Label(t.selfSelected ? lang.t("Du: Ja", "You: Yes") : lang.t("Du: Nein", "You: No"),
                           systemImage: t.selfSelected ? "checkmark.circle.fill" : "xmark.circle.fill")
                         .font(.caption)
-                        .foregroundStyle(t.selfSelected ? Color(hex: "34C759") : .white.opacity(0.4))
+                        .foregroundStyle(t.selfSelected ? Color(hex: "34C759") : Color.appTertiary)
                     Text("·").foregroundStyle(Color.appTertiary)
                     Text(lang.t("Andere: \(Int(t.othersPercent * 100))%", "Others: \(Int(t.othersPercent * 100))%"))
                         .font(.caption)
@@ -615,7 +615,7 @@ struct ResultsView: View {
         HStack(spacing: 10) {
             Image(systemName: t.selfSelected ? "person.fill" : "person")
                 .font(.caption)
-                .foregroundStyle(t.selfSelected ? Color(hex: "4A9EF8") : .white.opacity(0.15))
+                .foregroundStyle(t.selfSelected ? Color(hex: "4A9EF8") : Color.appBorder)
                 .frame(width: 16)
 
             Text(t.name)
@@ -663,7 +663,7 @@ struct ResultsView: View {
 
                     Text(option)
                         .font(.subheadline)
-                        .foregroundStyle(isSelf ? .white : .white.opacity(0.65))
+                        .foregroundStyle(isSelf ? Color.appPrimary : Color.appSecondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .fixedSize(horizontal: false, vertical: true)
 
@@ -679,7 +679,7 @@ struct ResultsView: View {
 
                     Text("\(Int(fraction * 100))%")
                         .font(.caption.bold().monospacedDigit())
-                        .foregroundStyle(isSelf ? Color(hex: "4A9EF8") : .white.opacity(0.5))
+                        .foregroundStyle(isSelf ? Color(hex: "4A9EF8") : Color.appSecondary)
                         .frame(width: 32, alignment: .trailing)
                 }
             }

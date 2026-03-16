@@ -99,7 +99,7 @@ private struct LicenseCard: View {
             HStack(spacing: 16) {
                 Image(systemName: license.icon)
                     .font(.system(size: 24))
-                    .foregroundStyle(isSelected ? Color(hex: "4A9EF8") : .white.opacity(0.6))
+                    .foregroundStyle(isSelected ? Color(hex: "4A9EF8") : Color.appSecondary)
                     .frame(width: 48, height: 48)
                     .background(isSelected ? Color(hex: "4A9EF8").opacity(0.15) : Color.appCard)
                     .clipShape(RoundedRectangle(cornerRadius: 13))
@@ -117,13 +117,13 @@ private struct LicenseCard: View {
                 Spacer()
 
                 Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                    .foregroundStyle(isSelected ? Color(hex: "4A9EF8") : .white.opacity(0.3))
+                    .foregroundStyle(isSelected ? Color(hex: "4A9EF8") : Color.appTertiary)
                     .font(.title3)
             }
             .padding(16)
             .background(
                 RoundedRectangle(cornerRadius: 18)
-                    .fill(.white.opacity(isSelected ? 0.1 : 0.05))
+                    .fill(isSelected ? Color.appCard : Color.clear)
                     .overlay(
                         RoundedRectangle(cornerRadius: 18)
                             .strokeBorder(
