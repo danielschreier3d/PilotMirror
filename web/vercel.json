@@ -1,6 +1,0 @@
-{
-  "rewrites": [
-    { "source": "/feedback/:token", "destination": "/index.html" },
-    { "source": "/app", "destination": "/app.html" }
-  ]
-}

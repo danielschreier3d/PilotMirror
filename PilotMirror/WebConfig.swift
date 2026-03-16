@@ -1,6 +1,6 @@
 import Foundation
 
-/// Update surveyBase after deploying the web/ folder to Vercel.
+/// GitHub Pages URL for the candidate survey web app (pilotmirror-survey repo).
 enum WebConfig {
-    static let surveyBase = "https://pilotmirrortest1.netlify.app"
+    static let surveyBase = "https://danielschreier3d.github.io/pilotmirror-survey"
 }
