@@ -18,10 +18,6 @@
 		CC000009000000000000000A /* FeedbackService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000009000000000000000A /* FeedbackService.swift */; };
 		CC000010000000000000000A /* SurveyService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000010000000000000000A /* SurveyService.swift */; };
 		CC000011000000000000000A /* AIAnalysisService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000011000000000000000A /* AIAnalysisService.swift */; };
-		CC000023000000000000000A /* LanguageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000023000000000000000A /* LanguageService.swift */; };
-		CC000024000000000000000A /* SupabaseClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000024000000000000000A /* SupabaseClient.swift */; };
-		CC000025000000000000000A /* DeepLinkHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000025000000000000000A /* DeepLinkHandler.swift */; };
-		CC000026000000000000000A /* WebConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000026000000000000000A /* WebConfig.swift */; };
 		CC000012000000000000000A /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000012000000000000000A /* OnboardingView.swift */; };
 		CC000013000000000000000A /* AssessmentSelectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000013000000000000000A /* AssessmentSelectView.swift */; };
 		CC000014000000000000000A /* CreateFeedbackLinkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000014000000000000000A /* CreateFeedbackLinkView.swift */; };
@@ -33,9 +29,18 @@
 		CC000020000000000000000A /* ProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000020000000000000000A /* ProgressBar.swift */; };
 		CC000021000000000000000A /* TraitRadarChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000021000000000000000A /* TraitRadarChart.swift */; };
 		CC000022000000000000000A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BB000022000000000000000A /* Assets.xcassets */; };
+		CC000023000000000000000A /* LanguageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000023000000000000000A /* LanguageService.swift */; };
+		CC000024000000000000000A /* SupabaseClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000024000000000000000A /* SupabaseClient.swift */; };
+		CC000025000000000000000A /* DeepLinkHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000025000000000000000A /* DeepLinkHandler.swift */; };
+		CC000026000000000000000A /* WebConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000026000000000000000A /* WebConfig.swift */; };
+		CC000027000000000000000A /* PrivacyConsentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000027000000000000000A /* PrivacyConsentView.swift */; };
+		CC000028000000000000000A /* FlightLicenseSelectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000028000000000000000A /* FlightLicenseSelectView.swift */; };
+		CC000029000000000000000A /* InterviewQuestion.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000029000000000000000A /* InterviewQuestion.swift */; };
+		CC000030000000000000000A /* InterviewSimulationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000030000000000000000A /* InterviewSimulationView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		AA000005000000000000000A /* PilotMirror.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PilotMirror.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB000001000000000000000A /* PilotMirrorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PilotMirrorApp.swift; sourceTree = "<group>"; };
 		BB000002000000000000000A /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		BB000003000000000000000A /* Assessment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Assessment.swift; sourceTree = "<group>"; };
@@ -47,10 +52,6 @@
 		BB000009000000000000000A /* FeedbackService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackService.swift; sourceTree = "<group>"; };
 		BB000010000000000000000A /* SurveyService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SurveyService.swift; sourceTree = "<group>"; };
 		BB000011000000000000000A /* AIAnalysisService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIAnalysisService.swift; sourceTree = "<group>"; };
-		BB000023000000000000000A /* LanguageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageService.swift; sourceTree = "<group>"; };
-		BB000024000000000000000A /* SupabaseClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseClient.swift; sourceTree = "<group>"; };
-		BB000025000000000000000A /* DeepLinkHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkHandler.swift; sourceTree = "<group>"; };
-		BB000026000000000000000A /* WebConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebConfig.swift; sourceTree = "<group>"; };
 		BB000012000000000000000A /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		BB000013000000000000000A /* AssessmentSelectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssessmentSelectView.swift; sourceTree = "<group>"; };
 		BB000014000000000000000A /* CreateFeedbackLinkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateFeedbackLinkView.swift; sourceTree = "<group>"; };
@@ -62,7 +63,14 @@
 		BB000020000000000000000A /* ProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressBar.swift; sourceTree = "<group>"; };
 		BB000021000000000000000A /* TraitRadarChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TraitRadarChart.swift; sourceTree = "<group>"; };
 		BB000022000000000000000A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		AA000005000000000000000A /* PilotMirror.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PilotMirror.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		BB000023000000000000000A /* LanguageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageService.swift; sourceTree = "<group>"; };
+		BB000024000000000000000A /* SupabaseClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseClient.swift; sourceTree = "<group>"; };
+		BB000025000000000000000A /* DeepLinkHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkHandler.swift; sourceTree = "<group>"; };
+		BB000026000000000000000A /* WebConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebConfig.swift; sourceTree = "<group>"; };
+		BB000027000000000000000A /* PrivacyConsentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyConsentView.swift; sourceTree = "<group>"; };
+		BB000028000000000000000A /* FlightLicenseSelectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlightLicenseSelectView.swift; sourceTree = "<group>"; };
+		BB000029000000000000000A /* InterviewQuestion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterviewQuestion.swift; sourceTree = "<group>"; };
+		BB000030000000000000000A /* InterviewSimulationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterviewSimulationView.swift; sourceTree = "<group>"; };
 		EE000001000000000000000A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -100,14 +108,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		FF000001000000000000000A = {
-			isa = PBXGroup;
-			children = (
-				AA000002000000000000000A /* PilotMirror */,
-				AA000003000000000000000A /* Products */,
-			);
-			sourceTree = "<group>";
-		};
 		DD000001000000000000000A /* App */ = {
 			isa = PBXGroup;
 			children = (
@@ -125,6 +125,7 @@
 				BB000005000000000000000A /* Response.swift */,
 				BB000006000000000000000A /* FeedbackLink.swift */,
 				BB000007000000000000000A /* Respondent.swift */,
+				BB000029000000000000000A /* InterviewQuestion.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -153,6 +154,9 @@
 				BB000016000000000000000A /* FeedbackSurveyView.swift */,
 				BB000017000000000000000A /* ResultsView.swift */,
 				BB000018000000000000000A /* AssessmentAdviceView.swift */,
+				BB000027000000000000000A /* PrivacyConsentView.swift */,
+				BB000028000000000000000A /* FlightLicenseSelectView.swift */,
+				BB000030000000000000000A /* InterviewSimulationView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -165,6 +169,14 @@
 				BB000021000000000000000A /* TraitRadarChart.swift */,
 			);
 			path = Components;
+			sourceTree = "<group>";
+		};
+		FF000001000000000000000A = {
+			isa = PBXGroup;
+			children = (
+				AA000002000000000000000A /* PilotMirror */,
+				AA000003000000000000000A /* Products */,
+			);
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -258,6 +270,10 @@
 				CC000016000000000000000A /* FeedbackSurveyView.swift in Sources */,
 				CC000017000000000000000A /* ResultsView.swift in Sources */,
 				CC000018000000000000000A /* AssessmentAdviceView.swift in Sources */,
+				CC000027000000000000000A /* PrivacyConsentView.swift in Sources */,
+				CC000028000000000000000A /* FlightLicenseSelectView.swift in Sources */,
+				CC000029000000000000000A /* InterviewQuestion.swift in Sources */,
+				CC000030000000000000000A /* InterviewSimulationView.swift in Sources */,
 				CC000019000000000000000A /* QuestionCard.swift in Sources */,
 				CC000020000000000000000A /* ProgressBar.swift in Sources */,
 				CC000021000000000000000A /* TraitRadarChart.swift in Sources */,
@@ -392,6 +408,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = H2F5PJATB6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = PilotMirror/Info.plist;
@@ -417,6 +434,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = H2F5PJATB6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = PilotMirror/Info.plist;
@@ -456,7 +474,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
 	};
 	rootObject = AA000001000000000000000A /* Project object */;
 }

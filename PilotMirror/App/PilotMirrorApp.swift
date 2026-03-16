@@ -25,8 +25,11 @@ struct PilotMirrorApp: App {
 // ─────────────────────────────────────────────────────────────────────────────
 struct RootView: View {
     @EnvironmentObject var auth:     AuthService
+    @EnvironmentObject var lang:     LanguageService
     @EnvironmentObject var deepLink: DeepLinkHandler
     @State private var selectedAssessment: User.AssessmentType?
+    @State private var flightLicenses: [User.FlightLicense]?
+    @State private var privacyAccepted = UserDefaults.standard.bool(forKey: "pm_privacy_accepted")
 
     var body: some View {
         // Deep link: email confirmation callback
@@ -46,9 +49,16 @@ struct RootView: View {
                 .onDisappear { deepLink.clearPendingToken() }
         } else if !auth.isAuthenticated {
             OnboardingView()
+        } else if !privacyAccepted {
+            PrivacyConsentView { privacyAccepted = true }
+                .environmentObject(lang)
         } else if auth.currentUser?.assessmentType == nil {
             NavigationStack {
                 AssessmentSelectView(selectedAssessment: $selectedAssessment)
+            }
+        } else if auth.currentUser?.flightLicenses == nil {
+            NavigationStack {
+                FlightLicenseSelectView(flightLicenses: $flightLicenses)
             }
         } else {
             MainTabView()
@@ -104,6 +114,28 @@ struct MainTabView: View {
             }
             .tabItem { Label(lang.isGerman ? "Tipps" : "Tips", systemImage: "lightbulb.fill") }
             .tag(1)
+
+            NavigationStack {
+                InterviewSimulationView()
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbarColorScheme(.dark, for: .navigationBar)
+                    .toolbar {
+                        ToolbarItem(placement: .primaryAction) {
+                            Button {
+                                withAnimation { lang.isGerman.toggle() }
+                            } label: {
+                                Text(lang.isGerman ? "EN" : "DE")
+                                    .font(.caption.weight(.bold))
+                                    .foregroundStyle(.white)
+                                    .padding(.horizontal, 8).padding(.vertical, 4)
+                                    .background(Color(hex: "4A9EF8").opacity(0.25))
+                                    .clipShape(Capsule())
+                            }
+                        }
+                    }
+            }
+            .tabItem { Label("Interview", systemImage: "person.2.fill") }
+            .tag(2)
         }
         .tint(Color(hex: "4A9EF8"))
         .onAppear {
