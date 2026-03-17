@@ -30,4 +30,4 @@ jobs:
 
       - name: Deploy to Vercel
         working-directory: web
-        run: vercel --prod --token "${{ secrets.VERCEL_TOKEN }}" --name pilotmirror --yes --debug 2>&1
+        run: vercel deploy --prod --token "${{ secrets.VERCEL_TOKEN }}" --name pilotmirror --yes --archive=tgz 2>&1
