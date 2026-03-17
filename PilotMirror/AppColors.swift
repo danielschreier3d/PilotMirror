@@ -24,7 +24,7 @@ extension Color {
     static let appInputBG = Color(UIColor { t in
         t.userInterfaceStyle == .dark
             ? UIColor.white.withAlphaComponent(0.08)
-            : UIColor.systemBackground
+            : UIColor.tertiarySystemGroupedBackground   // ~#F2F2F7 — distinguishable from appCard white
     })
 
     /// Card border / separator

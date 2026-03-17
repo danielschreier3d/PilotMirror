@@ -54,7 +54,7 @@ struct QuestionCard: View {
                         .font(.subheadline)
                         .padding(.horizontal, 14).padding(.vertical, 8)
                         .background(isOn ? Color(hex: "4A9EF8") : Color.appInputBG)
-                        .foregroundStyle(isOn ? .white : .white.opacity(0.7))
+                        .foregroundStyle(isOn ? .white : Color.appPrimary)
                         .clipShape(Capsule())
                         .animation(.easeInOut(duration: 0.15), value: isOn)
                 }
@@ -80,18 +80,18 @@ struct QuestionCard: View {
                     HStack {
                         Text(displayLabel)
                             .font(.subheadline)
-                            .foregroundStyle(isSelected ? .white : .white.opacity(0.75))
+                            .foregroundStyle(isSelected ? .white : Color.appPrimary)
                             .fixedSize(horizontal: false, vertical: true)
                         Spacer()
                         Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                            .foregroundStyle(isSelected ? Color(hex: "4A9EF8") : .white.opacity(0.3))
+                            .foregroundStyle(isSelected ? Color(hex: "4A9EF8") : Color.appTertiary)
                     }
                     .padding(14)
                     .background(isSelected ? Color(hex: "4A9EF8").opacity(0.18) : Color.appCard)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                     .overlay(
                         RoundedRectangle(cornerRadius: 12)
-                            .strokeBorder(isSelected ? Color(hex: "4A9EF8").opacity(0.7) : .clear, lineWidth: 1.5)
+                            .strokeBorder(isSelected ? Color(hex: "4A9EF8").opacity(0.7) : Color.appBorder, lineWidth: 1)
                     )
                     .animation(.easeInOut(duration: 0.15), value: isSelected)
                 }
@@ -117,11 +117,11 @@ struct QuestionCard: View {
                         VStack(spacing: 6) {
                             ZStack {
                                 Circle()
-                                    .fill(i <= current ? Color(hex: "4A9EF8") : .white.opacity(0.1))
+                                    .fill(i <= current ? Color(hex: "4A9EF8") : Color.appInputBG)
                                     .frame(width: 48, height: 48)
                                 Text("\(i)")
                                     .font(.headline)
-                                    .foregroundStyle(i <= current ? .white : .white.opacity(0.5))
+                                    .foregroundStyle(i <= current ? .white : Color.appSecondary)
                             }
                             .scaleEffect(i == current ? 1.1 : 1.0)
                             .animation(.spring(response: 0.25), value: current)
@@ -154,7 +154,7 @@ struct QuestionCard: View {
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .strokeBorder(.white.opacity(0.15), lineWidth: 1)
+                .strokeBorder(Color.appBorder, lineWidth: 1)
         )
         .onAppear {
             if case .text(let t) = answer { localText = t } else { localText = "" }
