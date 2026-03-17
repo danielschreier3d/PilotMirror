@@ -20,15 +20,15 @@ jobs:
       - name: Install Vercel CLI
         run: npm install -g vercel@latest
 
+      - name: Write env file
+        run: |
+          echo "NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}" >> web/.env.production
+          echo "NEXT_PUBLIC_SUPABASE_ANON=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON }}" >> web/.env.production
+
       - name: Deploy to Vercel
         working-directory: web
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: |
           vercel --prod \
-            --token "$VERCEL_TOKEN" \
-            --yes \
-            --build-env NEXT_PUBLIC_SUPABASE_URL="${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}" \
-            --build-env NEXT_PUBLIC_SUPABASE_ANON="${{ secrets.NEXT_PUBLIC_SUPABASE_ANON }}" \
-            --env NEXT_PUBLIC_SUPABASE_URL="${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}" \
-            --env NEXT_PUBLIC_SUPABASE_ANON="${{ secrets.NEXT_PUBLIC_SUPABASE_ANON }}"
+            --token "${{ secrets.VERCEL_TOKEN }}" \
+            --name pilotmirror \
+            --yes
