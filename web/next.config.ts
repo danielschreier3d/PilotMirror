@@ -1,8 +1,5 @@
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {
-  // Enable PWA-like features
-  // Vercel deployment ready
-};
+const nextConfig: NextConfig = {};
 
 export default nextConfig;
