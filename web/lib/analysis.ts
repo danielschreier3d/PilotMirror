@@ -36,7 +36,7 @@ function rowToAnswerValue(type: string, value: string): AnswerValue | null {
   switch (type) {
     case "single":   return { type: "singleChoice", value };
     case "multiple": try { return { type: "multipleChoice", value: JSON.parse(value) }; } catch { return null; }
-    case "rating":   const n = parseInt(value, 10); return isNaN(n) ? null : { type: "rating", value: n };
+    case "rating":   { const n = parseInt(value, 10); return isNaN(n) ? null : { type: "rating", value: n }; }
     case "text":     return { type: "text", value };
     default:         return null;
   }
