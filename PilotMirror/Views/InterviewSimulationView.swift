@@ -5,6 +5,7 @@ struct InterviewSimulationView: View {
     @EnvironmentObject var auth: AuthService
 
     private enum Phase {
+        case locked
         case setup
         case interview(questions: [InterviewQuestion], index: Int)
         case done(total: Int)
@@ -14,8 +15,11 @@ struct InterviewSimulationView: View {
     @State private var selectedSize: SessionSize = .medium
     @State private var showEndAlert  = false
     @State private var showFollowUps = false
+    @State private var aiHint:        String?  = nil
+    @State private var isLoadingHint: Bool     = false
 
     private var aiService: AIAnalysisService { AIAnalysisService.shared }
+    private var feedback:  FeedbackService   { FeedbackService.shared }
 
     private var flightLicenses: [User.FlightLicense] {
         auth.currentUser?.flightLicenses ?? []
@@ -25,6 +29,15 @@ struct InterviewSimulationView: View {
     }
     private var hasAIQuestions: Bool {
         !aiService.cachedInterviewQuestions.isEmpty
+    }
+    private var respondentCount: Int {
+        feedback.feedbackLink?.responseCount ?? feedback.respondents.count
+    }
+    private var interviewRunCount: Int {
+        get { UserDefaults.standard.integer(forKey: "pm_interview_run_count") }
+    }
+    private func incrementRunCount() {
+        UserDefaults.standard.set(interviewRunCount + 1, forKey: "pm_interview_run_count")
     }
 
     private func buildAIQuestions() -> [InterviewQuestion] {
@@ -40,6 +53,8 @@ struct InterviewSimulationView: View {
         ZStack {
             Color.appBG.ignoresSafeArea()
             switch phase {
+            case .locked:
+                lockedView
             case .setup:
                 setupView
             case .interview(let questions, let index):
@@ -50,6 +65,65 @@ struct InterviewSimulationView: View {
         }
         .navigationTitle(lang.t("Interview Simulation", "Interview Simulation"))
         .navigationBarBackButtonHidden(true)
+        .onAppear {
+            if respondentCount < 5 { phase = .locked }
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // MARK: Locked Phase
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private var lockedView: some View {
+        VStack(spacing: 0) {
+            Spacer()
+            VStack(spacing: 20) {
+                Image(systemName: "lock.fill")
+                    .font(.system(size: 52))
+                    .foregroundStyle(Color(hex: "4A9EF8").opacity(0.7))
+
+                VStack(spacing: 8) {
+                    Text(lang.t("Interview gesperrt", "Interview Locked"))
+                        .font(.system(size: 22, weight: .bold, design: .rounded))
+                        .foregroundStyle(Color.appPrimary)
+                    Text(lang.t(
+                        "Du benötigst mindestens 5 ausgefüllte Umfragen, um die Interview-Simulation freizuschalten. So werden deine Fragen auf dein echtes Profil abgestimmt.",
+                        "You need at least 5 completed surveys to unlock the interview simulation. This ensures your questions are tailored to your actual profile."
+                    ))
+                    .font(.subheadline)
+                    .foregroundStyle(Color.appSecondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 8)
+                }
+
+                // Progress indicator
+                VStack(spacing: 10) {
+                    HStack {
+                        Text(lang.t("Umfrageergebnisse", "Survey responses"))
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(Color.appSecondary)
+                        Spacer()
+                        Text("\(respondentCount) / 5")
+                            .font(.caption.weight(.bold))
+                            .foregroundStyle(respondentCount >= 5 ? Color(hex: "34C759") : Color(hex: "4A9EF8"))
+                    }
+                    GeometryReader { geo in
+                        ZStack(alignment: .leading) {
+                            RoundedRectangle(cornerRadius: 4).fill(Color.appBorder).frame(height: 8)
+                            RoundedRectangle(cornerRadius: 4)
+                                .fill(respondentCount >= 5 ? Color(hex: "34C759") : Color(hex: "4A9EF8"))
+                                .frame(width: geo.size.width * min(Double(respondentCount) / 5.0, 1.0), height: 8)
+                        }
+                    }.frame(height: 8)
+                }
+                .padding(16)
+                .background(Color.appCard)
+                .clipShape(RoundedRectangle(cornerRadius: 14))
+                .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(Color.appBorder, lineWidth: 1))
+            }
+            .padding(.horizontal, 28)
+            Spacer()
+        }
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -142,17 +216,51 @@ struct InterviewSimulationView: View {
                 }
                 .foregroundStyle(Color(hex: "FF9F0A"))
                 .padding(.top, 16)
+            } else {
+                HStack(spacing: 8) {
+                    Image(systemName: "info.circle")
+                        .font(.caption)
+                    Text(lang.t(
+                        "Fülle zuerst die Selbsteinschätzung aus — danach werden personalisierte KI-Fragen ergänzt.",
+                        "Complete the self-assessment first — personalised AI questions will then be added."
+                    ))
+                    .font(.caption)
+                    .multilineTextAlignment(.leading)
+                }
+                .foregroundStyle(Color.appSecondary)
+                .padding(12)
+                .background(Color.appCard)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(Color.appBorder, lineWidth: 1))
+                .padding(.horizontal, 20)
+                .padding(.top, 16)
             }
 
             Spacer()
 
+            // Run counter chip
+            let runCount = interviewRunCount
+            HStack(spacing: 6) {
+                Image(systemName: runCount >= 3 ? "checkmark.seal.fill" : "number.circle.fill")
+                    .font(.caption.weight(.semibold))
+                Text(runCount == 0
+                     ? lang.t("Erster Durchgang", "First run")
+                     : lang.t("Durchgang \(runCount + 1) · Pool \((runCount % 3) + 1)/3",
+                               "Run \(runCount + 1) · Pool \((runCount % 3) + 1)/3"))
+                    .font(.caption.weight(.semibold))
+            }
+            .foregroundStyle(runCount >= 3 ? Color(hex: "34C759") : Color.appSecondary)
+            .padding(.top, 8)
+
             Button {
                 let questions = InterviewQuestion.randomSession(
                     size: selectedSize,
+                    poolIndex: interviewRunCount,
                     flightLicenses: flightLicenses,
                     assessmentType: assessmentType,
                     aiQuestions: buildAIQuestions()
                 )
+                aiHint = nil
                 showFollowUps = false
                 withAnimation(.easeInOut(duration: 0.3)) {
                     phase = .interview(questions: questions, index: 0)
@@ -279,6 +387,66 @@ struct InterviewSimulationView: View {
                         .transition(.opacity.combined(with: .scale(scale: 0.97)))
                     }
 
+                    // AI hint button (knowledge categories only)
+                    if question.category.supportsAIHint && !question.category.showsAnswer {
+                        VStack(spacing: 0) {
+                            Button {
+                                guard !isLoadingHint else { return }
+                                if aiHint != nil { aiHint = nil; return }
+                                isLoadingHint = true
+                                Task {
+                                    defer { isLoadingHint = false }
+                                    let q = lang.isGerman ? question.de : question.en
+                                    aiHint = try? await AIAnalysisService.shared
+                                        .fetchInterviewHint(question: q, language: lang.isGerman ? "de" : "en")
+                                }
+                            } label: {
+                                HStack(spacing: 6) {
+                                    if isLoadingHint {
+                                        ProgressView().scaleEffect(0.8).tint(Color(hex: "FF9F0A"))
+                                    } else {
+                                        Image(systemName: aiHint == nil ? "sparkles" : "sparkles.slash")
+                                            .font(.caption.weight(.semibold))
+                                    }
+                                    Text(aiHint == nil
+                                         ? lang.t("KI-Musterantwort anzeigen", "Show AI model answer")
+                                         : lang.t("KI-Antwort ausblenden", "Hide AI answer"))
+                                        .font(.caption.weight(.semibold))
+                                }
+                                .foregroundStyle(Color(hex: "FF9F0A"))
+                                .padding(.horizontal, 14).padding(.vertical, 9)
+                                .background(Color(hex: "FF9F0A").opacity(0.12))
+                                .clipShape(Capsule())
+                                .overlay(Capsule().strokeBorder(Color(hex: "FF9F0A").opacity(0.3), lineWidth: 1))
+                            }
+                            .buttonStyle(.plain)
+
+                            if let hint = aiHint {
+                                HStack(alignment: .top, spacing: 10) {
+                                    Image(systemName: "sparkles")
+                                        .foregroundStyle(Color(hex: "FF9F0A"))
+                                        .font(.caption.weight(.bold))
+                                        .padding(.top, 2)
+                                    Text(hint)
+                                        .font(.subheadline)
+                                        .foregroundStyle(Color.appPrimary)
+                                        .fixedSize(horizontal: false, vertical: true)
+                                }
+                                .padding(14)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 14)
+                                        .fill(Color(hex: "FF9F0A").opacity(0.08))
+                                        .overlay(RoundedRectangle(cornerRadius: 14)
+                                            .strokeBorder(Color(hex: "FF9F0A").opacity(0.3), lineWidth: 1))
+                                )
+                                .padding(.top, 10)
+                                .transition(.opacity.combined(with: .move(edge: .top)))
+                            }
+                        }
+                        .padding(.horizontal, 24)
+                        .animation(.easeInOut(duration: 0.22), value: aiHint)
+                    }
+
                     // Follow-ups
                     if let fups = followUps, !fups.isEmpty {
                         VStack(spacing: 0) {
@@ -342,7 +510,7 @@ struct InterviewSimulationView: View {
             HStack(spacing: 16) {
                 Button {
                     guard index > 0 else { return }
-                    showFollowUps = false
+                    showFollowUps = false; aiHint = nil
                     withAnimation(.easeInOut(duration: 0.25)) {
                         phase = .interview(questions: questions, index: index - 1)
                     }
@@ -362,12 +530,13 @@ struct InterviewSimulationView: View {
                 .disabled(index == 0)
 
                 Button {
-                    showFollowUps = false
+                    showFollowUps = false; aiHint = nil
                     if index < total - 1 {
                         withAnimation(.easeInOut(duration: 0.25)) {
                             phase = .interview(questions: questions, index: index + 1)
                         }
                     } else {
+                        incrementRunCount()
                         withAnimation(.easeInOut(duration: 0.3)) {
                             phase = .done(total: total)
                         }
@@ -390,6 +559,7 @@ struct InterviewSimulationView: View {
         .alert(lang.t("Interview beenden?", "End interview?"), isPresented: $showEndAlert) {
             Button(lang.t("Abbrechen", "Cancel"), role: .cancel) {}
             Button(lang.t("Beenden", "End"), role: .destructive) {
+                incrementRunCount()
                 withAnimation(.easeInOut(duration: 0.3)) {
                     phase = .done(total: index + 1)
                 }
@@ -422,6 +592,13 @@ struct InterviewSimulationView: View {
                     Text(lang.t("\(total) Fragen gestellt", "\(total) questions asked"))
                         .font(.subheadline)
                         .foregroundStyle(Color.appSecondary)
+                    let runs = interviewRunCount
+                    Text(runs >= 3
+                         ? lang.t("✓ Mindestens 3 Durchgänge absolviert", "✓ At least 3 runs completed")
+                         : lang.t("Durchgang \(runs) von 3", "Run \(runs) of 3"))
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(runs >= 3 ? Color(hex: "34C759") : Color.appSecondary)
+                        .padding(.top, 2)
                 }
             }
             Spacer()

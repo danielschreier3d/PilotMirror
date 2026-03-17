@@ -366,6 +366,22 @@ final class AIAnalysisService: ObservableObject {
         )
     }
 
+    // MARK: – Live interview hint (called on demand during interview simulation)
+
+    func fetchInterviewHint(question: String, language: String) async throws -> String {
+        var req = URLRequest(url: URL(string: SupabaseConfig.hintFunctionURL)!)
+        req.httpMethod = "POST"
+        req.timeoutInterval = 30
+        req.setValue("Bearer \(SupabaseConfig.anonKey)", forHTTPHeaderField: "Authorization")
+        req.setValue(SupabaseConfig.anonKey, forHTTPHeaderField: "apikey")
+        req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        req.httpBody = try JSONSerialization.data(withJSONObject: ["question": question, "language": language])
+        let (data, _) = try await URLSession.shared.data(for: req)
+        let json = try JSONSerialization.jsonObject(with: data) as? [String: Any]
+        if let err = json?["error"] as? String { throw NSError(domain: "HintFunction", code: -1, userInfo: [NSLocalizedDescriptionKey: err]) }
+        return json?["hint"] as? String ?? ""
+    }
+
     // MARK: – Private: Call Supabase Edge Function (Groq key stored server-side)
 
     private func callOpenAI(prompt: String) async throws -> String {

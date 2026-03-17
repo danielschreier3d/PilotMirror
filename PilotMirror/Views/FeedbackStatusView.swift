@@ -21,6 +21,19 @@ struct FeedbackStatusView: View {
     var linkDone: Bool { responseCount >= minimumResponses }
     var canAnalyze: Bool { selfDone && linkDone }
 
+    var interviewRunCount: Int { UserDefaults.standard.integer(forKey: "pm_interview_run_count") }
+    var interviewDone: Bool { interviewRunCount >= 3 }
+
+    /// 0.0 – 1.0 overall preparation progress
+    var preparationProgress: Double {
+        var score = 0.0
+        if selfDone  { score += 1.0 / 3.0 }
+        score += min(Double(responseCount), 5.0) / 5.0 * (1.0 / 3.0)
+        score += min(Double(interviewRunCount), 3.0) / 3.0 * (1.0 / 3.0)
+        return min(score, 1.0)
+    }
+    var isFullyPrepared: Bool { selfDone && linkDone && interviewDone }
+
     // True when a saved report exists but new responses have come in since it was generated
     var hasNewResponses: Bool {
         guard let r = aiService.result, r.respondentCount > 0 else { return false }
@@ -40,6 +53,7 @@ struct FeedbackStatusView: View {
             ScrollView {
                 VStack(spacing: 20) {
                     header
+                    preparationCard
                     step1Card
                     step2Card
                     step3Card
@@ -93,6 +107,77 @@ struct FeedbackStatusView: View {
             flightLicenses: licenses,
             silent: true
         )
+    }
+
+    // MARK: - Preparation Progress Card
+
+    private var preparationCard: some View {
+        VStack(spacing: 14) {
+            HStack {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(isFullyPrepared
+                         ? lang.t("Bestmöglich vorbereitet!", "Best possible preparation!")
+                         : lang.t("Dein Vorbereitungsstand", "Your preparation status"))
+                        .font(.subheadline.weight(.bold))
+                        .foregroundStyle(Color.appPrimary)
+                    Text(isFullyPrepared
+                         ? lang.t("Du hast alle Schritte abgeschlossen.", "You have completed all steps.")
+                         : lang.t("Schließe alle Schritte ab für optimale Vorbereitung.",
+                                   "Complete all steps for optimal preparation."))
+                        .font(.caption)
+                        .foregroundStyle(Color.appSecondary)
+                }
+                Spacer()
+                Text("\(Int(preparationProgress * 100))%")
+                    .font(.system(size: 22, weight: .bold, design: .rounded))
+                    .foregroundStyle(isFullyPrepared ? Color(hex: "34C759") : Color(hex: "4A9EF8"))
+            }
+
+            // Progress bar
+            GeometryReader { geo in
+                ZStack(alignment: .leading) {
+                    RoundedRectangle(cornerRadius: 6).fill(Color.appBorder).frame(height: 10)
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(isFullyPrepared
+                              ? AnyShapeStyle(Color(hex: "34C759"))
+                              : AnyShapeStyle(LinearGradient(colors: [Color(hex: "4A9EF8"), Color(hex: "34C759")],
+                                               startPoint: .leading, endPoint: .trailing)))
+                        .frame(width: geo.size.width * preparationProgress, height: 10)
+                        .animation(.easeInOut(duration: 0.5), value: preparationProgress)
+                }
+            }.frame(height: 10)
+
+            // Milestones
+            HStack(spacing: 0) {
+                milestoneChip(done: selfDone,
+                              label: lang.t("Self-Assessment", "Self-Assessment"))
+                Spacer()
+                milestoneChip(done: linkDone,
+                              label: lang.t("5 Umfragen", "5 Surveys"))
+                Spacer()
+                milestoneChip(done: interviewDone,
+                              label: lang.t("3 Interviews", "3 Interviews"))
+            }
+        }
+        .padding(16)
+        .background(Color.appCard)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .overlay(RoundedRectangle(cornerRadius: 16)
+            .strokeBorder(isFullyPrepared
+                          ? Color(hex: "34C759").opacity(0.5)
+                          : Color.appBorder, lineWidth: 1))
+        .padding(.horizontal, 16)
+    }
+
+    private func milestoneChip(done: Bool, label: String) -> some View {
+        HStack(spacing: 4) {
+            Image(systemName: done ? "checkmark.circle.fill" : "circle")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(done ? Color(hex: "34C759") : Color.appTertiary)
+            Text(label)
+                .font(.caption2.weight(.semibold))
+                .foregroundStyle(done ? Color.appPrimary : Color.appTertiary)
+        }
     }
 
     // MARK: - Header

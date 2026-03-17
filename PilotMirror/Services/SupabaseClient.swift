@@ -10,6 +10,7 @@ enum SupabaseConfig {
     static let anonKey    = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im91dHNoZXJ0dGt3d3V2aWhwa3puIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMyODE4NzgsImV4cCI6MjA4ODg1Nzg3OH0.KRFm5YghZPysybdTKtQRUX2Mr6pOKgyWgJ1gOnc-9as"
     /// Supabase Edge Function URL for AI analysis (Groq key stored server-side)
     static let analyzeFunctionURL = "\(projectURL)/functions/v1/analyze"
+    static let hintFunctionURL    = "\(projectURL)/functions/v1/interview-hint"
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

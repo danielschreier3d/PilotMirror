@@ -132,6 +132,7 @@ final class AuthService: NSObject, ObservableObject {
         isAuthenticated = false
         UserDefaults.standard.removeObject(forKey: "pm_session_id")
         UserDefaults.standard.removeObject(forKey: "pm_feedback_link")
+        UserDefaults.standard.removeObject(forKey: "pm_interview_run_count")
         SurveyService.shared.clearLocalCache()
         FeedbackService.shared.feedbackLink = nil
         AIAnalysisService.shared.result     = nil
@@ -179,7 +180,8 @@ final class AuthService: NSObject, ObservableObject {
                                  filters: ["candidate_id": "eq.\(uid)"])
         }
         let keys = ["pm_session_id", "pm_feedback_link", "pm_self_responses",
-                    "pm_analysis_result_v1", "pm_interview_questions_v1"]
+                    "pm_analysis_result_v1", "pm_interview_questions_v1",
+                    "pm_interview_run_count"]
         keys.forEach { UserDefaults.standard.removeObject(forKey: $0) }
         SurveyService.shared.clearLocalCache()
         FeedbackService.shared.feedbackLink = nil

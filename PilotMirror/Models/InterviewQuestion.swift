@@ -15,6 +15,14 @@ enum InterviewCategory: String, CaseIterable {
 
     var showsAnswer: Bool { self == .math || self == .spatial || self == .english }
 
+    /// Whether the interviewer can request a live AI model answer for this category.
+    var supportsAIHint: Bool {
+        switch self {
+        case .math, .physics, .navigation, .aviation, .english, .spatial, .judgment: return true
+        case .personality, .school: return false
+        }
+    }
+
     var icon: String {
         switch self {
         case .math:        return "function"
@@ -56,7 +64,7 @@ enum SessionSize: CaseIterable {
     }
 
     var aiQuestionCount: Int {
-        switch self { case .small: return 1; case .medium: return 2; case .large: return 3 }
+        switch self { case .small: return 2; case .medium: return 3; case .large: return 4 }
     }
 
     func totalCount(hasAIQuestions: Bool) -> String {
@@ -99,6 +107,8 @@ struct InterviewQuestion: Identifiable {
     var followUpsDE: [String]? = nil
     var followUpsEN: [String]? = nil
     var requiresFlightExperience: Bool = false
+    /// Licenses for which this question is NOT appropriate (e.g. night-flying questions for UL).
+    var excludedLicenses: Set<User.FlightLicense> = []
     var isAIGenerated: Bool = false
 }
 
@@ -106,22 +116,37 @@ struct InterviewQuestion: Identifiable {
 
 extension InterviewQuestion {
 
+    /// poolIndex 0/1/2 — each run draws from a different third of the question bank.
     static func randomSession(
         size: SessionSize,
+        poolIndex: Int = 0,
         flightLicenses: [User.FlightLicense] = [],
         assessmentType: User.AssessmentType? = nil,
         aiQuestions: [InterviewQuestion] = []
     ) -> [InterviewQuestion] {
+        let pool          = poolIndex % 3
+        let licenseSet    = Set(flightLicenses)
         let hasExperience = flightLicenses.contains { $0 != .none }
         let schoolPool    = assessmentType.map { schoolQuestions(for: $0) } ?? []
         let fullPool      = all + schoolPool
 
         let staticQuestions: [InterviewQuestion] = InterviewCategory.allCases.flatMap { cat in
-            fullPool
+            let available = fullPool
                 .filter { $0.category == cat }
                 .filter { !$0.requiresFlightExperience || hasExperience }
-                .shuffled()
-                .prefix(size.questionsPerCategory)
+                .filter { $0.excludedLicenses.isDisjoint(with: licenseSet) }
+                .sorted { $0.id < $1.id }   // stable sort for deterministic splitting
+
+            // Split into 3 balanced chunks; remainder distributed to first chunks
+            let n = available.count
+            let base = n / 3; let rem = n % 3
+            var chunks: [[InterviewQuestion]] = []; var offset = 0
+            for i in 0..<3 {
+                let sz = base + (i < rem ? 1 : 0)
+                chunks.append(Array(available[offset..<(offset + sz)]))
+                offset += sz
+            }
+            return Array(chunks[pool].shuffled().prefix(size.questionsPerCategory))
         }
 
         let aiToInclude = Array(aiQuestions.shuffled().prefix(size.aiQuestionCount))
@@ -408,6 +433,18 @@ extension InterviewQuestion {
         .init(id: "n12", category: .navigation,
               de: "Wie funktioniert GPS-Navigation grundsätzlich?",
               en: "How does GPS navigation work in principle?",
+              answerDE: nil, answerEN: nil),
+        .init(id: "n13", category: .navigation,
+              de: "Was ist Nebel und wie beeinflusst er den Flugbetrieb?",
+              en: "What is fog and how does it affect flight operations?",
+              answerDE: nil, answerEN: nil),
+        .init(id: "n14", category: .navigation,
+              de: "Was ist der Jetstream und wie entsteht er?",
+              en: "What is the jet stream and how does it form?",
+              answerDE: nil, answerEN: nil),
+        .init(id: "n15", category: .navigation,
+              de: "Was ist ein Föhn und welche Gefahren birgt er für die Luftfahrt?",
+              en: "What is a Föhn wind and what hazards does it pose for aviation?",
               answerDE: nil, answerEN: nil),
     ]
 
@@ -719,7 +756,8 @@ extension InterviewQuestion {
               followUpsEN: [
                 "What surprised you most in that moment?",
                 "Did that experience change your motivation?"
-              ]),
+              ],
+              requiresFlightExperience: true),
         .init(id: "per11", category: .personality,
               de: "Was motiviert dich außer dem Fliegen selbst?",
               en: "What motivates you besides flying itself?",
@@ -871,7 +909,8 @@ extension InterviewQuestion {
               followUpsEN: [
                 "What do you do first — instruments or look out the window?",
                 "When do you declare a Mayday?"
-              ]),
+              ],
+              excludedLicenses: [.ultralight, .lapl, .tmg, .paramotor]),
         .init(id: "j12", category: .judgment,
               de: "Die Kabine verliert unerwartet an Druck. Welche Sofortmaßnahmen leitest du ein?",
               en: "The cabin unexpectedly loses pressure. What immediate actions do you take?",
