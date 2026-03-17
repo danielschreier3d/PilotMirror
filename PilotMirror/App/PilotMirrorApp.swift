@@ -145,6 +145,9 @@ struct MainTabView: View {
 
             NavigationStack {
                 AssessmentAdviceView()
+                    .toolbarBackground(colorScheme == .dark ? Color(UIColor(red: 10/255, green: 22/255, blue: 40/255, alpha: 1)) : Color(UIColor.systemBackground), for: .navigationBar)
+                    .toolbarBackground(.visible, for: .navigationBar)
+                    .toolbarColorScheme(colorScheme == .dark ? .dark : nil, for: .navigationBar)
             }
             .tabItem { Label(lang.isGerman ? "Tipps" : "Tips", systemImage: "lightbulb.fill") }
             .tag(1)
