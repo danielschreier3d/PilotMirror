@@ -21,18 +21,28 @@ struct ComparisonArea: Codable, Identifiable {
 
     var delta: Double { selfRating - othersAverage }
 
-    var gapLabel: String {
+    func gapLabel(isGerman: Bool) -> String {
         let d = delta
-        if abs(d) < 0.2 { return "Übereinstimmung" }
-        if d > 0 { return "Du schätzt dich höher ein" }
-        return "Andere sehen dich stärker"
+        if isGerman {
+            if abs(d) < 0.3  { return "Realistische Einschätzung" }
+            if d >= 0.3  && d < 0.7  { return "Du schätzt dich leicht höher ein" }
+            if d >= 0.7              { return "Du überschätzt dich deutlich" }
+            if d <= -0.3 && d > -0.7 { return "Andere sehen dich leicht stärker" }
+            return "Andere sehen dich deutlich stärker"
+        } else {
+            if abs(d) < 0.3  { return "Realistic self-assessment" }
+            if d >= 0.3  && d < 0.7  { return "Slight overestimation" }
+            if d >= 0.7              { return "Significant overestimation" }
+            if d <= -0.3 && d > -0.7 { return "Others see you slightly stronger" }
+            return "Others see you as clearly stronger"
+        }
     }
 
     var gapColor: String {
-        if abs(delta) < 0.2 { return "34C759" }
-        if delta > 0.5 { return "FF6B6B" }
-        if delta < -0.5 { return "4A9EF8" }
-        return "FF9F0A"
+        if abs(delta) < 0.3 { return "4A9EF8" }
+        if abs(delta) < 0.7 { return "FF9F0A" }
+        if delta > 0        { return "FF6B6B" }
+        return "34C759"
     }
 }
 

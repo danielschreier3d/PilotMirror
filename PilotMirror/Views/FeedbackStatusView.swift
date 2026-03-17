@@ -137,7 +137,7 @@ struct FeedbackStatusView: View {
                 Spacer()
                 Text("\(Int(preparationProgress * 100))%")
                     .font(.system(size: 22, weight: .bold, design: .rounded))
-                    .foregroundStyle(isFullyPrepared ? Color(hex: "34C759") : Color(hex: "4A9EF8"))
+                    .foregroundStyle(Color(hex: "4A9EF8"))
             }
 
             // Progress bar
@@ -145,10 +145,8 @@ struct FeedbackStatusView: View {
                 ZStack(alignment: .leading) {
                     RoundedRectangle(cornerRadius: 6).fill(Color.appBorder).frame(height: 10)
                     RoundedRectangle(cornerRadius: 6)
-                        .fill(isFullyPrepared
-                              ? AnyShapeStyle(Color(hex: "34C759"))
-                              : AnyShapeStyle(LinearGradient(colors: [Color(hex: "4A9EF8"), Color(hex: "34C759")],
-                                               startPoint: .leading, endPoint: .trailing)))
+                        .fill(AnyShapeStyle(LinearGradient(colors: [Color(hex: "4A9EF8"), Color(hex: "4A9EF8").opacity(0.6)],
+                                             startPoint: .leading, endPoint: .trailing)))
                         .frame(width: geo.size.width * preparationProgress, height: 10)
                         .animation(.easeInOut(duration: 0.5), value: preparationProgress)
                 }
@@ -171,7 +169,7 @@ struct FeedbackStatusView: View {
         .clipShape(RoundedRectangle(cornerRadius: 16))
         .overlay(RoundedRectangle(cornerRadius: 16)
             .strokeBorder(isFullyPrepared
-                          ? Color(hex: "34C759").opacity(0.5)
+                          ? Color(hex: "4A9EF8").opacity(0.4)
                           : Color.appBorder, lineWidth: 1))
         .padding(.horizontal, 16)
     }
@@ -180,7 +178,7 @@ struct FeedbackStatusView: View {
         HStack(spacing: 4) {
             Image(systemName: done ? "checkmark.circle.fill" : "circle")
                 .font(.caption.weight(.semibold))
-                .foregroundStyle(done ? Color(hex: "34C759") : Color.appTertiary)
+                .foregroundStyle(done ? Color(hex: "4A9EF8") : Color.appTertiary)
             Text(label)
                 .font(.caption2.weight(.semibold))
                 .foregroundStyle(done ? Color.appPrimary : Color.appTertiary)
@@ -312,11 +310,7 @@ struct FeedbackStatusView: View {
                     Capsule().fill(Color.appInputBG).frame(height: 8)
                     // Fill (0–12)
                     Capsule()
-                        .fill(LinearGradient(
-                            colors: responseCount >= minimumResponses
-                                ? [Color(hex: "34C759"), Color(hex: "34C759")]
-                                : [Color(hex: "4A9EF8"), Color(hex: "4A9EF8")],
-                            startPoint: .leading, endPoint: .trailing))
+                        .fill(Color(hex: "4A9EF8"))
                         .frame(width: max(0, geo.size.width * min(Double(responseCount) / Double(targetResponses), 1.0)), height: 8)
                         .animation(.spring(response: 0.5), value: responseCount)
                     // Milestone marker at 5/12
@@ -334,15 +328,15 @@ struct FeedbackStatusView: View {
                 Spacer()
                 VStack(spacing: 1) {
                     Text(lang.t("5 min", "5 min"))
-                        .foregroundStyle(responseCount >= 5 ? Color(hex: "34C759") : Color.appSecondary)
+                        .foregroundStyle(responseCount >= 5 ? Color(hex: "4A9EF8") : Color.appSecondary)
                     if responseCount >= 5 && responseCount < 12 {
                         Text(lang.t("✓ freigeschaltet", "✓ unlocked"))
-                            .foregroundStyle(Color(hex: "34C759"))
+                            .foregroundStyle(Color(hex: "4A9EF8"))
                     }
                 }
                 Spacer()
                 Text(lang.t("12 ideal", "12 ideal"))
-                    .foregroundStyle(responseCount >= 12 ? Color(hex: "34C759") : Color.appTertiary)
+                    .foregroundStyle(responseCount >= 12 ? Color(hex: "4A9EF8") : Color.appTertiary)
             }
             .font(.caption2)
             .foregroundStyle(Color.appTertiary)
@@ -404,7 +398,7 @@ struct FeedbackStatusView: View {
                 .disabled(aiService.isAnalyzing)
             }
             if aiService.result != nil {
-                actionButton(lang.t("Report anzeigen", "View report"), icon: "doc.text.fill", color: "34C759") {
+                actionButton(lang.t("Report anzeigen", "View report"), icon: "doc.text.fill", color: "4A9EF8") {
                     showResults = true
                 }
             }
@@ -440,12 +434,12 @@ struct FeedbackStatusView: View {
                 HStack(spacing: 6) {
                     ForEach(0..<3) { i in
                         Circle()
-                            .fill(i < runs ? Color(hex: "34C759") : Color.appBorder)
+                            .fill(i < runs ? Color(hex: "4A9EF8") : Color.appBorder)
                             .frame(width: 8, height: 8)
                     }
                     Text(lang.t("\(min(runs,3))/3 Durchgänge", "\(min(runs,3))/3 runs"))
                         .font(.caption2)
-                        .foregroundStyle(runs >= 3 ? Color(hex: "34C759") : Color.appSecondary)
+                        .foregroundStyle(Color.appSecondary)
                 }
                 .padding(.top, 2)
             }
@@ -467,12 +461,12 @@ struct FeedbackStatusView: View {
                 // Step indicator
                 ZStack {
                     Circle()
-                        .fill(done ? Color(hex: "34C759") : locked ? Color.appCard : Color(hex: "4A9EF8").opacity(0.2))
+                        .fill(done ? Color(hex: "4A9EF8") : locked ? Color.appCard : Color(hex: "4A9EF8").opacity(0.2))
                         .frame(width: 38, height: 38)
                     if done {
                         Image(systemName: "checkmark")
                             .font(.system(size: 16, weight: .bold))
-                            .foregroundStyle(Color(hex: "34C759"))
+                            .foregroundStyle(.white)
                     } else {
                         Text("\(number)")
                             .font(.system(size: 16, weight: .bold))
@@ -486,7 +480,7 @@ struct FeedbackStatusView: View {
                         .foregroundStyle(locked ? Color.appTertiary : Color.appPrimary)
                     Text(subtitle)
                         .font(.caption)
-                        .foregroundStyle(done ? Color(hex: "34C759") : locked ? Color.appTertiary : Color.appSecondary)
+                        .foregroundStyle(locked ? Color.appTertiary : Color.appSecondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 Spacer()
@@ -497,11 +491,11 @@ struct FeedbackStatusView: View {
             }
         }
         .padding(18)
-        .background(done ? Color(hex: "34C759").opacity(0.07) : Color.appCard)
+        .background(done ? Color(hex: "4A9EF8").opacity(0.07) : Color.appCard)
         .clipShape(RoundedRectangle(cornerRadius: 18))
         .overlay(
             RoundedRectangle(cornerRadius: 18)
-                .strokeBorder(done ? Color(hex: "34C759").opacity(0.3) : .clear, lineWidth: 1)
+                .strokeBorder(done ? Color(hex: "4A9EF8").opacity(0.4) : .clear, lineWidth: 1)
         )
         .padding(.horizontal)
     }

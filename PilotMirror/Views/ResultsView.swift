@@ -422,7 +422,7 @@ struct ResultsView: View {
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(Color.appPrimary)
                 Spacer()
-                Text(area.gapLabel)
+                Text(area.gapLabel(isGerman: lang.isGerman))
                     .font(.caption)
                     .foregroundStyle(Color(hex: area.gapColor))
             }
@@ -548,9 +548,10 @@ struct ResultsView: View {
                     .font(.subheadline)
                     .foregroundStyle(Color.appTertiary)
             } else {
+                let fName = firstName(from: auth.currentUser?.name)
                 VStack(spacing: 20) {
                     ForEach(fcStats) { stat in
-                        forcedChoiceRow(stat)
+                        forcedChoiceRow(stat, firstName: fName, isGerman: lang.isGerman)
                     }
                 }
             }
@@ -558,9 +559,23 @@ struct ResultsView: View {
 
         // Open text — grouped by question
         let openIds = ["q10","q11","q12","q13","q14","q15","q16","q17","q18"]
-        let groups: [(String, [String])] = openIds.compactMap { id in
+        let fName = firstName(from: auth.currentUser?.name)
+        let isGerman = lang.isGerman
+        let groups: [(String, [String])] = openIds.compactMap { id -> (String, [String])? in
             guard let answers = openByQ[id], !answers.isEmpty else { return nil }
-            let title = Question.surveyQuestions.first(where: { $0.id == id })?.text ?? id
+            guard let q = Question.surveyQuestions.first(where: { $0.id == id }) else { return (id, answers) }
+            var title = isGerman ? q.text : (q.textEN ?? q.text)
+            if !fName.isEmpty {
+                title = title
+                    .replacingOccurrences(of: "von dieser Person", with: "von \(fName)")
+                    .replacingOccurrences(of: "Diese Person", with: fName)
+                    .replacingOccurrences(of: "diese Person", with: fName)
+                    .replacingOccurrences(of: "dieser Person", with: fName)
+                    .replacingOccurrences(of: "This person's", with: "\(fName)'s")
+                    .replacingOccurrences(of: "this person's", with: "\(fName)'s")
+                    .replacingOccurrences(of: "This person", with: fName)
+                    .replacingOccurrences(of: "this person", with: fName)
+            }
             return (title, answers)
         }
 
@@ -645,9 +660,23 @@ struct ResultsView: View {
         return Color(hex: "8E8E93")
     }
 
-    private func forcedChoiceRow(_ stat: ForcedChoiceStat) -> some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text(stat.question)
+    private func firstName(from fullName: String?) -> String {
+        guard let name = fullName, !name.isEmpty else { return "" }
+        return String(name.split(separator: " ").first ?? Substring(name))
+    }
+
+    private func forcedChoiceRow(_ stat: ForcedChoiceStat, firstName: String = "", isGerman: Bool = true) -> some View {
+        let question: String = {
+            guard !firstName.isEmpty else { return stat.question }
+            return stat.question
+                .replacingOccurrences(of: "Diese Person", with: firstName)
+                .replacingOccurrences(of: "diese Person", with: firstName)
+                .replacingOccurrences(of: "dieser Person", with: firstName)
+                .replacingOccurrences(of: "This person", with: firstName)
+                .replacingOccurrences(of: "this person", with: firstName)
+        }()
+        return VStack(alignment: .leading, spacing: 10) {
+            Text(question)
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(Color.appSecondary)
                 .textCase(.uppercase)

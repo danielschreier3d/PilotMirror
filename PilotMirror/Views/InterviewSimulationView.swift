@@ -254,6 +254,7 @@ struct InterviewSimulationView: View {
             }
             .foregroundStyle(runCount >= 3 ? Color(hex: "34C759") : Color.appSecondary)
             .padding(.top, 8)
+            .padding(.bottom, 12)
 
             Button {
                 let questions = InterviewQuestion.randomSession(

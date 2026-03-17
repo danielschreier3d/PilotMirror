@@ -47,6 +47,8 @@ struct Question: Identifiable, Codable {
                 .replacingOccurrences(of: "Diese Person", with: name)
                 .replacingOccurrences(of: "diese Person", with: name)
                 .replacingOccurrences(of: "dieser Person", with: name)
+                .replacingOccurrences(of: "This person's", with: "\(name)'s")
+                .replacingOccurrences(of: "this person's", with: "\(name)'s")
                 .replacingOccurrences(of: "This person", with: name)
                 .replacingOccurrences(of: "this person", with: name)
         }
@@ -171,7 +173,7 @@ extension Question {
 
         // MARK: Section 4 — Stärken
         q(id: "q10", type: .openText,
-          text: "Was ist eine der größten Stärken dieser Person?",
+          text: "Was ist eine der größten Stärken von dieser Person?",
           textEN: "What is one of this person's greatest strengths?",
           textSelf: "Was ist eine deiner größten Stärken?",
           textSelfEN: "What is one of your greatest strengths?",
@@ -208,7 +210,7 @@ extension Question {
           section: 5, sectionTitle: "Schwächen", sectionTitleEN: "Weaknesses"),
 
         q(id: "q14", type: .openText,
-          text: "Gibt es Verhaltensweisen dieser Person, die manchmal schwierig sein können?",
+          text: "Gibt es Verhaltensweisen von dieser Person, die manchmal schwierig sein können?",
           textEN: "Are there behaviours of this person that can sometimes be difficult?",
           textSelf: "Gibt es Verhaltensweisen bei dir, die manchmal schwierig sein können?",
           textSelfEN: "Are there behaviours of yours that can sometimes be difficult?",
@@ -217,7 +219,7 @@ extension Question {
           section: 5, sectionTitle: "Schwächen", sectionTitleEN: "Weaknesses"),
 
         q(id: "q15", type: .openText,
-          text: "Welches Verhalten dieser Person kann in Gruppen gelegentlich problematisch sein?",
+          text: "Welches Verhalten von dieser Person kann in Gruppen gelegentlich problematisch sein?",
           textEN: "Which of this person's behaviours can occasionally be problematic in groups?",
           textSelf: "Welches deiner eigenen Verhaltensweisen kann in Gruppen gelegentlich problematisch sein?",
           textSelfEN: "Which of your own behaviours can occasionally be problematic in groups?",
@@ -236,8 +238,8 @@ extension Question {
           section: 6, sectionTitle: "Verhalten & Außenwirkung", sectionTitleEN: "Behaviour & Perception"),
 
         q(id: "q17", type: .openText,
-          text: "Wie reagiert diese Person, wenn sie kritisiert wird oder Fehler macht?",
-          textEN: "How does this person react when criticised or when they make a mistake?",
+          text: "Wie reagiert diese Person auf Kritik oder eigene Fehler?",
+          textEN: "How does this person react to criticism or their own mistakes?",
           textSelf: "Wie reagierst du, wenn du kritisiert wirst oder Fehler machst?",
           textSelfEN: "How do you react when you are criticised or make a mistake?",
           placeholder: "z.B. nimmt Feedback gut an / wird defensiv / zieht sich zurück…",
@@ -245,8 +247,8 @@ extension Question {
           section: 6, sectionTitle: "Verhalten & Außenwirkung", sectionTitleEN: "Behaviour & Perception"),
 
         q(id: "q18", type: .openText,
-          text: "Wenn diese Person an einem anspruchsvollen Auswahlverfahren teilnimmt – welches Verhalten könnte ihr besonders helfen oder besonders im Weg stehen?",
-          textEN: "If this person were to take part in a demanding selection process – which of their behaviours could help or hinder them the most?",
+          text: "Wenn diese Person an einem anspruchsvollen Auswahlverfahren teilnimmt – welches Verhalten könnte besonders hilfreich oder hinderlich sein?",
+          textEN: "If this person were to take part in a demanding selection process – which behaviours could help or hinder them the most?",
           textSelf: "Wenn du an einem anspruchsvollen Auswahlverfahren teilnimmst – welches deiner Verhaltensweisen könnte dir besonders helfen oder im Weg stehen?",
           textSelfEN: "If you were to take part in a demanding selection process – which of your behaviours could help or hinder you the most?",
           placeholder: "z.B. wirkt in unbekannten Gruppen zunächst distanziert, obwohl ein starker Teamplayer…",
