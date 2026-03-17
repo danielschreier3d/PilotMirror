@@ -148,13 +148,6 @@ struct MainTabView: View {
             .tabItem { Label(lang.isGerman ? "Tipps" : "Tips", systemImage: "lightbulb.fill") }
             .tag(1)
 
-            NavigationStack {
-                InterviewSimulationView()
-                    .navigationBarTitleDisplayMode(.inline)
-                    .toolbarColorScheme(.dark, for: .navigationBar)
-            }
-            .tabItem { Label("Interview", systemImage: "person.2.fill") }
-            .tag(2)
         }
         .tint(Color(hex: "4A9EF8"))
         .onAppear {

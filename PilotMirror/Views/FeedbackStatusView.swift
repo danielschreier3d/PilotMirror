@@ -9,6 +9,7 @@ struct FeedbackStatusView: View {
 
     @State private var showSelfAssessment = false
     @State private var showResults = false
+    @State private var showInterview = false
     @State private var isCreatingLink = false
     @State private var showShareSheet = false
     @State private var copied = false
@@ -57,6 +58,7 @@ struct FeedbackStatusView: View {
                     step1Card
                     step2Card
                     step3Card
+                    step4Card
                     Spacer(minLength: 40)
                 }
                 .padding(.top, 16)
@@ -81,6 +83,11 @@ struct FeedbackStatusView: View {
         }
         .navigationDestination(isPresented: $showResults) {
             ResultsView().environmentObject(auth)
+        }
+        .navigationDestination(isPresented: $showInterview) {
+            InterviewSimulationView()
+                .environmentObject(auth)
+                .environmentObject(lang)
         }
         .task {
             // Load from Supabase if UserDefaults cache is empty (first install / cleared cache)
@@ -400,6 +407,47 @@ struct FeedbackStatusView: View {
                 actionButton(lang.t("Report anzeigen", "View report"), icon: "doc.text.fill", color: "34C759") {
                     showResults = true
                 }
+            }
+        }
+    }
+
+    // MARK: - Step 4: Interview
+
+    private var step4Card: some View {
+        let locked = aiService.result == nil
+        let runs   = interviewRunCount
+        let subtitle: String = {
+            if locked    { return lang.t("Verfügbar nach KI-Analyse", "Available after AI analysis") }
+            if runs == 0 { return lang.t("Noch kein Durchgang absolviert", "No run completed yet") }
+            if runs < 3  { return lang.t("\(runs) von 3 Durchgängen absolviert",
+                                         "\(runs) of 3 runs completed") }
+            return lang.t("Mindestens 3 Durchgänge absolviert ✓", "At least 3 runs completed ✓")
+        }()
+        return stepCard(
+            number: 4,
+            title: lang.t("Interview simulieren", "Simulate Interview"),
+            subtitle: subtitle,
+            done: interviewDone,
+            locked: locked
+        ) {
+            actionButton(
+                lang.t(runs == 0 ? "Interview starten" : "Weiteres Interview starten",
+                       runs == 0 ? "Start interview"   : "Start another interview"),
+                icon: "person.2.fill", color: "4A9EF8"
+            ) { showInterview = true }
+
+            if runs > 0 {
+                HStack(spacing: 6) {
+                    ForEach(0..<3) { i in
+                        Circle()
+                            .fill(i < runs ? Color(hex: "34C759") : Color.appBorder)
+                            .frame(width: 8, height: 8)
+                    }
+                    Text(lang.t("\(min(runs,3))/3 Durchgänge", "\(min(runs,3))/3 runs"))
+                        .font(.caption2)
+                        .foregroundStyle(runs >= 3 ? Color(hex: "34C759") : Color.appSecondary)
+                }
+                .padding(.top, 2)
             }
         }
     }

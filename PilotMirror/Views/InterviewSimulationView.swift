@@ -64,7 +64,10 @@ struct InterviewSimulationView: View {
             }
         }
         .navigationTitle(lang.t("Interview Simulation", "Interview Simulation"))
-        .navigationBarBackButtonHidden(true)
+        .navigationBarBackButtonHidden({
+            if case .interview = phase { return true }
+            return false
+        }())
         .onAppear {
             if respondentCount < 5 { phase = .locked }
         }
