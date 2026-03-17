@@ -21,9 +21,15 @@ final class AuthService: NSObject, ObservableObject {
 
     @Published var currentUser:              User?
     @Published var isAuthenticated           = false
+    @Published var isRestoring               = true   // true until first restoreSession() completes
     @Published var isLoading                 = false
     @Published var error:                    String?
     @Published var pendingEmailConfirmation  = false
+    @Published var loginLockedUntil:         Date?
+
+    private var loginFailedAttempts = 0
+    private let maxLoginAttempts    = 5
+    private let lockoutDuration: TimeInterval = 5 * 60
 
     private let sb = SupabaseClient.shared
 
@@ -35,6 +41,7 @@ final class AuthService: NSObject, ObservableObject {
     // MARK: – Session restore
 
     func restoreSession() async {
+        defer { isRestoring = false }
         guard sb.isAuthenticated, let uid = sb.userId else { return }
         do {
             if let record: UserRecord = try await sb.selectFirst(
@@ -78,10 +85,16 @@ final class AuthService: NSObject, ObservableObject {
 
     // MARK: – Email auth
 
-    func signUp(name: String, email: String, password: String) async {
+    func signUp(name: String, email: String, password: String, inviteCode: String) async {
         isLoading = true; defer { isLoading = false }; error = nil
         do {
+            let valid = try await sb.validateInviteCode(code: inviteCode, email: email)
+            guard valid else {
+                self.error = "Invalid invite code or email not authorised."
+                return
+            }
             let r = try await sb.signUpEmail(email: email, password: password)
+            try? await sb.redeemInviteCode(code: inviteCode)
             if r.accessToken != nil {
                 await createOrFetchUser(id: r.user?.id ?? sb.userId ?? "", email: email,
                                         name: name.isEmpty ? "Pilot" : name)
@@ -92,11 +105,23 @@ final class AuthService: NSObject, ObservableObject {
     }
 
     func signIn(email: String, password: String) async {
+        if let locked = loginLockedUntil, locked > Date() { return }
         isLoading = true; defer { isLoading = false }; error = nil
         do {
             let r = try await sb.signInEmail(email: email, password: password)
+            loginFailedAttempts = 0
+            loginLockedUntil    = nil
             await createOrFetchUser(id: r.user?.id ?? sb.userId ?? "", email: email, name: "")
-        } catch { self.error = error.localizedDescription }
+        } catch {
+            loginFailedAttempts += 1
+            if loginFailedAttempts >= maxLoginAttempts {
+                loginLockedUntil = Date().addingTimeInterval(lockoutDuration)
+                self.error = nil   // OnboardingView reads loginLockedUntil directly
+            } else {
+                let remaining = maxLoginAttempts - loginFailedAttempts
+                self.error = "Incorrect email or password. \(remaining) attempt\(remaining == 1 ? "" : "s") remaining."
+            }
+        }
     }
 
     // MARK: – Sign out

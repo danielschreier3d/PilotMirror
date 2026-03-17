@@ -176,11 +176,12 @@ final class SupabaseClient: ObservableObject {
     func update(
         table: String,
         filters: [String: String],
-        body: [String: Any]
+        body: [String: Any],
+        anonOnly: Bool = false
     ) async throws {
         var comps = URLComponents(string: "\(base)/rest/v1/\(table)")!
         comps.queryItems = filters.map { URLQueryItem(name: $0.key, value: $0.value) }
-        var req = makeRequest(url: comps.url!, method: "PATCH")
+        var req = makeRequest(url: comps.url!, method: "PATCH", anonOnly: anonOnly)
         req.httpBody = try JSONSerialization.data(withJSONObject: body)
         let (data, res) = try await URLSession.shared.data(for: req)
         try validate(res, data)
@@ -219,6 +220,32 @@ final class SupabaseClient: ObservableObject {
         req.httpBody = try JSONSerialization.data(withJSONObject: ["password": newPassword])
         let (data, res) = try await URLSession.shared.data(for: req)
         try validate(res, data)
+    }
+
+    // MARK: – Invite codes
+
+    /// Returns true if the code exists, matches the email, and has not been used yet.
+    func validateInviteCode(code: String, email: String) async throws -> Bool {
+        struct InviteRow: Decodable { let id: String }
+        let normalized = email.lowercased().trimmingCharacters(in: .whitespaces)
+        let upper      = code.uppercased().trimmingCharacters(in: .whitespaces)
+        let result: InviteRow? = try await selectFirst(
+            from: "invite_codes",
+            filters: ["code": "eq.\(upper)", "email": "eq.\(normalized)", "used": "eq.false"],
+            anonOnly: true
+        )
+        return result != nil
+    }
+
+    /// Marks a code as used (anon — called before the user session is established).
+    func redeemInviteCode(code: String) async throws {
+        let upper = code.uppercased().trimmingCharacters(in: .whitespaces)
+        try await update(
+            table: "invite_codes",
+            filters: ["code": "eq.\(upper)"],
+            body: ["used": true],
+            anonOnly: true
+        )
     }
 
     // MARK: – RPC (returns value)

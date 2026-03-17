@@ -6,11 +6,24 @@ struct OnboardingView: View {
     @State private var name               = ""
     @State private var email              = ""
     @State private var password           = ""
+    @State private var inviteCode         = ""
     @State private var showForgotPassword = false
     @State private var resetEmail         = ""
     @State private var isResetting        = false
     @State private var resetMessage:      String?
     @State private var resetSuccess       = false
+    @State private var now                = Date()
+
+    private var isLocked: Bool {
+        guard let until = auth.loginLockedUntil else { return false }
+        return until > now
+    }
+    private var lockoutCountdown: String {
+        guard let until = auth.loginLockedUntil else { return "" }
+        let secs = max(0, Int(until.timeIntervalSince(now)))
+        let m = secs / 60; let s = secs % 60
+        return String(format: "%d:%02d", m, s)
+    }
 
     var body: some View {
         ZStack {
@@ -55,12 +68,27 @@ struct OnboardingView: View {
                         authField("Email", text: $email, icon: "envelope.fill",
                                   keyboard: .emailAddress, capitalize: .never)
                         authField("Password", text: $password, icon: "lock.fill", isSecure: true)
+                        if isSignUp {
+                            authField("Invite Code", text: $inviteCode,
+                                      icon: "ticket.fill", capitalize: .characters)
+                        }
                     }
                     .padding(.horizontal, 24)
                     .padding(.top, 20)
 
-                    // Error
-                    if let err = auth.error {
+                    // Error / Lockout
+                    if isLocked {
+                        HStack(spacing: 8) {
+                            Image(systemName: "lock.fill")
+                                .font(.caption)
+                            Text("Too many failed attempts. Try again in \(lockoutCountdown).")
+                                .font(.caption)
+                                .multilineTextAlignment(.leading)
+                        }
+                        .foregroundStyle(Color(hex: "FF6B6B"))
+                        .padding(.horizontal, 24)
+                        .padding(.top, 8)
+                    } else if let err = auth.error {
                         Text(err)
                             .font(.caption)
                             .foregroundStyle(Color(hex: "FF6B6B"))
@@ -73,7 +101,8 @@ struct OnboardingView: View {
                     Button {
                         Task {
                             if isSignUp {
-                                await auth.signUp(name: name, email: email, password: password)
+                                await auth.signUp(name: name, email: email, password: password,
+                                                  inviteCode: inviteCode)
                             } else {
                                 await auth.signIn(email: email, password: password)
                             }
@@ -96,7 +125,8 @@ struct OnboardingView: View {
                     .padding(.horizontal, 24)
                     .padding(.top, 20)
                     .disabled(auth.isLoading || email.isEmpty || password.isEmpty ||
-                              (isSignUp && name.isEmpty))
+                              (isSignUp && (name.isEmpty || inviteCode.isEmpty)) ||
+                              (!isSignUp && isLocked))
 
                     // Forgot password (Sign In only)
                     if !isSignUp {
@@ -119,7 +149,13 @@ struct OnboardingView: View {
                 }
             }
         }
-        .onChange(of: isSignUp) { _, _ in auth.error = nil; resetMessage = nil }
+        .onChange(of: isSignUp) { _, _ in auth.error = nil; resetMessage = nil; inviteCode = "" }
+        .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in
+            now = Date()
+            if let until = auth.loginLockedUntil, until <= now {
+                auth.loginLockedUntil = nil
+            }
+        }
         .sheet(isPresented: $showForgotPassword, onDismiss: { resetEmail = ""; resetMessage = nil; resetSuccess = false }) {
             forgotPasswordSheet
         }

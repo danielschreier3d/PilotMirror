@@ -40,7 +40,39 @@ struct RootView: View {
     @State private var flightLicenses: [User.FlightLicense]?
     @State private var privacyAccepted = UserDefaults.standard.bool(forKey: "pm_privacy_accepted")
 
+    // Splash state — hide after BOTH the animation AND session restore are done
+    @State private var showSplash      = true
+    @State private var splashAnimDone  = false
+
     var body: some View {
+        ZStack {
+            // ── Main content (always rendered beneath splash) ──────────
+            mainContent
+
+            // ── Splash overlay ─────────────────────────────────────────
+            if showSplash {
+                SplashView {
+                    splashAnimDone = true
+                    tryDismissSplash()
+                }
+                .zIndex(1)
+                .transition(.opacity)
+            }
+        }
+        .onChange(of: auth.isRestoring) { _, restoring in
+            if !restoring { tryDismissSplash() }
+        }
+    }
+
+    private func tryDismissSplash() {
+        guard splashAnimDone && !auth.isRestoring else { return }
+        withAnimation(.easeInOut(duration: 0.9)) {
+            showSplash = false
+        }
+    }
+
+    @ViewBuilder
+    private var mainContent: some View {
         // Deep link: email confirmation callback
         if let tokens = deepLink.pendingAuthTokens {
             Color.clear.task {

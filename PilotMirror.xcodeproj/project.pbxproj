@@ -39,6 +39,7 @@
 		CC000030000000000000000A /* InterviewSimulationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000030000000000000000A /* InterviewSimulationView.swift */; };
 		CC000031000000000000000A /* ProfileSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000031000000000000000A /* ProfileSettingsView.swift */; };
 		CC000032000000000000000A /* AppColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000032000000000000000A /* AppColors.swift */; };
+		CC000033000000000000000A /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000033000000000000000A /* SplashView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -75,6 +76,7 @@
 		BB000030000000000000000A /* InterviewSimulationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterviewSimulationView.swift; sourceTree = "<group>"; };
 		BB000031000000000000000A /* ProfileSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSettingsView.swift; sourceTree = "<group>"; };
 		BB000032000000000000000A /* AppColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppColors.swift; sourceTree = "<group>"; };
+		BB000033000000000000000A /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		EE000001000000000000000A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -163,6 +165,7 @@
 				BB000028000000000000000A /* FlightLicenseSelectView.swift */,
 				BB000030000000000000000A /* InterviewSimulationView.swift */,
 				BB000031000000000000000A /* ProfileSettingsView.swift */,
+				BB000033000000000000000A /* SplashView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -282,6 +285,7 @@
 				CC000030000000000000000A /* InterviewSimulationView.swift in Sources */,
 				CC000031000000000000000A /* ProfileSettingsView.swift in Sources */,
 				CC000032000000000000000A /* AppColors.swift in Sources */,
+				CC000033000000000000000A /* SplashView.swift in Sources */,
 				CC000019000000000000000A /* QuestionCard.swift in Sources */,
 				CC000020000000000000000A /* ProgressBar.swift in Sources */,
 				CC000021000000000000000A /* TraitRadarChart.swift in Sources */,
