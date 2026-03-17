@@ -271,10 +271,10 @@ struct FeedbackStatusView: View {
 
                     // Share buttons
                     HStack(spacing: 10) {
-                        shareIconButton("WhatsApp", icon: "message.fill", color: "34C759") { openWhatsApp(link.shareURLString) }
-                        shareIconButton("iMessage", icon: "message.fill", color: "4A9EF8") { openMessages(link.shareURLString) }
-                        shareIconButton("E-Mail", icon: "envelope.fill", color: "FF9F0A") { openMail(link.shareURLString) }
-                        shareIconButton("Mehr", icon: "square.and.arrow.up", color: "8E8E93") { showShareSheet = true }
+                        shareIconButton("WhatsApp", icon: "phone.bubble.fill") { openWhatsApp(link.shareURLString) }
+                        shareIconButton("iMessage", icon: "message.fill") { openMessages(link.shareURLString) }
+                        shareIconButton("E-Mail", icon: "envelope.fill") { openMail(link.shareURLString) }
+                        shareIconButton("Mehr", icon: "square.and.arrow.up") { showShareSheet = true }
                     }
                 }
             } else {
@@ -520,18 +520,22 @@ struct FeedbackStatusView: View {
         }
     }
 
-    private func shareIconButton(_ label: String, icon: String, color: String, action: @escaping () -> Void) -> some View {
+    private func shareIconButton(_ label: String, icon: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
-            VStack(spacing: 5) {
+            VStack(spacing: 6) {
                 Image(systemName: icon)
-                    .font(.system(size: 18))
-                    .foregroundStyle(Color(hex: color))
-                    .frame(width: 46, height: 46)
-                    .background(Color(hex: color).opacity(0.12))
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .font(.system(size: 20, weight: .medium))
+                    .foregroundStyle(Color.appSecondary)
+                    .frame(width: 52, height: 52)
+                    .background(Color.appInputBG)
+                    .clipShape(RoundedRectangle(cornerRadius: 13))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 13)
+                            .strokeBorder(Color.appBorder, lineWidth: 1)
+                    )
                 Text(label)
                     .font(.caption2)
-                    .foregroundStyle(Color.appSecondary)
+                    .foregroundStyle(Color.appTertiary)
             }
         }
         .frame(maxWidth: .infinity)
