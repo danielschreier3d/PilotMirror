@@ -113,6 +113,7 @@ struct RootView: View {
 struct MainTabView: View {
     @EnvironmentObject var auth: AuthService
     @EnvironmentObject var lang: LanguageService
+    @Environment(\.colorScheme) private var colorScheme
     @State private var selectedTab        = 0
     @State private var showProfileSettings = false
 
@@ -122,7 +123,7 @@ struct MainTabView: View {
                 FeedbackStatusView()
                     .navigationTitle("Dashboard")
                     .navigationBarTitleDisplayMode(.inline)
-                    .toolbarColorScheme(.dark, for: .navigationBar)
+                    .toolbarColorScheme(colorScheme == .dark ? .dark : nil, for: .navigationBar)
                     .toolbar {
                         ToolbarItem(placement: .primaryAction) {
                             Button {
