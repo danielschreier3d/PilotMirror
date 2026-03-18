@@ -663,7 +663,7 @@ function RawDataTab({ result, isGerman, filterRel, setFilterRel, filteredData, f
                 return (
                   <div key={trait.id} className="flex items-start gap-2" style={{ minHeight: 20 }}>
                     <PersonFillSVG size={14} color={trait.selfSelected ? "#4A9EF8" : "var(--app-border)"} />
-                    <span className="text-sm flex-shrink-0 leading-tight" style={{ color: "var(--app-primary)", width: 120 }}>{trait.name}</span>
+                    <span className="text-sm leading-tight" style={{ color: "var(--app-primary)", width: 120, minWidth: 120, wordBreak: "break-word" }}>{trait.name}</span>
                     <div className="flex-1 mt-1 h-2 rounded-full overflow-hidden" style={{ background: "var(--app-input)" }}>
                       <div className="h-full rounded-full" style={{ width: `${trait.othersPercent * 100}%`, background: color }} />
                     </div>
