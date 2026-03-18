@@ -170,7 +170,7 @@ export default function ProfilePage() {
         </SettingsSection>
 
         {/* Sign out */}
-        <button onClick={() => { signOut(); router.replace("/login"); }}
+        <button onClick={async () => { await signOut(); router.replace("/login"); }}
           className="w-full py-3 rounded-2xl font-semibold text-sm"
           style={{ background: "var(--app-input)", color: "#FF6B6B" }}>
           {t("Abmelden","Sign out",isGerman)}

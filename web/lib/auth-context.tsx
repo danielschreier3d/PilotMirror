@@ -15,7 +15,7 @@ interface AuthContextValue {
   setError: (e: string | null) => void;
   signUp: (name: string, email: string, password: string, inviteCode: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
-  signOut: () => void;
+  signOut: () => Promise<void>;
   sendPasswordReset: (email: string) => Promise<void>;
   changePassword: (newPassword: string) => Promise<void>;
   updateAssessmentType: (type: AssessmentType) => Promise<void>;
@@ -178,8 +178,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // ── Sign out ──────────────────────────────────────────────────────────────
 
-  function signOut() {
-    supabase.auth.signOut();
+  async function signOut() {
+    await supabase.auth.signOut();
     setUser(null); setIsAuth(false);
     localStorage.removeItem("pm_session_id");
     localStorage.removeItem("pm_feedback_link");
