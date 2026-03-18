@@ -583,7 +583,7 @@ function ActionButton({ label, icon, onClick, disabled = false, gradient = false
 }) {
   return (
     <button onClick={onClick} disabled={disabled}
-      className={gradient ? "btn-gradient" : ""}
+      className={`ios-press ${gradient ? "btn-gradient" : ""}`}
       style={gradient ? {} : {
         width: "100%", height: 50, borderRadius: 14, display: "flex",
         alignItems: "center", justifyContent: "center", gap: 8,
@@ -591,7 +591,6 @@ function ActionButton({ label, icon, onClick, disabled = false, gradient = false
         background: disabled ? "var(--app-input)" : "#4A9EF8",
         color: disabled ? "var(--app-tertiary)" : "white",
         cursor: disabled ? "not-allowed" : "pointer",
-        transition: "opacity 0.15s",
       }}>
       {icon}
       <span>{label}</span>
@@ -603,7 +602,7 @@ function ShareIconButton({ label, icon, color, onClick }: {
   label: string; icon: React.ReactNode; color: string; onClick: () => void;
 }) {
   return (
-    <button onClick={onClick} className="flex-1 flex flex-col items-center gap-1.5">
+    <button onClick={onClick} className="flex-1 flex flex-col items-center gap-1.5 ios-press">
       <div className="flex items-center justify-center rounded-2xl"
         style={{ width: 52, height: 52, background: color }}>
         {icon}

@@ -214,11 +214,12 @@ export default function ResultsPage() {
         <div className="flex mx-4 mb-2 p-1 rounded-xl" style={{ background: "var(--app-input)" }}>
           {tabs.map((label, i) => (
             <button key={i} onClick={() => setTab(i)}
-              className="flex-1 py-1.5 rounded-lg text-xs font-semibold transition-all"
+              className="flex-1 py-1.5 rounded-lg text-xs font-semibold ios-press"
               style={{
                 background: tab === i ? "var(--app-card)" : "transparent",
                 color: tab === i ? "var(--app-primary)" : "var(--app-tertiary)",
                 boxShadow: tab === i ? "0 1px 4px rgba(0,0,0,0.25)" : "none",
+                transition: "background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, transform 0.1s cubic-bezier(0.34,1.56,0.64,1), opacity 0.1s ease",
               }}>
               {label}
             </button>
@@ -226,7 +227,7 @@ export default function ResultsPage() {
         </div>
       </div>
 
-      <div className="px-4 py-4 space-y-4 pb-safe">
+      <div key={tab} className="px-4 py-4 space-y-4 pb-safe tab-content">
         {tab === 0 && <ProfileTab result={result} isGerman={isGerman} />}
         {tab === 1 && (
           <ComparisonTab result={result} isGerman={isGerman}
