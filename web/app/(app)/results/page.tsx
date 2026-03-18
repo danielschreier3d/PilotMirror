@@ -45,6 +45,28 @@ export default function ResultsPage() {
     if (cached) { try { setResult(JSON.parse(cached)); } catch { /* */ } }
   }, []);
 
+  // Load motivation data directly from respondents table (not stored in analysis_results)
+  useEffect(() => {
+    (async () => {
+      const sessionId = localStorage.getItem("pm_session_id");
+      if (!sessionId) return;
+      const { data: link } = await supabase.from("feedback_links").select("id").eq("session_id", sessionId).single();
+      if (!link) return;
+      const { data: respondents } = await supabase.from("respondents").select("confidence_rating, wish_text").eq("feedback_link_id", link.id);
+      if (!respondents?.length) return;
+      type RespondentRow = { confidence_rating: number | null; wish_text: string | null };
+      const ratings = (respondents as RespondentRow[]).map(r => r.confidence_rating).filter((r): r is number => r != null);
+      const wishes = (respondents as RespondentRow[]).map(r => r.wish_text).filter((w): w is string => w != null && w.trim().length > 0);
+      if (ratings.length === 0 && wishes.length === 0) return;
+      setResult(prev => prev ? {
+        ...prev,
+        motivationConfidenceAvg: ratings.length > 0 ? ratings.reduce((a, b) => a + b, 0) / ratings.length : prev.motivationConfidenceAvg,
+        motivationConfidenceCount: ratings.length || prev.motivationConfidenceCount,
+        motivationWishes: wishes.length > 0 ? wishes : (prev.motivationWishes ?? []),
+      } : prev);
+    })();
+  }, []);
+
   useEffect(() => {
     if (filterRel === "all" || !result) { setFilteredData(null); return; }
     setFilterLoading(true);
