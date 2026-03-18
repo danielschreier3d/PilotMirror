@@ -523,19 +523,20 @@ function ForcedChoiceRow({ stat, isGerman }: { stat: ForcedChoiceStat; isGerman:
   const sorted = Object.entries(stat.results).sort((a, b) => b[1] - a[1]);
   return (
     <div className="space-y-2">
-      <p className="text-sm font-semibold" style={{ color: "var(--app-primary)" }}>{stat.question}</p>
+      <p className="text-[10px] font-bold uppercase tracking-wider" style={{ color: "var(--app-secondary)" }}>{stat.question}</p>
       {sorted.map(([option, pct]) => {
         const isSelf = option === stat.selfChoice;
+        const color = isSelf ? "#4A9EF8" : (pct >= 0.5 ? "#34C759" : "var(--app-secondary)");
         return (
-          <div key={option} className="space-y-1">
-            <div className="flex justify-between text-xs" style={{ color: isSelf ? "#4A9EF8" : "var(--app-secondary)" }}>
-              <span>{option}{isSelf ? ` (${isGerman ? "du" : "you"})` : ""}</span>
-              <span>{Math.round(pct * 100)}%</span>
+          <div key={option} className="flex items-center gap-2">
+            <span className="text-xs flex-shrink-0" style={{ color: isSelf ? "#4A9EF8" : "var(--app-border)" }}>
+              {isSelf ? "●" : "○"}
+            </span>
+            <span className="text-sm flex-shrink-0" style={{ color: isSelf ? "#4A9EF8" : "var(--app-secondary)", minWidth: 120, maxWidth: 160 }}>{option}</span>
+            <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ background: "var(--app-input)" }}>
+              <div className="h-full rounded-full" style={{ width: `${pct * 100}%`, background: color }} />
             </div>
-            <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "var(--app-input)" }}>
-              <div className="h-full rounded-full transition-all"
-                style={{ width: `${pct * 100}%`, background: isSelf ? "#4A9EF8" : "var(--app-secondary)" }} />
-            </div>
+            <span className="text-xs font-bold w-8 text-right" style={{ color }}>{Math.round(pct * 100)}%</span>
           </div>
         );
       })}
@@ -549,6 +550,30 @@ function traitBarColor(pct: number): string {
   if (pct >= 0.7) return "#34C759";
   if (pct >= 0.4) return "#4A9EF8";
   return "#8E8E93";
+}
+
+const TRUNCATE_LEN = 120;
+
+function QuoteCard({ text }: { text: string }) {
+  const [expanded, setExpanded] = useState(false);
+  const long = text.length > TRUNCATE_LEN;
+  const displayed = (!long || expanded) ? text : text.slice(0, TRUNCATE_LEN) + "…";
+  return (
+    <div className="p-3 rounded-xl" style={{ background: "var(--app-input)" }}>
+      <div className="flex gap-2">
+        <span className="text-base font-bold flex-shrink-0 leading-tight" style={{ color: "#6B5EE4" }}>"</span>
+        <div>
+          <p className="text-sm" style={{ color: "var(--app-secondary)" }}>{displayed}</p>
+          {long && (
+            <button onClick={() => setExpanded(e => !e)}
+              className="text-xs font-semibold mt-1" style={{ color: "#6B5EE4" }}>
+              {expanded ? "↑ Weniger" : "Mehr anzeigen ↓"}
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 }
 
 function RawDataTab({ result, isGerman, filterRel, setFilterRel, filteredData, filterLoading }: {
@@ -570,18 +595,23 @@ function RawDataTab({ result, isGerman, filterRel, setFilterRel, filteredData, f
           <SectionCard
             title={t("Deine Eigenschaften — wie oft genannt?","Your Traits — How Often Mentioned?",isGerman)}
             iconBg="rgba(74,158,248,0.15)"
-            icon={<PersonFillSVG size={20} color="#4A9EF8" />}>
-            <p className="text-xs mb-1" style={{ color: "var(--app-tertiary)" }}>
-              👤 {t("Du hast dich so beschrieben","How you described yourself",isGerman)}
-            </p>
+            icon={
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82zM7 7h.01" stroke="#4A9EF8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            }>
+            <div className="flex items-center gap-1.5 mb-2">
+              <PersonFillSVG size={12} color="#4A9EF8" />
+              <p className="text-xs" style={{ color: "var(--app-tertiary)" }}>
+                {t("Du hast dich so beschrieben","How you described yourself",isGerman)}
+              </p>
+            </div>
             <div className="space-y-2.5">
               {traits.map((trait) => {
                 const color = traitBarColor(trait.othersPercent);
                 return (
                   <div key={trait.id} className="flex items-center gap-2">
-                    <span className="text-xs w-4 flex-shrink-0" style={{ color: trait.selfSelected ? "#4A9EF8" : "var(--app-border)" }}>
-                      {trait.selfSelected ? "●" : "○"}
-                    </span>
+                    <PersonFillSVG size={14} color={trait.selfSelected ? "#4A9EF8" : "var(--app-border)"} />
                     <span className="text-sm w-28 flex-shrink-0" style={{ color: "var(--app-primary)" }}>{trait.name}</span>
                     <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ background: "var(--app-input)" }}>
                       <div className="h-full rounded-full" style={{ width: `${trait.othersPercent * 100}%`, background: color }} />
@@ -618,12 +648,7 @@ function RawDataTab({ result, isGerman, filterRel, setFilterRel, filteredData, f
               </p>
             ) : (
               <div className="space-y-2">
-                {texts.map((text, i) => (
-                  <div key={i} className="p-3 rounded-xl text-sm"
-                    style={{ background: "var(--app-input)", color: "var(--app-secondary)" }}>
-                    {text}
-                  </div>
-                ))}
+                {texts.map((text, i) => <QuoteCard key={i} text={text} />)}
               </div>
             )}
           </SectionCard>
