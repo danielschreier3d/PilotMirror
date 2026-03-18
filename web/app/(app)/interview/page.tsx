@@ -288,8 +288,8 @@ export default function InterviewPage() {
               </svg>
               <p className="text-xs leading-snug" style={{ color: "var(--app-secondary)" }}>
                 {t(
-                  "Fülle zuerst die Selbsteinschätzung aus — danach werden personalisierte KI-Fragen ergänzt.",
-                  "Complete the self-assessment first — personalised AI questions will then be added.",
+                  "Führe zuerst die KI-Analyse durch — danach werden personalisierte KI-Fragen aus deinem Profil ergänzt.",
+                  "Run the AI analysis first — personalised questions from your profile will then be added.",
                   isGerman
                 )}
               </p>

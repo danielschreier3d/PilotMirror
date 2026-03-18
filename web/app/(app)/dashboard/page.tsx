@@ -375,11 +375,11 @@ export default function DashboardPage() {
               </div>
               {/* Share buttons */}
               <div className="flex gap-2.5">
-                <ShareIconButton label="WhatsApp" color="#25D366"
+                <ShareIconButton label="WhatsApp" color="var(--app-input)"
                   icon={<WhatsAppSVG />} onClick={shareWhatsApp} />
-                <ShareIconButton label="iMessage" color="#34C759"
+                <ShareIconButton label="iMessage" color="var(--app-input)"
                   icon={<MessageSVG />} onClick={shareIMessage} />
-                <ShareIconButton label="E-Mail" color="#4A9EF8"
+                <ShareIconButton label="E-Mail" color="var(--app-input)"
                   icon={<MailSVG />} onClick={shareMail} />
                 {typeof navigator !== "undefined" && "share" in navigator && (
                   <ShareIconButton label={t("Mehr","More",isGerman)} color="var(--app-input)"
@@ -460,7 +460,7 @@ export default function DashboardPage() {
                 <div key={i} className="w-2.5 h-2.5 rounded-full"
                   style={{ background: i < interviewRuns ? "#4A9EF8" : "var(--app-border)" }} />
               ))}
-              <span className="text-xs ml-0.5" style={{ color: interviewDone ? "#34C759" : "var(--app-secondary)" }}>
+              <span className="text-xs ml-0.5" style={{ color: "var(--app-secondary)" }}>
                 {Math.min(interviewRuns,3)}/3 {isGerman ? "Durchgänge" : "runs"}
               </span>
             </div>
