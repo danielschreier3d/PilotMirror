@@ -37,7 +37,16 @@ struct InterviewSimulationView: View {
         get { UserDefaults.standard.integer(forKey: "pm_interview_run_count") }
     }
     private func incrementRunCount() {
-        UserDefaults.standard.set(interviewRunCount + 1, forKey: "pm_interview_run_count")
+        let newCount = interviewRunCount + 1
+        UserDefaults.standard.set(newCount, forKey: "pm_interview_run_count")
+        Task {
+            guard let userId = auth.currentUser?.id else { return }
+            try? await SupabaseClient.shared.update(
+                table: "users",
+                filters: ["id": "eq.\(userId)"],
+                body: ["interview_run_count": newCount]
+            )
+        }
     }
 
     private func buildAIQuestions() -> [InterviewQuestion] {

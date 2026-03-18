@@ -110,6 +110,15 @@ export default function DashboardPage() {
         setAnalysisResult(ar);
         localStorage.setItem("pm_analysis_result_v1", JSON.stringify(ar));
       }
+
+      // Interview run count from Supabase (synced from iOS and web)
+      const { data: userData } = await supabase
+        .from("users").select("interview_run_count").eq("id", user.id).single();
+      if (userData && userData.interview_run_count != null) {
+        const runs = userData.interview_run_count as number;
+        setInterviewRuns(runs);
+        localStorage.setItem("pm_interview_run_count", String(runs));
+      }
     } finally {
       setIsRefreshing(false);
     }

@@ -84,11 +84,16 @@ export default function InterviewPage() {
     }
   }
 
-  function finish() {
+  async function finish() {
     const newCount = interviewRuns + 1;
     localStorage.setItem("pm_interview_run_count", String(newCount));
     setRuns(newCount);
     setPhase("done");
+    if (user) {
+      await supabase.from("users")
+        .update({ interview_run_count: newCount })
+        .eq("id", user.id);
+    }
   }
 
   async function fetchHint() {
