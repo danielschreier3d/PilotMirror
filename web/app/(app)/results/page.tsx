@@ -31,8 +31,53 @@ function gapColor(d: number): string {
   return d > 0 ? "#FF6B6B" : "#34C759";
 }
 
+function licenseSpecificHints(licenses: string[], isGerman: boolean): string[] {
+  const relevant = licenses.filter(l => l !== "None");
+  if (!relevant.length) return [];
+  const isMotorized = relevant.some(l => ["PPL","LAPL","TMG","UL"].includes(l));
+  const isParamotor = relevant.includes("Paramotor");
+  const isOther     = relevant.includes("Other");
+  const hints: string[] = [];
+  if (isMotorized) hints.push(...(isGerman ? [
+    "Welche Luftraumklassen kennst du und was darf man wo fliegen?",
+    "Wie gehst du eine Flugplanung an? (Wetter, NOTAM, Route, Ausweichplätze)",
+    "Was tust du bei einem unerwarteten Wetterumschwung in der Luft?",
+    "Wie bereitest du dich auf einen Flug in kontrollierten Luftraum vor?",
+    "Was versteht man unter CRM und warum ist es im Cockpit wichtig?",
+  ] : [
+    "Which airspace classes do you know and what is permitted where?",
+    "How do you approach flight planning? (weather, NOTAM, route, alternates)",
+    "What do you do in case of an unexpected weather change in flight?",
+    "How do you prepare for a flight into controlled airspace?",
+    "What is CRM and why does it matter in the cockpit?",
+  ]));
+  if (isParamotor) hints.push(...(isGerman ? [
+    "Woran erkennst du gefährliche oder fluguntaugliche Thermik?",
+    "Wie schätzt du deinen Gleitwinkel und deine Reichweite ein?",
+    "Welche Wetterphänomene sind für Paramotor-/Gleitschirmpiloten besonders relevant?",
+    "Wie gehst du mit einem plötzlichen Winddreher oder einer Böe um?",
+    "Was prüfst du beim Preflight-Check an deinem Gerät?",
+  ] : [
+    "How do you recognize dangerous or unflyable thermals?",
+    "How do you estimate your glide ratio and range?",
+    "Which weather phenomena are especially relevant for paramotor/paraglider pilots?",
+    "How do you handle a sudden wind shift or gust?",
+    "What do you check during your preflight inspection?",
+  ]));
+  if (isOther) hints.push(...(isGerman ? [
+    "Welche Lufträume und Regularien sind für deine Art des Fliegens relevant?",
+    "Wie planst du einen Flug und welche Sicherheitsaspekte berücksichtigst du?",
+    "Beschreibe eine Situation, in der du eine schnelle Entscheidung in der Luft treffen musstest.",
+  ] : [
+    "Which airspace and regulations are relevant for your type of flying?",
+    "How do you plan a flight and what safety aspects do you consider?",
+    "Describe a situation where you had to make a quick decision in the air.",
+  ]));
+  return hints;
+}
+
 export default function ResultsPage() {
-  const { isGerman } = useAuth();
+  const { isGerman, user } = useAuth();
   const router = useRouter();
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [tab, setTab] = useState(0);
@@ -268,18 +313,22 @@ function ProfileTab({ result, isGerman }: { result: AnalysisResult; isGerman: bo
             </div>
           </>
         )}
-        {result.interviewTips.length > 0 && (
-          <>
-            <Divider />
-            <p className="text-[10px] font-bold uppercase tracking-wider mb-3"
-              style={{ color: "#4A9EF8" }}>
-              {t("Mögliche Fragen","Possible Questions",isGerman)}
-            </p>
-            <div className="space-y-3">
-              {result.interviewTips.map((tip, i) => <QuestionRow key={i} text={tip} />)}
-            </div>
-          </>
-        )}
+        {(() => {
+          const hints = licenseSpecificHints(user?.flightLicenses ?? [], isGerman);
+          if (!hints.length) return null;
+          return (
+            <>
+              <Divider />
+              <p className="text-[10px] font-bold uppercase tracking-wider mb-3"
+                style={{ color: "#6B5EE4" }}>
+                {t("Mögliche Fragen zu deiner Lizenz","Possible License-Related Questions",isGerman)}
+              </p>
+              <div className="space-y-3">
+                {hints.map((hint, i) => <QuestionRow key={i} text={hint} />)}
+              </div>
+            </>
+          );
+        })()}
       </SectionCard>
 
       {/* Unterstützer */}
