@@ -133,10 +133,10 @@ export interface FeedbackLink {
 }
 
 export function getFeedbackURL(token: string): string {
-  const base = typeof window !== "undefined"
-    ? `${window.location.protocol}//${window.location.host}`
-    : "https://pilotmirror.vercel.app";
-  return `${base}/feedback/${token}`;
+  const origin = typeof window !== "undefined"
+    ? window.location.origin
+    : "https://danielschreier3d.github.io";
+  return `${origin}/PilotMirror/feedback?token=${token}`;
 }
 
 // ─── Respondent ──────────────────────────────────────────────────────────────

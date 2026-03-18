@@ -7,10 +7,9 @@ struct FeedbackLink: Identifiable, Codable {
     let createdAt:     Date
     var responseCount: Int
 
-    /// Web survey URL — update WebConfig.surveyBase after Vercel deploy
     var shareURL: URL { URL(string: shareURLString)! }
 
     var shareURLString: String {
-        "\(WebConfig.surveyBase)/?token=\(token)"
+        "\(WebConfig.surveyBase)/feedback?token=\(token)"
     }
 }
