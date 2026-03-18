@@ -52,36 +52,25 @@ export default function DashboardPage() {
     if (!user) return;
     setIsRefreshing(true);
     try {
-      // Get ALL sessions for this user (there may be multiple if user used both iOS and web)
-      const { data: sessions, error: sessErr } = await supabase
-        .from("assessment_sessions").select("id").eq("candidate_id", user.id)
-        .order("created_at", { ascending: false });
-
+      // Get ALL sessions for this user (iOS and web may have created different sessions)
+      const { data: sessions } = await supabase
+        .from("assessment_sessions").select("id").eq("candidate_id", user.id);
       if (!sessions || sessions.length === 0) { setIsRefreshing(false); return; }
 
-      // Pick the session that has an analysis result (iOS-generated), else fall back to newest
-      let chosenSessionId: string = sessions[0].id;
-      if (sessions.length > 1) {
-        const sessionIds = sessions.map((s: { id: string }) => s.id);
-        const { data: arCheck } = await supabase
-          .from("analysis_results").select("session_id").in("session_id", sessionIds).limit(1);
-        if (arCheck && arCheck.length > 0) {
-          chosenSessionId = (arCheck[0] as { session_id: string }).session_id;
-        }
-      }
+      const sessionIds = sessions.map((s: { id: string }) => s.id);
+      // Use most-recently-inserted session as primary (for new writes)
+      localStorage.setItem("pm_session_id", sessionIds[0]);
 
-      localStorage.setItem("pm_session_id", chosenSessionId);
-
-      // Self responses count
+      // Self responses count — across ALL sessions
       const { count } = await supabase
         .from("self_responses").select("*", { count: "exact", head: true })
-        .eq("session_id", chosenSessionId);
+        .in("session_id", sessionIds);
       setSelfDone((count ?? 0) >= 5);
 
-      // Feedback link + response count
+      // Feedback link — across ALL sessions, pick the one with most responses
       const { data: links } = await supabase
-        .from("feedback_links").select("*").eq("session_id", chosenSessionId)
-        .order("created_at", { ascending: false }).limit(1);
+        .from("feedback_links").select("*").in("session_id", sessionIds)
+        .order("response_count", { ascending: false }).limit(1);
       const link = links?.[0];
       if (link) {
         const fl: FeedbackLink = {
@@ -92,9 +81,9 @@ export default function DashboardPage() {
         localStorage.setItem("pm_feedback_link", JSON.stringify(fl));
       }
 
-      // Analysis result
+      // Analysis result — across ALL sessions
       const { data: analyses } = await supabase
-        .from("analysis_results").select("*").eq("session_id", chosenSessionId).limit(1);
+        .from("analysis_results").select("*").in("session_id", sessionIds).limit(1);
       const analysis = analyses?.[0];
       if (analysis) {
         function safeJson<T>(s: string | null): T[] {
