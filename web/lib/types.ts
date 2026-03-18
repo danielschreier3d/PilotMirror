@@ -133,10 +133,7 @@ export interface FeedbackLink {
 }
 
 export function getFeedbackURL(token: string): string {
-  const origin = typeof window !== "undefined"
-    ? window.location.origin
-    : "https://danielschreier3d.github.io";
-  return `${origin}/PilotMirror/feedback?token=${token}`;
+  return `https://danielschreier3d.github.io/pilotmirror-survey/?token=${token}`;
 }
 
 // ─── Respondent ──────────────────────────────────────────────────────────────
