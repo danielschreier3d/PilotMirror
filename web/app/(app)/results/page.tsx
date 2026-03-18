@@ -242,6 +242,7 @@ export default function ResultsPage() {
 // ─── Tab: Profile ─────────────────────────────────────────────────────────────
 
 function ProfileTab({ result, isGerman }: { result: AnalysisResult; isGerman: boolean }) {
+  const { user } = useAuth();
   const traits = result.traitStats.filter(s => s.othersPercent >= 0.50).sort((a, b) => b.othersPercent - a.othersPercent);
   return (
     <>
