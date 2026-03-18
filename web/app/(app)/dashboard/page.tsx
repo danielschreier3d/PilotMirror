@@ -53,9 +53,10 @@ export default function DashboardPage() {
     setIsRefreshing(true);
     try {
       // Get ALL sessions for this user (there may be multiple if user used both iOS and web)
-      const { data: sessions } = await supabase
+      const { data: sessions, error: sessErr } = await supabase
         .from("assessment_sessions").select("id").eq("candidate_id", user.id)
         .order("created_at", { ascending: false });
+      console.log("[PM Debug] sessions:", sessions, "error:", sessErr);
       if (!sessions || sessions.length === 0) { setIsRefreshing(false); return; }
 
       // Pick the session that has an analysis result (iOS-generated), else fall back to newest
@@ -68,6 +69,7 @@ export default function DashboardPage() {
           chosenSessionId = (arCheck[0] as { session_id: string }).session_id;
         }
       }
+      console.log("[PM Debug] chosenSessionId:", chosenSessionId);
       localStorage.setItem("pm_session_id", chosenSessionId);
 
       // Self responses count
@@ -91,8 +93,9 @@ export default function DashboardPage() {
       }
 
       // Analysis result
-      const { data: analyses } = await supabase
+      const { data: analyses, error: arErr } = await supabase
         .from("analysis_results").select("*").eq("session_id", chosenSessionId).limit(1);
+      console.log("[PM Debug] analysis_results:", analyses, "error:", arErr);
       const analysis = analyses?.[0];
       if (analysis) {
         function safeJson<T>(s: string | null): T[] {
