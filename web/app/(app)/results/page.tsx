@@ -561,7 +561,7 @@ function QuoteCard({ text }: { text: string }) {
   return (
     <div className="p-3 rounded-xl" style={{ background: "var(--app-input)" }}>
       <div className="flex gap-2">
-        <span className="text-base font-bold flex-shrink-0 leading-tight" style={{ color: "#6B5EE4" }}>"</span>
+        <span className="text-base font-bold flex-shrink-0 leading-tight" style={{ color: "#6B5EE4" }}>{'\u201C'}</span>
         <div>
           <p className="text-sm" style={{ color: "var(--app-secondary)" }}>{displayed}</p>
           {long && (
