@@ -56,7 +56,7 @@ export default function DashboardPage() {
       const { data: sessions, error: sessErr } = await supabase
         .from("assessment_sessions").select("id").eq("candidate_id", user.id)
         .order("created_at", { ascending: false });
-      console.log("[PM Debug] sessions:", sessions, "error:", sessErr);
+
       if (!sessions || sessions.length === 0) { setIsRefreshing(false); return; }
 
       // Pick the session that has an analysis result (iOS-generated), else fall back to newest
@@ -69,7 +69,7 @@ export default function DashboardPage() {
           chosenSessionId = (arCheck[0] as { session_id: string }).session_id;
         }
       }
-      console.log("[PM Debug] chosenSessionId:", chosenSessionId);
+
       localStorage.setItem("pm_session_id", chosenSessionId);
 
       // Self responses count
@@ -92,14 +92,9 @@ export default function DashboardPage() {
         localStorage.setItem("pm_feedback_link", JSON.stringify(fl));
       }
 
-      // Analysis result — also do a broad scan to detect session_id mismatch
-      const { data: allAr } = await supabase
-        .from("analysis_results").select("session_id").limit(10);
-      console.log("[PM Debug] all analysis_results session_ids:", allAr);
-
-      const { data: analyses, error: arErr } = await supabase
+      // Analysis result
+      const { data: analyses } = await supabase
         .from("analysis_results").select("*").eq("session_id", chosenSessionId).limit(1);
-      console.log("[PM Debug] analysis_results for chosenSession:", analyses, "error:", arErr);
       const analysis = analyses?.[0];
       if (analysis) {
         function safeJson<T>(s: string | null): T[] {
@@ -121,7 +116,7 @@ export default function DashboardPage() {
           forcedChoiceStats: safeJson(analysis.forced_choice_stats),
           openTextResponses: analysis.open_text_responses ?? [],
           respondentCount: analysis.respondent_count_at_analysis ?? 0,
-          generatedAt: analysis.created_at ?? new Date().toISOString(),
+          generatedAt: analysis.generated_at ?? new Date().toISOString(),
         };
         setAnalysisResult(ar);
         localStorage.setItem("pm_analysis_result_v1", JSON.stringify(ar));
