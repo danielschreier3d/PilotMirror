@@ -10,6 +10,16 @@ type Phase = "setup" | "interview" | "done";
 
 function t(de: string, en: string, g: boolean) { return g ? de : en; }
 
+type SessionSize = "short" | "medium" | "long";
+const SESSION_SIZES: Record<SessionSize, { de: string; en: string; detail: string; detailEN: string; count: number }> = {
+  short:  { de: "Kurz",   en: "Short",  detail: "3 Fragen",    detailEN: "3 questions",   count: 3 },
+  medium: { de: "Mittel", en: "Medium", detail: "5 Fragen",    detailEN: "5 questions",   count: 5 },
+  long:   { de: "Lang",   en: "Long",   detail: "Alle Fragen", detailEN: "All questions", count: 0 },
+};
+
+const GENERIC_CATEGORIES_DE = ["Entscheidungsfindung", "Umgang mit Kritik", "Stärken", "Teamarbeit", "Motivation"];
+const GENERIC_CATEGORIES_EN = ["Decision Making", "Handling Criticism", "Strengths", "Teamwork", "Motivation"];
+
 // Generic interview questions (fallback)
 const GENERIC_QUESTIONS_DE = [
   "Beschreibe eine Situation, in der du unter Zeitdruck eine wichtige Entscheidung treffen musstest. Was hast du getan und was hast du daraus gelernt?",
@@ -32,6 +42,8 @@ export default function InterviewPage() {
 
   const [phase, setPhase]         = useState<Phase>("setup");
   const [questions, setQuestions] = useState<string[]>([]);
+  const [sessionSize, setSessionSize] = useState<SessionSize>("medium");
+  const [activeCount, setActiveCount] = useState(0);
   const [currentIdx, setIdx]      = useState(0);
   const [hint, setHint]           = useState<string | null>(null);
   const [loadingHint, setLoadingHint] = useState(false);
@@ -54,13 +66,18 @@ export default function InterviewPage() {
   const hasAIQuestions = questions.length > 0 &&
     questions[0] !== (isGerman ? GENERIC_QUESTIONS_DE[0] : GENERIC_QUESTIONS_EN[0]);
 
+  const totalQ = activeCount || questions.length;
+
   function startInterview() {
+    const sizeCount = SESSION_SIZES[sessionSize].count;
+    const count = sizeCount > 0 ? Math.min(sizeCount, questions.length) : questions.length;
+    setActiveCount(count);
     setIdx(0); setHint(null); setPhase("interview");
   }
 
   function nextQuestion() {
     setHint(null);
-    if (currentIdx < questions.length - 1) {
+    if (currentIdx < totalQ - 1) {
       setIdx(currentIdx + 1);
     } else {
       finish();
@@ -146,6 +163,27 @@ export default function InterviewPage() {
                 {interviewRuns}/3 {t("Durchgänge","runs",isGerman)}
               </span>
             </div>
+
+            {/* Session size */}
+            <div className="space-y-2 pt-1">
+              <p className="text-xs font-semibold" style={{ color: "var(--app-secondary)" }}>
+                {t("Länge","Length",isGerman)}
+              </p>
+              <div className="flex gap-2">
+                {(Object.entries(SESSION_SIZES) as [SessionSize, typeof SESSION_SIZES[SessionSize]][]).map(([key, sz]) => (
+                  <button key={key} onClick={() => setSessionSize(key)}
+                    className="flex-1 py-2 rounded-xl text-xs font-semibold text-center"
+                    style={{
+                      background: sessionSize === key ? "rgba(74,158,248,0.15)" : "var(--app-input)",
+                      border: `1px solid ${sessionSize === key ? "#4A9EF8" : "transparent"}`,
+                      color: sessionSize === key ? "#4A9EF8" : "var(--app-secondary)",
+                    }}>
+                    <div>{isGerman ? sz.de : sz.en}</div>
+                    <div className="opacity-70" style={{ fontSize: "0.65rem", marginTop: 2 }}>{isGerman ? sz.detail : sz.detailEN}</div>
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
 
           {result && (
@@ -174,14 +212,14 @@ export default function InterviewPage() {
   // ── Interview ─────────────────────────────────────────────────────────────
   if (phase === "interview") {
     const q = questions[currentIdx];
-    const isLast = currentIdx === questions.length - 1;
+    const isLast = currentIdx === totalQ - 1;
     return (
       <div className="min-h-svh flex flex-col" style={{ background: "var(--app-bg)" }}>
         {/* Header — no back button during interview */}
         <div className="px-4" style={{ paddingTop: "max(env(safe-area-inset-top, 12px), 12px)", paddingBottom: 12 }}>
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold" style={{ color: "#4A9EF8" }}>
-              {currentIdx + 1} / {questions.length}
+              {currentIdx + 1} / {totalQ}
             </span>
             <span className="text-xs" style={{ color: "var(--app-tertiary)" }}>
               {t("Interview läuft…","Interview in progress…",isGerman)}
@@ -193,13 +231,19 @@ export default function InterviewPage() {
             </button>
           </div>
           <div className="mt-2 progress-bar-track">
-            <div className="progress-bar-fill" style={{ width: `${((currentIdx + 1) / questions.length) * 100}%` }} />
+            <div className="progress-bar-fill" style={{ width: `${((currentIdx + 1) / totalQ) * 100}%` }} />
           </div>
         </div>
 
         <div className="flex-1 px-5 py-4 space-y-4 fade-in">
           {/* Question card */}
           <div className="card p-6 space-y-4">
+            {!hasAIQuestions && GENERIC_CATEGORIES_DE[currentIdx] && (
+              <span className="text-xs px-2.5 py-1 rounded-full font-semibold"
+                style={{ background: "rgba(74,158,248,0.1)", color: "#4A9EF8" }}>
+                {isGerman ? GENERIC_CATEGORIES_DE[currentIdx] : GENERIC_CATEGORIES_EN[currentIdx]}
+              </span>
+            )}
             <div className="flex items-start gap-3">
               <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 font-bold text-sm"
                 style={{ background: "rgba(74,158,248,0.15)", color: "#4A9EF8" }}>

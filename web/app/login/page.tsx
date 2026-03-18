@@ -19,6 +19,9 @@ export default function LoginPage() {
   const [resetSent, setResetSent]   = useState(false);
   const [resetLoading, setResetLoading] = useState(false);
   const [pendingConfirmation, setPendingConfirmation] = useState(false);
+  const [failedAttempts, setFailedAttempts] = useState(0);
+  const [lockedUntil, setLockedUntil]       = useState<Date | null>(null);
+  const [countdown, setCountdown]           = useState(0);
 
   // Redirect when already authenticated
   useEffect(() => {
@@ -40,8 +43,19 @@ export default function LoginPage() {
     }
   }, [router]);
 
+  useEffect(() => {
+    if (!lockedUntil) return;
+    const tick = setInterval(() => {
+      const remaining = Math.ceil((lockedUntil.getTime() - Date.now()) / 1000);
+      if (remaining <= 0) { setLockedUntil(null); setFailedAttempts(0); setCountdown(0); }
+      else setCountdown(remaining);
+    }, 1000);
+    return () => clearInterval(tick);
+  }, [lockedUntil]);
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (lockedUntil) return;
     setError(null);
     if (mode === "signup") {
       await signUp(name, email, password, inviteCode);
@@ -50,6 +64,17 @@ export default function LoginPage() {
       if (!data.session) setPendingConfirmation(true);
     } else {
       await signIn(email, password);
+      const { data } = await supabase.auth.getSession();
+      if (!data.session) {
+        const next = failedAttempts + 1;
+        setFailedAttempts(next);
+        if (next >= 5) {
+          setLockedUntil(new Date(Date.now() + 5 * 60 * 1000));
+          setFailedAttempts(0);
+        }
+      } else {
+        setFailedAttempts(0);
+      }
     }
   }
 
@@ -163,8 +188,21 @@ export default function LoginPage() {
             <p className="text-sm text-center" style={{ color: "#FF6B6B" }}>{error}</p>
           )}
 
+          {!lockedUntil && failedAttempts >= 3 && (
+            <p className="text-xs text-center" style={{ color: "#FF9F0A" }}>
+              {5 - failedAttempts} attempt{5 - failedAttempts === 1 ? "" : "s"} remaining before lockout
+            </p>
+          )}
+
+          {lockedUntil && (
+            <div className="p-3 rounded-xl text-sm text-center"
+              style={{ background: "rgba(255,107,107,0.1)", color: "#FF6B6B" }}>
+              🔒 Too many attempts. Try again in {Math.floor(countdown / 60)}:{String(countdown % 60).padStart(2, "0")}
+            </div>
+          )}
+
           <button type="submit" className="btn-primary mt-2"
-            disabled={isLoading || !email || !password ||
+            disabled={isLoading || !!lockedUntil || !email || !password ||
               (mode === "signup" && (!name || !inviteCode))}>
             {isLoading ? <div className="spinner" /> : (mode === "signup" ? "Create Account" : "Sign In")}
           </button>

@@ -7,7 +7,7 @@ import { useAuth } from "@/lib/auth-context";
 function t(de: string, en: string, g: boolean) { return g ? de : en; }
 
 export default function ProfilePage() {
-  const { user, isGerman, signOut, changePassword, resetSurveyData, deleteAccount, updateAssessmentType, updateFlightLicenses } = useAuth();
+  const { user, isGerman, setLanguage, signOut, changePassword, resetSurveyData, deleteAccount, updateAssessmentType, updateFlightLicenses } = useAuth();
   const router = useRouter();
 
   const [showChangePassword, setShowChangePw] = useState(false);
@@ -15,6 +15,10 @@ export default function ProfilePage() {
   const [pwLoading, setPwLoading]             = useState(false);
   const [pwError, setPwError]                 = useState<string | null>(null);
   const [pwSuccess, setPwSuccess]             = useState(false);
+
+  const [langSetting, setLangSetting] = useState(
+    typeof localStorage !== "undefined" ? (localStorage.getItem("pm_language") ?? "auto") : "auto"
+  );
 
   const [appearance, setAppearance] = useState(
     typeof localStorage !== "undefined" ? (localStorage.getItem("pm_appearance") ?? "dark") : "dark"
@@ -71,6 +75,22 @@ export default function ProfilePage() {
             </span>
           )}
         </div>
+
+        {/* Language */}
+        <SettingsSection title={t("Sprache","Language",isGerman)}>
+          <div className="flex gap-2">
+            {[{v:"de",label:"Deutsch"},{v:"en",label:"English"},{v:"auto",label:"Auto"}].map(({v,label}) => (
+              <button key={v} onClick={() => { setLangSetting(v); setLanguage(v as "de"|"en"|"auto"); }}
+                className="flex-1 py-2 rounded-xl text-xs font-semibold"
+                style={{
+                  background: langSetting === v ? "#4A9EF8" : "var(--app-input)",
+                  color: langSetting === v ? "white" : "var(--app-secondary)",
+                }}>
+                {label}
+              </button>
+            ))}
+          </div>
+        </SettingsSection>
 
         {/* Appearance */}
         <SettingsSection title={t("Erscheinungsbild","Appearance",isGerman)}>

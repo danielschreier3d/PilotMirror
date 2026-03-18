@@ -119,7 +119,7 @@ export default function DashboardPage() {
   const canAnalyze      = selfDone && linkDone;
   const interviewDone   = interviewRuns >= 3;
   const hasNewResponses = analysisResult != null && responseCount > analysisResult.respondentCount;
-  const reportUpToDate  = analysisResult != null && !analysisResult.personalitySummary.includes("") === false
+  const reportUpToDate  = analysisResult != null && analysisResult.personalitySummary.trim().length > 0
                           && responseCount === analysisResult.respondentCount;
 
   const progress = Math.min(

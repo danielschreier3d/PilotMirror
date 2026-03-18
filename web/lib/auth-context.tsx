@@ -23,6 +23,7 @@ interface AuthContextValue {
   resetSurveyData: () => Promise<void>;
   deleteAccount: () => Promise<void>;
   isGerman: boolean;
+  setLanguage: (lang: "de" | "en" | "auto") => void;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -42,10 +43,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isRestoring, setIsRestoring] = useState(true);
   const [error, setError]             = useState<string | null>(null);
 
-  // Detect browser language
-  const isGerman = typeof navigator !== "undefined"
-    ? navigator.language.startsWith("de")
-    : false;
+  // Detect browser language with optional override
+  const [languageOverride, setLangOverride] = useState<"de" | "en" | null>(() => {
+    if (typeof localStorage !== "undefined") {
+      const v = localStorage.getItem("pm_language");
+      return v === "de" || v === "en" ? v : null;
+    }
+    return null;
+  });
+  const isGerman = languageOverride != null
+    ? languageOverride === "de"
+    : typeof navigator !== "undefined" && navigator.language.startsWith("de");
+
+  function setLanguage(lang: "de" | "en" | "auto") {
+    if (lang === "auto") { localStorage.removeItem("pm_language"); setLangOverride(null); }
+    else { localStorage.setItem("pm_language", lang); setLangOverride(lang as "de" | "en"); }
+  }
 
   // ── Map Supabase user row → User ──────────────────────────────────────────
   function mapRow(row: Record<string, unknown>): User {
@@ -242,7 +255,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       sendPasswordReset, changePassword,
       updateAssessmentType, updateFlightLicenses,
       resetSurveyData, deleteAccount,
-      isGerman,
+      isGerman, setLanguage,
     }}>
       {children}
     </AuthContext.Provider>

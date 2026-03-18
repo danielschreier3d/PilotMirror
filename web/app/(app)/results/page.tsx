@@ -3,9 +3,17 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
-import type { AnalysisResult, ComparisonArea, TraitStat, ForcedChoiceStat } from "@/lib/types";
+import { supabase } from "@/lib/supabase";
+import type { AnalysisResult, ComparisonArea, ForcedChoiceStat, RelationshipType } from "@/lib/types";
+import { RELATIONSHIP_LABELS } from "@/lib/types";
 
 function t(de: string, en: string, g: boolean) { return g ? de : en; }
+
+interface FilteredData {
+  texts: string[];
+  comparison: ComparisonArea[];
+  count: number;
+}
 
 function gapLabel(d: number, g: boolean): string {
   const abs = Math.abs(d);
@@ -28,11 +36,46 @@ export default function ResultsPage() {
   const router = useRouter();
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [tab, setTab] = useState(0);
+  const [filterRel, setFilterRel]       = useState<RelationshipType | "all">("all");
+  const [filteredData, setFilteredData] = useState<FilteredData | null>(null);
+  const [filterLoading, setFilterLoading] = useState(false);
 
   useEffect(() => {
     const cached = localStorage.getItem("pm_analysis_result_v1");
     if (cached) { try { setResult(JSON.parse(cached)); } catch { /* */ } }
   }, []);
+
+  useEffect(() => {
+    if (filterRel === "all" || !result) { setFilteredData(null); return; }
+    setFilterLoading(true);
+    (async () => {
+      try {
+        const sessionId = localStorage.getItem("pm_session_id");
+        if (!sessionId) return;
+        const { data: link } = await supabase.from("feedback_links").select("id").eq("session_id", sessionId).single();
+        if (!link) { setFilteredData({ texts: [], comparison: [], count: 0 }); return; }
+        const { data: respondents } = await supabase.from("respondents").select("id").eq("feedback_link_id", link.id).eq("relationship", filterRel);
+        if (!respondents?.length) { setFilteredData({ texts: [], comparison: [], count: 0 }); return; }
+        const ids = (respondents as { id: string }[]).map(r => r.id);
+        const { data: responses } = await supabase.from("survey_responses").select("question_id, answer_type, answer_value").in("respondent_id", ids);
+        const ratingMap: Record<string, number[]> = {};
+        const textList: string[] = [];
+        for (const r of (responses ?? []) as { question_id: string; answer_type: string; answer_value: string }[]) {
+          if (r.answer_type === "rating") {
+            const n = parseInt(r.answer_value, 10);
+            if (!isNaN(n)) { ratingMap[r.question_id] = [...(ratingMap[r.question_id] ?? []), n]; }
+          } else if (r.answer_type === "text" && r.answer_value) {
+            textList.push(r.answer_value);
+          }
+        }
+        const filteredComparison = result.comparisonAreas
+          .map(area => { const rs = ratingMap[area.id] ?? []; if (!rs.length) return null; return { ...area, othersAverage: rs.reduce((a, b) => a + b, 0) / rs.length }; })
+          .filter(Boolean) as ComparisonArea[];
+        setFilteredData({ texts: textList, comparison: filteredComparison, count: respondents.length });
+      } finally { setFilterLoading(false); }
+    })();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filterRel, result]);
 
   if (!result) {
     return (
@@ -83,8 +126,8 @@ export default function ResultsPage() {
 
       <div className="px-4 py-4 space-y-4 pb-safe">
         {tab === 0 && <ProfileTab result={result} isGerman={isGerman} />}
-        {tab === 1 && <ComparisonTab result={result} isGerman={isGerman} />}
-        {tab === 2 && <RawDataTab result={result} isGerman={isGerman} />}
+        {tab === 1 && <ComparisonTab result={result} isGerman={isGerman} filterRel={filterRel} setFilterRel={setFilterRel} filteredData={filteredData} filterLoading={filterLoading} />}
+        {tab === 2 && <RawDataTab result={result} isGerman={isGerman} filterRel={filterRel} setFilterRel={setFilterRel} filteredData={filteredData} filterLoading={filterLoading} />}
       </div>
     </div>
   );
@@ -198,25 +241,47 @@ function ProfileTab({ result, isGerman }: { result: AnalysisResult; isGerman: bo
 
 // ─── Tab: Comparison ──────────────────────────────────────────────────────────
 
-function ComparisonTab({ result, isGerman }: { result: AnalysisResult; isGerman: boolean }) {
+function ComparisonTab({ result, isGerman, filterRel, setFilterRel, filteredData, filterLoading }: {
+  result: AnalysisResult; isGerman: boolean;
+  filterRel: RelationshipType | "all"; setFilterRel: (r: RelationshipType | "all") => void;
+  filteredData: FilteredData | null; filterLoading: boolean;
+}) {
+  const areas = filterRel === "all" ? result.comparisonAreas : (filteredData?.comparison ?? []);
   return (
     <>
-      <SectionCard title={t("Du vs. Andere","You vs. Others",isGerman)} icon="📊">
-        <div className="space-y-4">
-          {result.comparisonAreas.map((area) => (
-            <ComparisonRow key={area.id} area={area} isGerman={isGerman} />
-          ))}
-        </div>
-      </SectionCard>
-
-      {result.forcedChoiceStats.length > 0 && (
-        <SectionCard title={t("Entscheidungsstil","Decision Style",isGerman)} icon="🔀">
-          <div className="space-y-5">
-            {result.forcedChoiceStats.map((stat) => (
-              <ForcedChoiceRow key={stat.id} stat={stat} isGerman={isGerman} />
-            ))}
-          </div>
-        </SectionCard>
+      <RelFilterChips filterRel={filterRel} setFilterRel={setFilterRel} isGerman={isGerman} />
+      {filterLoading ? (
+        <div className="flex justify-center py-8"><div className="spinner" /></div>
+      ) : (
+        <>
+          {filterRel !== "all" && filteredData && (
+            <p className="text-xs text-center" style={{ color: "var(--app-tertiary)" }}>
+              {filteredData.count} {t("Antworten von dieser Gruppe","responses from this group",isGerman)}
+            </p>
+          )}
+          <SectionCard title={t("Du vs. Andere","You vs. Others",isGerman)} icon="📊">
+            {areas.length === 0 ? (
+              <p className="text-sm" style={{ color: "var(--app-tertiary)" }}>
+                {t("Keine Daten für diese Gruppe.","No data for this group.",isGerman)}
+              </p>
+            ) : (
+              <div className="space-y-4">
+                {areas.map((area) => (
+                  <ComparisonRow key={area.id} area={area} isGerman={isGerman} />
+                ))}
+              </div>
+            )}
+          </SectionCard>
+          {filterRel === "all" && result.forcedChoiceStats.length > 0 && (
+            <SectionCard title={t("Entscheidungsstil","Decision Style",isGerman)} icon="🔀">
+              <div className="space-y-5">
+                {result.forcedChoiceStats.map((stat) => (
+                  <ForcedChoiceRow key={stat.id} stat={stat} isGerman={isGerman} />
+                ))}
+              </div>
+            </SectionCard>
+          )}
+        </>
       )}
     </>
   );
@@ -276,27 +341,62 @@ function ForcedChoiceRow({ stat, isGerman }: { stat: ForcedChoiceStat; isGerman:
 
 // ─── Tab: Raw Data ────────────────────────────────────────────────────────────
 
-function RawDataTab({ result, isGerman }: { result: AnalysisResult; isGerman: boolean }) {
+function RawDataTab({ result, isGerman, filterRel, setFilterRel, filteredData, filterLoading }: {
+  result: AnalysisResult; isGerman: boolean;
+  filterRel: RelationshipType | "all"; setFilterRel: (r: RelationshipType | "all") => void;
+  filteredData: FilteredData | null; filterLoading: boolean;
+}) {
+  const texts = filterRel === "all" ? result.openTextResponses : (filteredData?.texts ?? []);
   return (
-    <SectionCard title={t("Freitext-Antworten","Open Text Responses",isGerman)} icon="💬">
-      {result.openTextResponses.length === 0 ? (
-        <p className="text-sm" style={{ color: "var(--app-tertiary)" }}>
-          {t("Keine Antworten vorhanden.","No responses available.",isGerman)}
-        </p>
+    <>
+      <RelFilterChips filterRel={filterRel} setFilterRel={setFilterRel} isGerman={isGerman} />
+      {filterLoading ? (
+        <div className="flex justify-center py-8"><div className="spinner" /></div>
       ) : (
-        <div className="space-y-2">
-          {result.openTextResponses.map((text, i) => (
-            <div key={i} className="p-3 rounded-xl text-sm" style={{ background: "var(--app-input)", color: "var(--app-secondary)" }}>
-              {text}
+        <SectionCard title={t("Freitext-Antworten","Open Text Responses",isGerman)} icon="💬">
+          {texts.length === 0 ? (
+            <p className="text-sm" style={{ color: "var(--app-tertiary)" }}>
+              {t("Keine Antworten vorhanden.","No responses available.",isGerman)}
+            </p>
+          ) : (
+            <div className="space-y-2">
+              {texts.map((text, i) => (
+                <div key={i} className="p-3 rounded-xl text-sm" style={{ background: "var(--app-input)", color: "var(--app-secondary)" }}>
+                  {text}
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          )}
+        </SectionCard>
       )}
-    </SectionCard>
+    </>
   );
 }
 
 // ─── Shared components ────────────────────────────────────────────────────────
+
+function RelFilterChips({ filterRel, setFilterRel, isGerman }: {
+  filterRel: RelationshipType | "all";
+  setFilterRel: (r: RelationshipType | "all") => void;
+  isGerman: boolean;
+}) {
+  return (
+    <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
+      <button onClick={() => setFilterRel("all")}
+        className="py-1.5 px-3 rounded-full text-xs font-semibold flex-shrink-0"
+        style={{ background: filterRel === "all" ? "#4A9EF8" : "var(--app-input)", color: filterRel === "all" ? "white" : "var(--app-secondary)" }}>
+        {isGerman ? "Alle" : "All"}
+      </button>
+      {(Object.entries(RELATIONSHIP_LABELS) as [RelationshipType, { de: string; en: string }][]).map(([rel, labels]) => (
+        <button key={rel} onClick={() => setFilterRel(rel)}
+          className="py-1.5 px-3 rounded-full text-xs font-semibold flex-shrink-0"
+          style={{ background: filterRel === rel ? "#4A9EF8" : "var(--app-input)", color: filterRel === rel ? "white" : "var(--app-secondary)" }}>
+          {isGerman ? labels.de : labels.en}
+        </button>
+      ))}
+    </div>
+  );
+}
 
 function SectionCard({ title, icon, accentColor, children }: {
   title: string; icon: string; accentColor?: string; children: React.ReactNode;
