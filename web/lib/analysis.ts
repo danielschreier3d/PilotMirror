@@ -311,6 +311,16 @@ export async function storeResult(result: AnalysisResult, sessionId: string): Pr
     motivation_confidence_count: result.motivationConfidenceCount ?? null,
     motivation_wishes:           result.motivationWishes ?? [],
   }, { onConflict: "session_id" });
+
+  // Persist interview questions separately (requires column — see migration below)
+  try {
+    const iqs = localStorage.getItem("pm_interview_questions_v1");
+    if (iqs) {
+      await supabase.from("analysis_results")
+        .update({ interview_simulation_questions: JSON.parse(iqs) })
+        .eq("session_id", sessionId);
+    }
+  } catch { /* column may not exist yet */ }
 }
 
 // ─── Main analysis entry point ────────────────────────────────────────────────

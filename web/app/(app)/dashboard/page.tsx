@@ -121,6 +121,11 @@ export default function DashboardPage() {
         };
         setAnalysisResult(ar);
         localStorage.setItem("pm_analysis_result_v1", JSON.stringify(ar));
+        // Restore interview questions if missing from localStorage
+        const iqs = (analysis as Record<string, unknown>).interview_simulation_questions as string[] | undefined;
+        if (iqs?.length && !localStorage.getItem("pm_interview_questions_v1")) {
+          localStorage.setItem("pm_interview_questions_v1", JSON.stringify(iqs));
+        }
       }
 
       const { data: userData } = await supabase
@@ -227,6 +232,14 @@ export default function DashboardPage() {
           open_text_responses:        result.openTextResponses,
           respondent_count_at_analysis: result.respondentCount,
         }, { onConflict: "session_id" });
+        try {
+          const iqs = localStorage.getItem("pm_interview_questions_v1");
+          if (iqs) {
+            await supabase.from("analysis_results")
+              .update({ interview_simulation_questions: JSON.parse(iqs) })
+              .eq("session_id", sessionId);
+          }
+        } catch { /* column may not exist yet */ }
       }
       router.push("/results");
     } catch (e: unknown) {
