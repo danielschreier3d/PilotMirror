@@ -6,6 +6,7 @@ import { useAuth } from "@/lib/auth-context";
 import { supabase } from "@/lib/supabase";
 import type { AnalysisResult, ComparisonArea, ForcedChoiceStat, RelationshipType } from "@/lib/types";
 import { RELATIONSHIP_LABELS } from "@/lib/types";
+import { SURVEY_QUESTIONS } from "@/lib/questions";
 
 function t(de: string, en: string, g: boolean) { return g ? de : en; }
 
@@ -81,9 +82,10 @@ export default function ResultsPage() {
   const router = useRouter();
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [tab, setTab] = useState(0);
-  const [filterRel, setFilterRel]       = useState<RelationshipType | "all">("all");
-  const [filteredData, setFilteredData] = useState<FilteredData | null>(null);
+  const [filterRel, setFilterRel]         = useState<RelationshipType | "all">("all");
+  const [filteredData, setFilteredData]   = useState<FilteredData | null>(null);
   const [filterLoading, setFilterLoading] = useState(false);
+  const [groupedTexts, setGroupedTexts]   = useState<Record<string, string[]> | null>(null);
 
   useEffect(() => {
     const cached = localStorage.getItem("pm_analysis_result_v1");
@@ -109,6 +111,32 @@ export default function ResultsPage() {
         motivationConfidenceCount: ratings.length || prev.motivationConfidenceCount,
         motivationWishes: wishes.length > 0 ? wishes : (prev.motivationWishes ?? []),
       } : prev);
+    })();
+  }, []);
+
+  // Load open text answers grouped by question
+  useEffect(() => {
+    (async () => {
+      const sessionId = localStorage.getItem("pm_session_id");
+      if (!sessionId) return;
+      const { data: link } = await supabase.from("feedback_links").select("id").eq("session_id", sessionId).single();
+      if (!link) return;
+      const { data: respondents } = await supabase.from("respondents").select("id").eq("feedback_link_id", (link as { id: string }).id);
+      if (!respondents?.length) return;
+      const ids = (respondents as { id: string }[]).map(r => r.id);
+      const openIds = ["q10","q11","q12","q13","q14","q15","q16","q17","q18"];
+      const { data: responses } = await supabase.from("survey_responses")
+        .select("question_id, answer_value")
+        .in("respondent_id", ids)
+        .in("question_id", openIds);
+      if (!responses?.length) return;
+      const grouped: Record<string, string[]> = {};
+      for (const r of responses as { question_id: string; answer_value: string }[]) {
+        const text = r.answer_value?.trim();
+        if (!text || text.length < 4) continue;
+        grouped[r.question_id] = [...(grouped[r.question_id] ?? []), text];
+      }
+      setGroupedTexts(grouped);
     })();
   }, []);
 
@@ -208,7 +236,8 @@ export default function ResultsPage() {
         {tab === 2 && (
           <RawDataTab result={result} isGerman={isGerman}
             filterRel={filterRel} setFilterRel={setFilterRel}
-            filteredData={filteredData} filterLoading={filterLoading} />
+            filteredData={filteredData} filterLoading={filterLoading}
+            groupedTexts={groupedTexts} userName={user?.name} />
         )}
       </div>
     </div>
@@ -576,13 +605,34 @@ function QuoteCard({ text }: { text: string }) {
   );
 }
 
-function RawDataTab({ result, isGerman, filterRel, setFilterRel, filteredData, filterLoading }: {
+const OPEN_IDS = ["q10","q11","q12","q13","q14","q15","q16","q17","q18"];
+
+function RawDataTab({ result, isGerman, filterRel, setFilterRel, filteredData, filterLoading, groupedTexts, userName }: {
   result: AnalysisResult; isGerman: boolean;
   filterRel: RelationshipType | "all"; setFilterRel: (r: RelationshipType | "all") => void;
   filteredData: FilteredData | null; filterLoading: boolean;
+  groupedTexts: Record<string, string[]> | null;
+  userName?: string;
 }) {
   const texts = filterRel === "all" ? result.openTextResponses : (filteredData?.texts ?? []);
   const traits = [...result.traitStats].sort((a, b) => b.othersPercent - a.othersPercent);
+  const firstName = userName?.split(" ")[0] ?? "";
+
+  function questionTitle(id: string): string {
+    const q = SURVEY_QUESTIONS.find(q => q.id === id);
+    if (!q) return id;
+    const base = isGerman ? q.text : (q.textEN ?? q.text);
+    if (!firstName) return base;
+    return base
+      .replace(/von dieser Person/g, `von ${firstName}`)
+      .replace(/Diese Person/g, firstName)
+      .replace(/diese Person/g, firstName)
+      .replace(/dieser Person/g, firstName)
+      .replace(/This person's/g, `${firstName}'s`)
+      .replace(/this person's/g, `${firstName}'s`)
+      .replace(/This person/g, firstName)
+      .replace(/this person/g, firstName);
+  }
 
   return (
     <>
@@ -637,20 +687,55 @@ function RawDataTab({ result, isGerman, filterRel, setFilterRel, filteredData, f
             </SectionCard>
           )}
 
-          {/* Open text */}
+          {/* Open text — grouped by question */}
           <SectionCard
             title={t("So sehen andere dich","How Others See You",isGerman)}
             iconBg="rgba(107,94,228,0.15)"
             icon={<ChatSVG size={20} color="#6B5EE4" />}>
-            {texts.length === 0 ? (
-              <p className="text-sm" style={{ color: "var(--app-tertiary)" }}>
-                {t("Keine Antworten vorhanden.","No responses available.",isGerman)}
-              </p>
-            ) : (
-              <div className="space-y-2">
-                {texts.map((text, i) => <QuoteCard key={i} text={text} />)}
-              </div>
-            )}
+            {(() => {
+              // Use grouped data if available and no filter active
+              if (filterRel === "all" && groupedTexts) {
+                const groups = OPEN_IDS
+                  .filter(id => (groupedTexts[id]?.length ?? 0) > 0)
+                  .map(id => ({ id, title: questionTitle(id), answers: groupedTexts[id] }));
+                if (groups.length === 0) return (
+                  <p className="text-sm" style={{ color: "var(--app-tertiary)" }}>
+                    {t("Keine Antworten vorhanden.","No responses available.",isGerman)}
+                  </p>
+                );
+                return (
+                  <div>
+                    {groups.map((group, gi) => (
+                      <div key={group.id}>
+                        {gi > 0 && <Divider />}
+                        <div className="py-4">
+                          <div className="flex gap-2 mb-3">
+                            <div className="w-0.5 rounded-full flex-shrink-0" style={{ background: "#6B5EE4", minHeight: 20 }} />
+                            <p className="font-semibold text-sm leading-snug" style={{ color: "var(--app-primary)" }}>
+                              {group.title}
+                            </p>
+                          </div>
+                          <div className="space-y-2">
+                            {group.answers.map((text, i) => <QuoteCard key={i} text={text} />)}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                );
+              }
+              // Fallback: flat list (when filter active or grouped data not yet loaded)
+              if (texts.length === 0) return (
+                <p className="text-sm" style={{ color: "var(--app-tertiary)" }}>
+                  {t("Keine Antworten vorhanden.","No responses available.",isGerman)}
+                </p>
+              );
+              return (
+                <div className="space-y-2">
+                  {texts.map((text, i) => <QuoteCard key={i} text={text} />)}
+                </div>
+              );
+            })()}
           </SectionCard>
         </>
       )}
