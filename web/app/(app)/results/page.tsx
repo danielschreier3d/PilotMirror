@@ -518,24 +518,24 @@ function ComparisonRow({ area, isGerman }: { area: ComparisonArea; isGerman: boo
         <span className="text-xs font-semibold text-right leading-tight" style={{ color, flexShrink: 0 }}>{label}</span>
       </div>
       {/* Du row */}
-      <div className="flex items-center gap-2">
-        <span className="text-xs w-12 flex-shrink-0" style={{ color: "var(--app-tertiary)" }}>
+      <div className="flex items-center gap-3">
+        <span className="text-xs w-14 flex-shrink-0" style={{ color: "var(--app-tertiary)" }}>
           {t("Du","You",isGerman)}
         </span>
         <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ background: "var(--app-input)" }}>
           <div className="h-full rounded-full" style={{ width: `${(area.selfRating / 5) * 100}%`, background: "#4A9EF8" }} />
         </div>
-        <span className="text-sm font-bold w-8 text-right" style={{ color: "#4A9EF8" }}>{area.selfRating.toFixed(1)}</span>
+        <span className="text-sm font-bold w-9 text-right flex-shrink-0" style={{ color: "#4A9EF8" }}>{area.selfRating.toFixed(1)}</span>
       </div>
       {/* Andere row */}
-      <div className="flex items-center gap-2">
-        <span className="text-xs w-12 flex-shrink-0" style={{ color: "var(--app-tertiary)" }}>
+      <div className="flex items-center gap-3">
+        <span className="text-xs w-14 flex-shrink-0" style={{ color: "var(--app-tertiary)" }}>
           {t("Andere","Others",isGerman)}
         </span>
         <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ background: "var(--app-input)" }}>
           <div className="h-full rounded-full" style={{ width: `${(area.othersAverage / 5) * 100}%`, background: "#34C759" }} />
         </div>
-        <span className="text-sm font-bold w-8 text-right" style={{ color: "#34C759" }}>{area.othersAverage.toFixed(1)}</span>
+        <span className="text-sm font-bold w-9 text-right flex-shrink-0" style={{ color: "#34C759" }}>{area.othersAverage.toFixed(1)}</span>
       </div>
       {/* Delta */}
       <div className="flex items-center gap-1.5">
@@ -561,7 +561,7 @@ function ForcedChoiceRow({ stat, isGerman }: { stat: ForcedChoiceStat; isGerman:
             <span className="text-xs flex-shrink-0" style={{ color: isSelf ? "#4A9EF8" : "var(--app-border)" }}>
               {isSelf ? "●" : "○"}
             </span>
-            <span className="text-sm flex-shrink-0" style={{ color: isSelf ? "#4A9EF8" : "var(--app-secondary)", minWidth: 120, maxWidth: 160 }}>{option}</span>
+            <span className="text-sm" style={{ color: isSelf ? "#4A9EF8" : "var(--app-secondary)", flex: "0 1 auto", minWidth: 80, maxWidth: 160, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{option}</span>
             <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ background: "var(--app-input)" }}>
               <div className="h-full rounded-full" style={{ width: `${pct * 100}%`, background: color }} />
             </div>
@@ -662,7 +662,7 @@ function RawDataTab({ result, isGerman, filterRel, setFilterRel, filteredData, f
                 return (
                   <div key={trait.id} className="flex items-center gap-2">
                     <PersonFillSVG size={14} color={trait.selfSelected ? "#4A9EF8" : "var(--app-border)"} />
-                    <span className="text-sm w-28 flex-shrink-0" style={{ color: "var(--app-primary)" }}>{trait.name}</span>
+                    <span className="text-sm flex-shrink-0" style={{ color: "var(--app-primary)", minWidth: 80, maxWidth: 130, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{trait.name}</span>
                     <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ background: "var(--app-input)" }}>
                       <div className="h-full rounded-full" style={{ width: `${trait.othersPercent * 100}%`, background: color }} />
                     </div>
@@ -779,7 +779,7 @@ function SectionCard({ title, iconBg, icon, children }: {
           style={{ width: 40, height: 40, background: iconBg }}>
           {icon}
         </div>
-        <h3 className="font-bold text-base" style={{ color: "var(--app-primary)" }}>{title}</h3>
+        <h3 className="font-bold text-base flex-1 min-w-0" style={{ color: "var(--app-primary)", wordBreak: "break-word" }}>{title}</h3>
       </div>
       {children}
     </div>

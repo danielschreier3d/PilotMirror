@@ -525,7 +525,7 @@ function MilestoneChip({ done, label }: { done: boolean; label: string }) {
         }}>
         {done && <CheckSVG size={9} color="white" strokeWidth={3} />}
       </div>
-      <span className="text-[10px] font-semibold"
+      <span className="text-[10px] font-semibold whitespace-nowrap"
         style={{ color: done ? "var(--app-primary)" : "var(--app-tertiary)" }}>
         {label}
       </span>
@@ -630,11 +630,11 @@ function ResponseProgressBar({ responseCount, isGerman }: { responseCount: numbe
           style={{ left: `${milestoneX}%`, background: "var(--app-card)" }} />
       </div>
       <div className="flex justify-between text-[10px]" style={{ color: "var(--app-tertiary)" }}>
-        <span>0</span>
-        <span style={{ color: responseCount >= MIN_RESPONSES ? "#4A9EF8" : undefined }}>
+        <span className="flex-shrink-0">0</span>
+        <span className="text-center px-1 flex-shrink" style={{ color: responseCount >= MIN_RESPONSES ? "#4A9EF8" : undefined }}>
           {unlockedLabel}
         </span>
-        <span style={{ color: responseCount >= TARGET_RESPONSES ? "#4A9EF8" : undefined }}>
+        <span className="flex-shrink-0" style={{ color: responseCount >= TARGET_RESPONSES ? "#4A9EF8" : undefined }}>
           {isGerman ? "12 ideal" : "12 ideal"}
         </span>
       </div>
