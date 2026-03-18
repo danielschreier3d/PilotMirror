@@ -52,21 +52,35 @@ export default function DashboardPage() {
     if (!user) return;
     setIsRefreshing(true);
     try {
-      // Session
-      const { data: session } = await supabase
-        .from("assessment_sessions").select("id").eq("candidate_id", user.id).single();
-      if (!session) { setIsRefreshing(false); return; }
-      localStorage.setItem("pm_session_id", session.id);
+      // Get ALL sessions for this user (there may be multiple if user used both iOS and web)
+      const { data: sessions } = await supabase
+        .from("assessment_sessions").select("id").eq("candidate_id", user.id)
+        .order("created_at", { ascending: false });
+      if (!sessions || sessions.length === 0) { setIsRefreshing(false); return; }
+
+      // Pick the session that has an analysis result (iOS-generated), else fall back to newest
+      let chosenSessionId: string = sessions[0].id;
+      if (sessions.length > 1) {
+        const sessionIds = sessions.map((s: { id: string }) => s.id);
+        const { data: arCheck } = await supabase
+          .from("analysis_results").select("session_id").in("session_id", sessionIds).limit(1);
+        if (arCheck && arCheck.length > 0) {
+          chosenSessionId = (arCheck[0] as { session_id: string }).session_id;
+        }
+      }
+      localStorage.setItem("pm_session_id", chosenSessionId);
 
       // Self responses count
       const { count } = await supabase
         .from("self_responses").select("*", { count: "exact", head: true })
-        .eq("session_id", session.id);
+        .eq("session_id", chosenSessionId);
       setSelfDone((count ?? 0) >= 5);
 
       // Feedback link + response count
-      const { data: link } = await supabase
-        .from("feedback_links").select("*").eq("session_id", session.id).single();
+      const { data: links } = await supabase
+        .from("feedback_links").select("*").eq("session_id", chosenSessionId)
+        .order("created_at", { ascending: false }).limit(1);
+      const link = links?.[0];
       if (link) {
         const fl: FeedbackLink = {
           id: link.id, sessionId: link.session_id, token: link.token,
@@ -77,8 +91,9 @@ export default function DashboardPage() {
       }
 
       // Analysis result
-      const { data: analysis } = await supabase
-        .from("analysis_results").select("*").eq("session_id", session.id).single();
+      const { data: analyses } = await supabase
+        .from("analysis_results").select("*").eq("session_id", chosenSessionId).limit(1);
+      const analysis = analyses?.[0];
       if (analysis) {
         function safeJson<T>(s: string | null): T[] {
           if (!s) return [];
