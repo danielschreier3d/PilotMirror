@@ -545,37 +545,89 @@ function ForcedChoiceRow({ stat, isGerman }: { stat: ForcedChoiceStat; isGerman:
 
 // ─── Tab: Raw Data ────────────────────────────────────────────────────────────
 
+function traitBarColor(pct: number): string {
+  if (pct >= 0.7) return "#34C759";
+  if (pct >= 0.4) return "#4A9EF8";
+  return "#8E8E93";
+}
+
 function RawDataTab({ result, isGerman, filterRel, setFilterRel, filteredData, filterLoading }: {
   result: AnalysisResult; isGerman: boolean;
   filterRel: RelationshipType | "all"; setFilterRel: (r: RelationshipType | "all") => void;
   filteredData: FilteredData | null; filterLoading: boolean;
 }) {
   const texts = filterRel === "all" ? result.openTextResponses : (filteredData?.texts ?? []);
+  const traits = [...result.traitStats].sort((a, b) => b.othersPercent - a.othersPercent);
+
   return (
     <>
       <RelFilterChips filterRel={filterRel} setFilterRel={setFilterRel} isGerman={isGerman} />
       {filterLoading ? (
         <div className="flex justify-center py-8"><div className="spinner" /></div>
       ) : (
-        <SectionCard
-          title={t("Freitext-Antworten","Open Text Responses",isGerman)}
-          iconBg="rgba(74,158,248,0.15)"
-          icon={<ChatSVG size={20} color="#4A9EF8" />}>
-          {texts.length === 0 ? (
-            <p className="text-sm" style={{ color: "var(--app-tertiary)" }}>
-              {t("Keine Antworten vorhanden.","No responses available.",isGerman)}
+        <>
+          {/* Trait stats */}
+          <SectionCard
+            title={t("Deine Eigenschaften — wie oft genannt?","Your Traits — How Often Mentioned?",isGerman)}
+            iconBg="rgba(74,158,248,0.15)"
+            icon={<PersonFillSVG size={20} color="#4A9EF8" />}>
+            <p className="text-xs mb-1" style={{ color: "var(--app-tertiary)" }}>
+              👤 {t("Du hast dich so beschrieben","How you described yourself",isGerman)}
             </p>
-          ) : (
-            <div className="space-y-2">
-              {texts.map((text, i) => (
-                <div key={i} className="p-3 rounded-xl text-sm"
-                  style={{ background: "var(--app-input)", color: "var(--app-secondary)" }}>
-                  {text}
-                </div>
-              ))}
+            <div className="space-y-2.5">
+              {traits.map((trait) => {
+                const color = traitBarColor(trait.othersPercent);
+                return (
+                  <div key={trait.id} className="flex items-center gap-2">
+                    <span className="text-xs w-4 flex-shrink-0" style={{ color: trait.selfSelected ? "#4A9EF8" : "var(--app-border)" }}>
+                      {trait.selfSelected ? "●" : "○"}
+                    </span>
+                    <span className="text-sm w-28 flex-shrink-0" style={{ color: "var(--app-primary)" }}>{trait.name}</span>
+                    <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ background: "var(--app-input)" }}>
+                      <div className="h-full rounded-full" style={{ width: `${trait.othersPercent * 100}%`, background: color }} />
+                    </div>
+                    <span className="text-xs font-bold w-8 text-right" style={{ color }}>{Math.round(trait.othersPercent * 100)}%</span>
+                  </div>
+                );
+              })}
             </div>
+          </SectionCard>
+
+          {/* Forced choice */}
+          {result.forcedChoiceStats.length > 0 && (
+            <SectionCard
+              title={t("Dein Entscheidungsstil — Antworten der anderen","Your Decision Style — Others' Answers",isGerman)}
+              iconBg="rgba(255,159,10,0.15)"
+              icon={<ShuffleSVG size={20} color="#FF9F0A" />}>
+              <div className="space-y-5">
+                {result.forcedChoiceStats.map((stat) => (
+                  <ForcedChoiceRow key={stat.id} stat={stat} isGerman={isGerman} />
+                ))}
+              </div>
+            </SectionCard>
           )}
-        </SectionCard>
+
+          {/* Open text */}
+          <SectionCard
+            title={t("So sehen andere dich","How Others See You",isGerman)}
+            iconBg="rgba(107,94,228,0.15)"
+            icon={<ChatSVG size={20} color="#6B5EE4" />}>
+            {texts.length === 0 ? (
+              <p className="text-sm" style={{ color: "var(--app-tertiary)" }}>
+                {t("Keine Antworten vorhanden.","No responses available.",isGerman)}
+              </p>
+            ) : (
+              <div className="space-y-2">
+                {texts.map((text, i) => (
+                  <div key={i} className="p-3 rounded-xl text-sm"
+                    style={{ background: "var(--app-input)", color: "var(--app-secondary)" }}>
+                    {text}
+                  </div>
+                ))}
+              </div>
+            )}
+          </SectionCard>
+        </>
       )}
     </>
   );
