@@ -307,6 +307,9 @@ export async function storeResult(result: AnalysisResult, sessionId: string): Pr
     forced_choice_stats: fcJSON,
     open_text_responses: result.openTextResponses,
     respondent_count_at_analysis: result.respondentCount,
+    motivation_confidence_avg:   result.motivationConfidenceAvg ?? null,
+    motivation_confidence_count: result.motivationConfidenceCount ?? null,
+    motivation_wishes:           result.motivationWishes ?? [],
   }, { onConflict: "session_id" });
 }
 

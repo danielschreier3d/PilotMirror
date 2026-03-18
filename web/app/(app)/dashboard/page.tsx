@@ -92,6 +92,11 @@ export default function DashboardPage() {
           openTextResponses: analysis.open_text_responses ?? [],
           respondentCount: analysis.respondent_count_at_analysis ?? 0,
           generatedAt: analysis.generated_at ?? new Date().toISOString(),
+          motivationConfidenceAvg:   analysis.motivation_confidence_avg ?? undefined,
+          motivationConfidenceCount: analysis.motivation_confidence_count ?? undefined,
+          motivationWishes: Array.isArray(analysis.motivation_wishes)
+            ? (analysis.motivation_wishes as string[])
+            : [],
         };
         setAnalysisResult(ar);
         localStorage.setItem("pm_analysis_result_v1", JSON.stringify(ar));
