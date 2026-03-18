@@ -68,6 +68,29 @@ export default function DashboardPage() {
         localStorage.setItem("pm_feedback_link", JSON.stringify(fl));
       }
 
+      // Load motivation data from respondents (same as iOS — not stored in analysis_results)
+      type RespondentRow = { confidence_rating: number | null; wish_text: string | null };
+      let motivationConfidenceAvg: number | undefined;
+      let motivationConfidenceCount = 0;
+      let motivationWishes: string[] = [];
+      if (link) {
+        const { data: respondents } = await supabase
+          .from("respondents")
+          .select("confidence_rating, wish_text")
+          .eq("feedback_link_id", link.id);
+        if (respondents) {
+          const ratings = (respondents as RespondentRow[])
+            .map(r => r.confidence_rating).filter((r): r is number => r != null);
+          motivationConfidenceCount = ratings.length;
+          motivationConfidenceAvg = ratings.length > 0
+            ? ratings.reduce((a, b) => a + b, 0) / ratings.length
+            : undefined;
+          motivationWishes = (respondents as RespondentRow[])
+            .map(r => r.wish_text)
+            .filter((w): w is string => w != null && w.trim().length > 0);
+        }
+      }
+
       const { data: analyses } = await supabase
         .from("analysis_results").select("*").in("session_id", sessionIds).limit(1);
       const analysis = analyses?.[0];
@@ -92,11 +115,9 @@ export default function DashboardPage() {
           openTextResponses: analysis.open_text_responses ?? [],
           respondentCount: analysis.respondent_count_at_analysis ?? 0,
           generatedAt: analysis.generated_at ?? new Date().toISOString(),
-          motivationConfidenceAvg:   analysis.motivation_confidence_avg ?? undefined,
-          motivationConfidenceCount: analysis.motivation_confidence_count ?? undefined,
-          motivationWishes: Array.isArray(analysis.motivation_wishes)
-            ? (analysis.motivation_wishes as string[])
-            : [],
+          motivationConfidenceAvg,
+          motivationConfidenceCount,
+          motivationWishes,
         };
         setAnalysisResult(ar);
         localStorage.setItem("pm_analysis_result_v1", JSON.stringify(ar));
