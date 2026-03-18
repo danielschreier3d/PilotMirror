@@ -242,7 +242,7 @@ export default function ResultsPage() {
 // ─── Tab: Profile ─────────────────────────────────────────────────────────────
 
 function ProfileTab({ result, isGerman }: { result: AnalysisResult; isGerman: boolean }) {
-  const traits = result.traitStats.filter(s => s.othersPercent > 0.2 || s.selfSelected);
+  const traits = result.traitStats.filter(s => s.othersPercent >= 0.50).sort((a, b) => b.othersPercent - a.othersPercent);
   return (
     <>
       {/* Das macht dich aus */}
