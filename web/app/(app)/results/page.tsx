@@ -557,15 +557,15 @@ function ForcedChoiceRow({ stat, isGerman }: { stat: ForcedChoiceStat; isGerman:
         const isSelf = option === stat.selfChoice;
         const color = isSelf ? "#4A9EF8" : (pct >= 0.5 ? "#34C759" : "var(--app-secondary)");
         return (
-          <div key={option} className="flex items-center gap-2">
-            <span className="text-xs flex-shrink-0" style={{ color: isSelf ? "#4A9EF8" : "var(--app-border)" }}>
+          <div key={option} className="flex items-start gap-2">
+            <span className="text-xs flex-shrink-0 mt-0.5" style={{ color: isSelf ? "#4A9EF8" : "var(--app-border)" }}>
               {isSelf ? "●" : "○"}
             </span>
-            <span className="text-sm" style={{ color: isSelf ? "#4A9EF8" : "var(--app-secondary)", flex: "0 1 auto", minWidth: 80, maxWidth: 160, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{option}</span>
-            <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ background: "var(--app-input)" }}>
+            <span className="text-sm flex-shrink-0 leading-tight" style={{ color: isSelf ? "#4A9EF8" : "var(--app-secondary)", width: 150 }}>{option}</span>
+            <div className="flex-1 mt-1.5 h-2 rounded-full overflow-hidden" style={{ background: "var(--app-input)" }}>
               <div className="h-full rounded-full" style={{ width: `${pct * 100}%`, background: color }} />
             </div>
-            <span className="text-xs font-bold w-8 text-right" style={{ color }}>{Math.round(pct * 100)}%</span>
+            <span className="text-xs font-bold w-8 text-right flex-shrink-0" style={{ color }}>{Math.round(pct * 100)}%</span>
           </div>
         );
       })}
@@ -660,13 +660,13 @@ function RawDataTab({ result, isGerman, filterRel, setFilterRel, filteredData, f
               {traits.map((trait) => {
                 const color = traitBarColor(trait.othersPercent);
                 return (
-                  <div key={trait.id} className="flex items-center gap-2">
+                  <div key={trait.id} className="flex items-start gap-2" style={{ minHeight: 20 }}>
                     <PersonFillSVG size={14} color={trait.selfSelected ? "#4A9EF8" : "var(--app-border)"} />
-                    <span className="text-sm flex-shrink-0" style={{ color: "var(--app-primary)", minWidth: 80, maxWidth: 130, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{trait.name}</span>
-                    <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ background: "var(--app-input)" }}>
+                    <span className="text-sm flex-shrink-0 leading-tight" style={{ color: "var(--app-primary)", width: 120 }}>{trait.name}</span>
+                    <div className="flex-1 mt-1 h-2 rounded-full overflow-hidden" style={{ background: "var(--app-input)" }}>
                       <div className="h-full rounded-full" style={{ width: `${trait.othersPercent * 100}%`, background: color }} />
                     </div>
-                    <span className="text-xs font-bold w-8 text-right" style={{ color }}>{Math.round(trait.othersPercent * 100)}%</span>
+                    <span className="text-xs font-bold w-8 text-right flex-shrink-0" style={{ color }}>{Math.round(trait.othersPercent * 100)}%</span>
                   </div>
                 );
               })}
