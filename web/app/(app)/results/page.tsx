@@ -384,6 +384,7 @@ function ComparisonTab({ result, isGerman, filterRel, setFilterRel, filteredData
   filteredData: FilteredData | null; filterLoading: boolean;
 }) {
   const areas = filterRel === "all" ? result.comparisonAreas : (filteredData?.comparison ?? []);
+  const surpriseTraits = result.traitStats.filter(s => Math.abs((s.selfSelected ? 1.0 : 0.0) - s.othersPercent) > 0.4);
   return (
     <>
       <RelFilterChips filterRel={filterRel} setFilterRel={setFilterRel} isGerman={isGerman} />
@@ -397,7 +398,7 @@ function ComparisonTab({ result, isGerman, filterRel, setFilterRel, filteredData
             </p>
           )}
           <SectionCard
-            title={t("Du vs. Andere","You vs. Others",isGerman)}
+            title={t("Bereiche — Du vs. Andere (1–5)","Areas — You vs. Others (1–5)",isGerman)}
             iconBg="rgba(74,158,248,0.2)"
             icon={<ChartBarSVG size={20} color="#4A9EF8" />}>
             {areas.length === 0 ? (
@@ -405,21 +406,61 @@ function ComparisonTab({ result, isGerman, filterRel, setFilterRel, filteredData
                 {t("Keine Daten für diese Gruppe.","No data for this group.",isGerman)}
               </p>
             ) : (
-              <div className="space-y-4">
-                {areas.map((area) => (
-                  <ComparisonRow key={area.id} area={area} isGerman={isGerman} />
+              <div className="space-y-5">
+                {areas.map((area, i) => (
+                  <div key={area.id}>
+                    {i > 0 && <Divider />}
+                    <ComparisonRow area={area} isGerman={isGerman} />
+                  </div>
                 ))}
               </div>
             )}
           </SectionCard>
-          {filterRel === "all" && result.forcedChoiceStats.length > 0 && (
+
+          {filterRel === "all" && result.selfVsOthers && (
             <SectionCard
-              title={t("Entscheidungsstil","Decision Style",isGerman)}
-              iconBg="rgba(107,94,228,0.2)"
-              icon={<ShuffleSVG size={20} color="#6B5EE4" />}>
-              <div className="space-y-5">
-                {result.forcedChoiceStats.map((stat) => (
-                  <ForcedChoiceRow key={stat.id} stat={stat} isGerman={isGerman} />
+              title={t("So realistisch schätzt du dich ein","How Realistic Is Your Self-Assessment",isGerman)}
+              iconBg="rgba(255,159,10,0.2)"
+              icon={
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <path d="M7 16l-4-4 4-4M17 8l4 4-4 4M14 4l-4 16" stroke="#FF9F0A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              }>
+              <p className="text-sm leading-relaxed" style={{ color: "var(--app-primary)" }}>
+                {result.selfVsOthers}
+              </p>
+            </SectionCard>
+          )}
+
+          {filterRel === "all" && surpriseTraits.length > 0 && (
+            <SectionCard
+              title={t("Überraschende Unterschiede","Surprising Differences",isGerman)}
+              iconBg="rgba(255,107,107,0.2)"
+              icon={
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <path d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="#FF6B6B" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
+              }>
+              <div className="space-y-2">
+                {surpriseTraits.map((trait) => (
+                  <div key={trait.id} className="flex items-center justify-between px-3 py-2.5 rounded-xl"
+                    style={{ background: "rgba(255,107,107,0.08)" }}>
+                    <div>
+                      <p className="text-sm font-semibold" style={{ color: "var(--app-primary)" }}>{trait.name}</p>
+                      <div className="flex items-center gap-1.5 mt-0.5">
+                        <span className="text-xs" style={{ color: trait.selfSelected ? "#34C759" : "var(--app-tertiary)" }}>
+                          {trait.selfSelected ? "✓" : "✕"} {t("Du:","You:",isGerman)} {t(trait.selfSelected ? "Ja" : "Nein", trait.selfSelected ? "Yes" : "No", isGerman)}
+                        </span>
+                        <span className="text-xs" style={{ color: "var(--app-tertiary)" }}>·</span>
+                        <span className="text-xs font-semibold" style={{ color: "#FF6B6B" }}>
+                          {t("Andere:","Others:",isGerman)} {Math.round(trait.othersPercent * 100)}%
+                        </span>
+                      </div>
+                    </div>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                      <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0zM12 9v4m0 4h.01" stroke="#FF6B6B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
                 ))}
               </div>
             </SectionCard>
@@ -434,24 +475,45 @@ function ComparisonRow({ area, isGerman }: { area: ComparisonArea; isGerman: boo
   const diff  = area.selfRating - area.othersAverage;
   const label = gapLabel(diff, isGerman);
   const color = gapColor(diff);
+  const DeltaIcon = () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill={color}>
+      {diff >= 0
+        ? <path d="M12 5l7 14H5z"/>
+        : <path d="M12 19l7-14H5z"/>}
+    </svg>
+  );
   return (
-    <div className="space-y-1.5">
-      <div className="flex justify-between items-center">
-        <span className="text-sm font-semibold" style={{ color: "var(--app-primary)" }}>{area.name}</span>
-        <span className="text-xs px-2 py-0.5 rounded-full font-semibold"
-          style={{ background: `${color}20`, color }}>{label}</span>
+    <div className="space-y-2 pt-1">
+      <div className="flex justify-between items-start gap-2">
+        <span className="font-bold text-base" style={{ color: "var(--app-primary)" }}>{area.name}</span>
+        <span className="text-xs font-semibold text-right leading-tight" style={{ color, flexShrink: 0 }}>{label}</span>
       </div>
-      <div className="flex items-center gap-3 text-xs" style={{ color: "var(--app-secondary)" }}>
-        <span>{isGerman ? "Du" : "You"}: <strong style={{ color: "#4A9EF8" }}>{area.selfRating.toFixed(1)}</strong></span>
-        <span>{isGerman ? "Andere" : "Others"}: <strong style={{ color: "var(--app-primary)" }}>{area.othersAverage.toFixed(2)}</strong></span>
-      </div>
+      {/* Du row */}
       <div className="flex items-center gap-2">
-        <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: "var(--app-input)" }}>
+        <span className="text-xs w-12 flex-shrink-0" style={{ color: "var(--app-tertiary)" }}>
+          {t("Du","You",isGerman)}
+        </span>
+        <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ background: "var(--app-input)" }}>
           <div className="h-full rounded-full" style={{ width: `${(area.selfRating / 5) * 100}%`, background: "#4A9EF8" }} />
         </div>
-        <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: "var(--app-input)" }}>
-          <div className="h-full rounded-full" style={{ width: `${(area.othersAverage / 5) * 100}%`, background: "var(--app-secondary)" }} />
+        <span className="text-sm font-bold w-8 text-right" style={{ color: "#4A9EF8" }}>{area.selfRating.toFixed(1)}</span>
+      </div>
+      {/* Andere row */}
+      <div className="flex items-center gap-2">
+        <span className="text-xs w-12 flex-shrink-0" style={{ color: "var(--app-tertiary)" }}>
+          {t("Andere","Others",isGerman)}
+        </span>
+        <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ background: "var(--app-input)" }}>
+          <div className="h-full rounded-full" style={{ width: `${(area.othersAverage / 5) * 100}%`, background: "#34C759" }} />
         </div>
+        <span className="text-sm font-bold w-8 text-right" style={{ color: "#34C759" }}>{area.othersAverage.toFixed(1)}</span>
+      </div>
+      {/* Delta */}
+      <div className="flex items-center gap-1.5">
+        <DeltaIcon />
+        <span className="text-xs font-semibold" style={{ color }}>
+          Δ {diff >= 0 ? "+" : ""}{diff.toFixed(1)}
+        </span>
       </div>
     </div>
   );
