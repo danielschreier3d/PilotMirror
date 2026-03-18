@@ -132,6 +132,7 @@ export default function ResultsPage() {
   );
 
   function exportReport() {
+    if (!result) return;
     const lines = [
       "# PilotMirror 360° Report",
       "",
