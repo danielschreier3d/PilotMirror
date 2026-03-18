@@ -92,10 +92,14 @@ export default function DashboardPage() {
         localStorage.setItem("pm_feedback_link", JSON.stringify(fl));
       }
 
-      // Analysis result
+      // Analysis result — also do a broad scan to detect session_id mismatch
+      const { data: allAr } = await supabase
+        .from("analysis_results").select("session_id").limit(10);
+      console.log("[PM Debug] all analysis_results session_ids:", allAr);
+
       const { data: analyses, error: arErr } = await supabase
         .from("analysis_results").select("*").eq("session_id", chosenSessionId).limit(1);
-      console.log("[PM Debug] analysis_results:", analyses, "error:", arErr);
+      console.log("[PM Debug] analysis_results for chosenSession:", analyses, "error:", arErr);
       const analysis = analyses?.[0];
       if (analysis) {
         function safeJson<T>(s: string | null): T[] {
