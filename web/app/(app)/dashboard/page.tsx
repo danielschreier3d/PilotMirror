@@ -170,6 +170,29 @@ export default function DashboardPage() {
       );
       setAnalysisResult(result);
       localStorage.setItem("pm_analysis_result_v1", JSON.stringify(result));
+
+      // Persist to Supabase so it survives across devices/sessions
+      const sessionId = localStorage.getItem("pm_session_id");
+      if (sessionId) {
+        await supabase.from("analysis_results").upsert({
+          session_id:                 sessionId,
+          personality_summary:        result.personalitySummary,
+          strengths:                  result.perceivedStrengths,
+          weaknesses:                 result.possibleWeaknesses,
+          self_vs_others:             result.selfVsOthers,
+          assessment_advice:          result.assessmentAdvice,
+          group_exercise_tips:        result.groupExerciseTips,
+          interview_tips:             result.interviewTips,
+          decision_making_tips:       result.decisionMakingTips,
+          self_awareness_tips:        result.selfAwarenessTips,
+          comparison_areas:           JSON.stringify(result.comparisonAreas),
+          trait_stats:                JSON.stringify(result.traitStats),
+          forced_choice_stats:        JSON.stringify(result.forcedChoiceStats),
+          open_text_responses:        result.openTextResponses,
+          respondent_count_at_analysis: result.respondentCount,
+        }, { onConflict: "session_id" });
+      }
+
       router.push("/results");
     } catch (e: unknown) {
       setAnalysisError(e instanceof Error ? e.message : "Unknown error");
