@@ -350,15 +350,21 @@ export default function InterviewPage() {
         {/* Scrollable content */}
         <div className="flex-1 overflow-y-auto px-6 py-6 flex flex-col items-center" style={{ gap: 18 }}>
 
-          {/* Category chip */}
-          <div className="flex items-center gap-1.5 px-4 py-2 rounded-full"
-            style={{ background: "rgba(74,158,248,0.15)", border: "1px solid rgba(74,158,248,0.3)" }}>
-            <CategoryIconSVG category={q.isAIGenerated ? "personality" : q.category} size={13} color="#4A9EF8" />
-            <span className="text-sm font-semibold" style={{ color: "#4A9EF8" }}>{catLabel}</span>
+          {/* Category chip + optional AI badge */}
+          <div className="flex items-center gap-2 flex-wrap justify-center">
+            <div className="flex items-center gap-1.5 px-4 py-2 rounded-full"
+              style={{ background: "rgba(74,158,248,0.15)", border: "1px solid rgba(74,158,248,0.3)" }}>
+              <CategoryIconSVG category={q.category} size={13} color="#4A9EF8" />
+              <span className="text-sm font-semibold" style={{ color: "#4A9EF8" }}>{catLabel}</span>
+            </div>
             {q.isAIGenerated && (
-              <span className="ml-1 flex items-center gap-0.5 text-xs font-bold" style={{ color: "#FF9F0A" }}>
-                <SparklesSVG size={11} /> KI
-              </span>
+              <div className="flex items-center gap-1 px-2.5 py-1.5 rounded-full"
+                style={{ background: "rgba(255,159,10,0.15)", border: "1px solid rgba(255,159,10,0.3)" }}>
+                <SparklesSVG size={11} />
+                <span className="text-xs font-semibold" style={{ color: "#FF9F0A" }}>
+                  {t("KI-Frage","AI Question",isGerman)}
+                </span>
+              </div>
             )}
           </div>
 
