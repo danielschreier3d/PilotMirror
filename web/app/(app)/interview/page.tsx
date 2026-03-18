@@ -238,10 +238,11 @@ export default function InterviewPage() {
           {/* Size cards */}
           <div className="grid grid-cols-3 gap-3 px-5 mb-4">
             {(["small","medium","large"] as SessionSize[]).map(key => {
-              const sz  = SESSION_SIZE_META[key];
-              const cnt = totalCount(key, isAIQ);
-              const sel = sessionSize === key;
-              const aiN = key === "small" ? 2 : key === "medium" ? 3 : 4;
+              const sz       = SESSION_SIZE_META[key];
+              const cnt      = totalCount(key, aiQStrings.length);
+              const sel      = sessionSize === key;
+              const maxAiN   = SESSION_SIZE_META[key].aiCount;
+              const actualAiN = Math.min(maxAiN, aiQStrings.length);
               return (
                 <button key={key} onClick={() => setSize(key)}
                   className="flex flex-col items-center py-5 px-2 rounded-2xl ios-press"
@@ -259,9 +260,9 @@ export default function InterviewPage() {
                   <span className="text-xs text-center" style={{ color: "var(--app-secondary)", lineHeight: 1.3, whiteSpace: "pre-line" }}>
                     {isGerman ? sz.descDE : sz.descEN}
                   </span>
-                  {isAIQ && (
+                  {actualAiN > 0 && (
                     <span className="flex items-center gap-0.5 text-xs font-bold" style={{ color: "#FF9F0A" }}>
-                      <SparklesSVG size={10} /> +{aiN} KI
+                      <SparklesSVG size={10} /> +{actualAiN} KI
                     </span>
                   )}
                   <CircleCheckSVG selected={sel} />
@@ -276,8 +277,8 @@ export default function InterviewPage() {
               <SparklesSVG />
               <span className="text-sm font-semibold" style={{ color: "#FF9F0A" }}>
                 {t(
-                  `${sessionSize === "small" ? 2 : sessionSize === "medium" ? 3 : 4} KI-Fragen aus deinem Profil enthalten`,
-                  `${sessionSize === "small" ? 2 : sessionSize === "medium" ? 3 : 4} AI questions from your profile included`,
+                  `${Math.min(SESSION_SIZE_META[sessionSize].aiCount, aiQStrings.length)} KI-Fragen aus deinem Profil enthalten`,
+                  `${Math.min(SESSION_SIZE_META[sessionSize].aiCount, aiQStrings.length)} AI questions from your profile included`,
                   isGerman
                 )}
               </span>

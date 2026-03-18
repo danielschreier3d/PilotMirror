@@ -37,10 +37,10 @@ export const SESSION_SIZE_META: Record<SessionSize, {
   large:  { de: "Groß",   en: "Large",  descDE: "3 Fragen\npro Kategorie", descEN: "3 questions\nper category", qPerCat: 3, aiCount: 4 },
 };
 
-export function totalCount(size: SessionSize, hasAI: boolean): string {
+export function totalCount(size: SessionSize, aiQCount: number): number {
   const base = CATEGORY_ORDER.length * SESSION_SIZE_META[size].qPerCat;
-  const ai   = hasAI ? SESSION_SIZE_META[size].aiCount : 0;
-  return `~${base + ai}`;
+  const ai   = Math.min(SESSION_SIZE_META[size].aiCount, aiQCount);
+  return base + ai;
 }
 
 // ─── Question type ─────────────────────────────────────────────────────────────
