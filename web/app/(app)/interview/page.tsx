@@ -106,9 +106,11 @@ export default function InterviewPage() {
   const [showFollowUps, setFollowUps] = useState(false);
   const [runs, setRuns]               = useState(0);
   const [showEndAlert, setEndAlert]   = useState(false);
+  const [hasAnalysis, setHasAnalysis] = useState(false);
 
   useEffect(() => {
     setRuns(parseInt(localStorage.getItem("pm_interview_run_count") ?? "0", 10));
+    setHasAnalysis(!!localStorage.getItem("pm_analysis_result_v1"));
     const aiQ = localStorage.getItem("pm_interview_questions_v1");
     if (aiQ) {
       try {
@@ -280,7 +282,7 @@ export default function InterviewPage() {
                 )}
               </span>
             </div>
-          ) : (
+          ) : !hasAnalysis ? (
             <div className="mx-5 p-3 rounded-xl flex items-start gap-2 mb-2"
               style={{ background: "var(--app-card)", border: "1px solid var(--app-border)" }}>
               <svg className="flex-shrink-0 mt-0.5" width="13" height="13" viewBox="0 0 24 24" fill="var(--app-tertiary)">
@@ -288,13 +290,13 @@ export default function InterviewPage() {
               </svg>
               <p className="text-xs leading-snug" style={{ color: "var(--app-secondary)" }}>
                 {t(
-                  "Führe zuerst die KI-Analyse durch — danach werden personalisierte KI-Fragen aus deinem Profil ergänzt.",
-                  "Run the AI analysis first — personalised questions from your profile will then be added.",
+                  "Fülle zuerst die Selbsteinschätzung aus — danach werden personalisierte KI-Fragen ergänzt.",
+                  "Complete the self-assessment first — personalised AI questions will then be added.",
                   isGerman
                 )}
               </p>
             </div>
-          )}
+          ) : null}
 
           {/* Run counter */}
           <div className="flex items-center justify-center gap-1.5 pb-6">

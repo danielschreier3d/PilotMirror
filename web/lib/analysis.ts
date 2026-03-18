@@ -141,7 +141,8 @@ Return ONLY valid JSON with exactly these keys (no markdown fences):
 - interviewTips: string array (3–5 tips)
 - decisionMakingTips: string array (3–5 tips)
 - selfAwarenessTips: string array (3–5 tips)
-- interviewSimulationQuestions: string array (exactly 3 personal interview questions in German, "du"-form, probe weak points)`;
+- interviewSimulationQuestions: string array (exactly 5 deeply personal interview questions in German, tailored to THIS candidate's specific weak points, self-perception gaps, and personality profile; mix of personal introspective and situational pressure questions; use "du"-form; probe areas where the candidate is most likely to be challenged by a psychologist — e.g. discrepancies between self-image and external perception, stress handling, decision-making under pressure, motivation authenticity)
+`;
 }
 
 // ─── Compute stats locally ────────────────────────────────────────────────────
