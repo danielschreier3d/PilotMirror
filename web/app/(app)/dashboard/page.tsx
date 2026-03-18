@@ -150,9 +150,26 @@ export default function DashboardPage() {
     if (!user) return;
     setIsCreatingLink(true);
     try {
+      // First check if a link already exists in Supabase (e.g. created on iOS)
+      const { data: existingSessions } = await supabase
+        .from("assessment_sessions").select("id").eq("candidate_id", user.id);
+      if (existingSessions && existingSessions.length > 0) {
+        const sessionIds = existingSessions.map((s: { id: string }) => s.id);
+        const { data: existingLinks } = await supabase
+          .from("feedback_links").select("*").in("session_id", sessionIds)
+          .order("response_count", { ascending: false }).limit(1);
+        if (existingLinks && existingLinks[0]) {
+          const l = existingLinks[0];
+          const fl: FeedbackLink = { id: l.id, sessionId: l.session_id, token: l.token, responseCount: l.response_count, createdAt: l.created_at };
+          setFeedbackLink(fl);
+          localStorage.setItem("pm_feedback_link", JSON.stringify(fl));
+          return;
+        }
+      }
+
+      // No existing link found — create one
       let sessionId = localStorage.getItem("pm_session_id");
       if (!sessionId) {
-        // Create session
         const newId = crypto.randomUUID();
         await supabase.from("assessment_sessions").insert({ id: newId, candidate_id: user.id });
         sessionId = newId;
@@ -164,7 +181,7 @@ export default function DashboardPage() {
       await supabase.from("feedback_links").insert({
         id: linkId, session_id: sessionId, token, response_count: 0,
       });
-      const fl: FeedbackLink = { id: linkId, sessionId, token, responseCount: 0, createdAt: new Date().toISOString() };
+      const fl: FeedbackLink = { id: linkId, sessionId: sessionId!, token, responseCount: 0, createdAt: new Date().toISOString() };
       setFeedbackLink(fl);
       localStorage.setItem("pm_feedback_link", JSON.stringify(fl));
     } finally {
