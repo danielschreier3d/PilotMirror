@@ -74,7 +74,6 @@ export default function ResultsPage() {
         setFilteredData({ texts: textList, comparison: filteredComparison, count: respondents.length });
       } finally { setFilterLoading(false); }
     })();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterRel, result]);
 
   if (!result) {
