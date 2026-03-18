@@ -282,7 +282,7 @@ function ProfileTab({ result, isGerman }: { result: AnalysisResult; isGerman: bo
         iconBg="rgba(74,158,248,0.2)"
         icon={<PersonFillSVG size={20} color="#4A9EF8" />}>
         {traits.length > 0 && (
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 mb-2">
             {traits.slice(0, 8).map(s => (
               <div key={s.id} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full"
                 style={{ background: "var(--app-input)" }}>
